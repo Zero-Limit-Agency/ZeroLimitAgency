@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zero Limit Agency</title>
+    <meta
+      name="description"
+      content="Zero Limit Agency, agence e-sport, management, marketing et design pour structurer les projets, renforcer l'image et accompagner les talents."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Playfair+Display:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Aller au contenu</a>
+
+    <header class="site-header">
+      <div class="container nav-shell">
+        <a class="brand" href="#hero" aria-label="Accueil Zero Limit Agency">
+          <span class="brand-badge">
+            <img src="./assets/zero-limit-logo.png" alt="Logo Zero Limit Agency" />
+          </span>
+          <span class="brand-text"><strong>Zero Limit Agency</strong></span>
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-nav"
+        >
+          Menu
+        </button>
+
+        <nav class="site-nav" id="site-nav" aria-label="Navigation principale">
+          <a href="#hero">Accueil</a>
+          <a href="#reviews">Avis</a>
+          <a href="#showcase">Projet & client</a>
+          <a href="#news">News</a>
+          <a href="#ecosystem">Outils & collaborateurs</a>
+          <a class="nav-cta" href="#portal">Connexion</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero section" id="hero">
+        <div class="hero-background" aria-hidden="true"></div>
+        <div class="container hero-grid">
+          <div class="hero-copy reveal">
+            <p class="eyebrow">E-sport x Management x Marketing x Design</p>
+            <h1>On aide les projets e-sport &agrave; devenir plus clairs, plus forts et plus m&eacute;morables.</h1>
+            <p class="hero-lead">
+              Zero Limit Agency accompagne les talents, managers, &eacute;quipes,
+              structures et cr&eacute;ateurs avec une approche m&eacute;langeant image,
+              ex&eacute;cution, accompagnement et strat&eacute;gie.
+            </p>
+
+            <div class="hero-actions">
+              <a class="button button-primary" href="#contact">Faire une inscription</a>
+            </div>
+
+            <div class="hero-stats">
+              <article class="stat-card reveal">
+                <strong>E-sport</strong>
+                <p>&Eacute;quipes, joueurs, structures et dynamique comp&eacute;titive.</p>
+              </article>
+              <article class="stat-card reveal">
+                <strong>Cr&eacute;ation</strong>
+                <p>Graphisme, montage, 3D, branding, contenus et sites web.</p>
+              </article>
+              <article class="stat-card reveal">
+                <strong>Accompagnement</strong>
+                <p>Objectifs, posture, relation client et progression professionnelle.</p>
+              </article>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="section intro-section" id="about">
+        <div class="container split-grid media-layout">
+          <div class="section-copy reveal">
+            <p class="eyebrow">Description</p>
+            <h2>Une agence construite pour renforcer l'image, la structure et la valeur per&ccedil;ue.</h2>
+            <p>
+              Zero Limit Agency &eacute;volue entre e-sport, management, marketing et
+              design avec une logique simple : aider un projet &agrave; mieux se
+              pr&eacute;senter, mieux s'organiser et mieux progresser.
+            </p>
+            <p>
+              On peut intervenir sur du graphisme, du montage, de la 3D, des
+              sites web, mais aussi sur l'accompagnement de managers,
+              graphistes, monteurs ou profils en d&eacute;veloppement dans leur vie
+              professionnelle.
+            </p>
+          </div>
+
+          <div class="media-shell reveal" id="trailer">
+            <div class="media-tabs" role="tablist" aria-label="M&eacute;dias Zero Limit Agency">
+              <button class="media-tab is-active" type="button" data-target="trailer-panel">
+                <span class="tab-dot"></span>
+                <span>M&eacute;dia 1</span>
+              </button>
+              <button class="media-tab" type="button" data-target="interview-panel">
+                <span class="tab-dot"></span>
+                <span>M&eacute;dia 2</span>
+              </button>
+              <button class="media-tab" type="button" data-target="gallery-panel">
+                <span class="tab-dot"></span>
+                <span>M&eacute;dia 3</span>
+              </button>
+            </div>
+
+            <div class="media-panels">
+              <article class="media-panel is-active" id="trailer-panel">
+                <video
+                  class="trailer-video"
+                  src="./assets/zero-limit-trailer.mov"
+                  controls
+                  muted
+                  playsinline
+                  preload="metadata"
+                ></video>
+              </article>
+
+              <article class="media-panel" id="interview-panel" hidden>
+                <div class="media-placeholder">
+                  <strong>M&eacute;dia 2</strong>
+                  <p>Bloc pr&ecirc;t pour une interview, une pr&eacute;sentation ou une vid&eacute;o compl&eacute;mentaire.</p>
+                </div>
+              </article>
+
+              <article class="media-panel" id="gallery-panel" hidden>
+                <div class="media-placeholder media-placeholder-alt">
+                  <strong>M&eacute;dia 3</strong>
+                  <p>Bloc pr&ecirc;t pour une image, une bande-annonce secondaire ou un autre support.</p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-soft" id="portal">
+        <div class="container portal-card reveal">
+          <div class="portal-copy">
+            <p class="eyebrow">Connexion client</p>
+            <h2>Un espace membre pour acc&eacute;der automatiquement aux fichiers Drive et au suivi associ&eacute;.</h2>
+            <p>
+              Une fois connect&eacute;, le client pourra r&eacute;cup&eacute;rer ses fichiers,
+              retrouver les documents du projet et acc&eacute;der directement &agrave; l'aide,
+              la formation ou l'accompagnement li&eacute;s &agrave; son espace.
+            </p>
+          </div>
+          <div class="portal-panel">
+            <div class="portal-box">
+              <strong>Espace membre en pr&eacute;paration</strong>
+              <p>
+                Connexion, acc&egrave;s Drive, fichiers projet et ressources
+                d'accompagnement seront reli&eacute;s dans une prochaine &eacute;tape avec une
+                authentification s&eacute;curis&eacute;e.
+              </p>
+              <a class="button button-dark" href="#contact">Se connecter</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-soft" id="reviews">
+        <div class="container">
+          <div class="section-heading section-heading-wide reveal">
+            <p class="eyebrow">Avis clients</p>
+            <h2>Des retours qui installent la preuve sociale d&egrave;s la page d'accueil.</h2>
+          </div>
+
+          <div class="reviews-grid">
+            <article class="review-card reveal">
+              <p>
+                "On avait besoin d'une image plus solide et d'un message plus
+                clair. Le repositionnement a imm&eacute;diatement chang&eacute; la perception."
+              </p>
+              <strong>Retour &agrave; confirmer</strong>
+              <span>Fondateur</span>
+            </article>
+            <article class="review-card reveal">
+              <p>
+                "Le site et les assets cr&eacute;&eacute;s nous ont donn&eacute; une pr&eacute;sence plus
+                premium et plus coh&eacute;rente sur tous nos supports."
+              </p>
+              <strong>Retour &agrave; confirmer</strong>
+              <span>Directeur de marque</span>
+            </article>
+            <article class="review-card reveal">
+              <p>
+                "Le plus fort, c'est le m&eacute;lange entre vision cr&eacute;ative et vraie
+                logique m&eacute;tier. Rien n'est d&eacute;coratif pour rien."
+              </p>
+              <strong>Retour &agrave; confirmer</strong>
+              <span>Entrepreneur</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-dark" id="showcase">
+        <div class="container">
+          <div class="section-heading section-heading-wide reveal">
+            <p class="eyebrow">Projet & client</p>
+            <h2>Un seul espace pour montrer les projets livr&eacute;s et les profils accompagn&eacute;s.</h2>
+            <p>
+              Cette zone peut raconter aussi bien une identit&eacute; cr&eacute;&eacute;e pour une
+              &eacute;quipe qu'un accompagnement m&eacute;tier pour un manager, un graphiste
+              ou un monteur.
+            </p>
+          </div>
+
+          <div class="projects-grid">
+            <article class="project-card reveal">
+              <div class="project-visual project-visual-one"></div>
+              <div class="project-copy">
+                <small>Projet / accompagnement 01</small>
+                <h3>Formation m&eacute;tier et structuration de posture</h3>
+                <p>
+                  Accompagnement d'un profil pour clarifier ses objectifs, sa
+                  relation client et sa valeur sur le long terme.
+                </p>
+              </div>
+            </article>
+            <article class="project-card reveal">
+              <div class="project-visual project-visual-two"></div>
+              <div class="project-copy">
+                <small>Projet / accompagnement 02</small>
+                <h3>Logo et identit&eacute; visuelle pour une structure</h3>
+                <p>
+                  Cr&eacute;ation d'un univers graphique fort pour renforcer la
+                  pr&eacute;sence d'une &eacute;quipe ou d'une marque.
+                </p>
+              </div>
+            </article>
+            <article class="project-card reveal">
+              <div class="project-visual project-visual-three"></div>
+              <div class="project-copy">
+                <small>Projet / accompagnement 03</small>
+                <h3>Support marketing, montage, 3D ou site web</h3>
+                <p>
+                  Production d'assets utiles pour rendre une structure plus
+                  claire, plus attractive et plus professionnelle.
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="news">
+        <div class="container">
+          <div class="section-heading section-heading-wide reveal">
+            <p class="eyebrow">News</p>
+            <h2>Un espace pour montrer la vie de l'agence, les lancements et les coulisses.</h2>
+          </div>
+
+          <div class="news-grid">
+            <article class="news-card reveal">
+              <div class="news-media news-media-image">Image / vid&eacute;o</div>
+              <span>Avril 2026</span>
+              <h3>Lancement du nouveau site Zero Limit Agency</h3>
+              <p>
+                Une base pens&eacute;e pour &eacute;voluer avec les projets, les cas clients
+                et les futures annonces.
+              </p>
+            </article>
+            <article class="news-card reveal">
+              <div class="news-media news-media-video">Image / vid&eacute;o</div>
+              <span>Bient&ocirc;t</span>
+              <h3>Ajout des vraies actualit&eacute;s, articles et sorties</h3>
+              <p>
+                Chaque news pourra accueillir une date, un titre, une
+                description et un m&eacute;dia.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="ecosystem">
+        <div class="container">
+          <div class="section-heading section-heading-wide reveal">
+            <p class="eyebrow">Outils & collaborateurs</p>
+            <h2>Les outils, partenaires et marques qui accompagnent l'agence au quotidien.</h2>
+          </div>
+
+          <div class="team-grid">
+            <article class="team-card reveal">
+              <span class="team-badge"><span class="badge-dot"></span>Outil</span>
+              <div class="avatar-placeholder">N</div>
+              <h3>Notion</h3>
+              <p>Organisation, suivi, documentation et pilotage des projets.</p>
+            </article>
+            <article class="team-card reveal">
+              <span class="team-badge"><span class="badge-dot"></span>Outil</span>
+              <div class="avatar-placeholder">D</div>
+              <h3>Discord</h3>
+              <p>Communication, communaut&eacute; et coordination op&eacute;rationnelle.</p>
+            </article>
+            <article class="team-card reveal">
+              <span class="team-badge"><span class="badge-dot"></span>Partenaire</span>
+              <div class="avatar-placeholder">P</div>
+              <h3>Partenaires</h3>
+              <p>Zone &agrave; compl&eacute;ter avec les marques et structures mises en avant.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-soft" id="faq">
+        <div class="container faq-grid">
+          <div class="section-copy reveal">
+            <p class="eyebrow">FAQ</p>
+            <h2>Des r&eacute;ponses simples aux questions que les gens se posent avant de s'inscrire.</h2>
+          </div>
+
+          <div class="faq-list">
+            <article class="faq-item reveal">
+              <button class="faq-trigger" type="button" aria-expanded="false">
+                Comment s'inscrire ?
+              </button>
+              <div class="faq-panel">
+                <p>
+                  L'inscription se fait directement sur le site via le formulaire
+                  pr&eacute;vu &agrave; cet effet. Il suffit de remplir les informations
+                  demand&eacute;es puis d'envoyer la demande.
+                </p>
+              </div>
+            </article>
+            <article class="faq-item reveal">
+              <button class="faq-trigger" type="button" aria-expanded="false">
+                Y a-t-il un engagement lorsqu'on rejoint l'agence ?
+              </button>
+              <div class="faq-panel">
+                <p>
+                  Cela d&eacute;pend de l'accompagnement choisi et de ce qui sera
+                  pr&eacute;cis&eacute; dans le contrat. La dur&eacute;e, les modalit&eacute;s et le cadre
+                  de collaboration sont d&eacute;finis au moment du devis et de la
+                  signature.
+                </p>
+              </div>
+            </article>
+            <article class="faq-item reveal">
+              <button class="faq-trigger" type="button" aria-expanded="false">
+                Peut-on &ecirc;tre rembours&eacute; ?
+              </button>
+              <div class="faq-panel">
+                <p>
+                  Une fois l'inscription valid&eacute;e et l'accompagnement commenc&eacute;,
+                  il n'y a pas de remboursement possible. Pour toute situation
+                  particuli&egrave;re, vous pouvez toujours nous contacter par mail ou
+                  sur X pour avoir plus d'informations.
+                </p>
+              </div>
+            </article>
+            <article class="faq-item reveal">
+              <button class="faq-trigger" type="button" aria-expanded="false">
+                Quels services peut-on demander ?
+              </button>
+              <div class="faq-panel">
+                <p>
+                  Nous pouvons intervenir sur le graphisme, le montage, la 3D,
+                  le web, le marketing, le management et l'accompagnement
+                  professionnel selon les besoins du projet.
+                </p>
+              </div>
+            </article>
+            <article class="faq-item reveal">
+              <button class="faq-trigger" type="button" aria-expanded="false">
+                Comment vous contacter si j'ai encore une question ?
+              </button>
+              <div class="faq-panel">
+                <p>
+                  Vous pouvez utiliser le formulaire d'inscription, nous &eacute;crire
+                  par mail ou nous contacter sur X pour une demande rapide.
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section contact-section" id="contact">
+        <div class="container contact-grid">
+          <div class="section-copy reveal">
+            <p class="eyebrow">Inscription</p>
+            <h2>Le point d'entr&eacute;e pour les prises de contact, les devis et les partenariats.</h2>
+            <p>
+              Le formulaire est pr&ecirc;t pour centraliser les demandes. Pour un
+              envoi complet avec pi&egrave;ces jointes et stockage automatique, il
+              faudra ensuite brancher une vraie solution de traitement.
+            </p>
+          </div>
+
+          <form class="contact-form reveal" id="contact-form">
+            <div class="form-row">
+              <label>
+                Nom et pr&eacute;nom
+                <input type="text" name="fullName" placeholder="Votre nom et pr&eacute;nom" required />
+              </label>
+            </div>
+            <div class="form-row form-row-two">
+              <label>
+                Date de naissance
+                <input type="date" name="birthDate" required />
+              </label>
+              <label>
+                Pseudo
+                <input type="text" name="username" placeholder="Votre pseudo" />
+              </label>
+            </div>
+            <div class="form-row form-row-two">
+              <label>
+                Email
+                <input type="email" name="email" placeholder="vous@email.com" required />
+              </label>
+              <label>
+                Soci&eacute;t&eacute;
+                <input type="text" name="company" placeholder="Votre soci&eacute;t&eacute;" />
+              </label>
+            </div>
+            <div class="form-row form-row-two">
+              <label>
+                Pays
+                <select name="country" required>
+                  <option value="">Choisir un pays</option>
+                  <option value="France">France</option>
+                  <option value="Belgique">Belgique</option>
+                  <option value="Suisse">Suisse</option>
+                  <option value="Luxembourg">Luxembourg</option>
+                  <option value="Espagne">Espagne</option>
+                  <option value="Royaume-Uni">Royaume-Uni</option>
+                  <option value="Canada">Canada</option>
+                  <option value="Etats-Unis">Etats-Unis</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </label>
+              <label>
+                Langue principale
+                <select name="language" required>
+                  <option value="">Choisir une langue</option>
+                  <option value="Fran&ccedil;ais">Fran&ccedil;ais</option>
+                  <option value="Anglais">Anglais</option>
+                  <option value="Espagnol">Espagnol</option>
+                  <option value="Allemand">Allemand</option>
+                  <option value="Italien">Italien</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </label>
+            </div>
+            <label>
+              Demande
+              <select name="request">
+                <option value="contact">Prise de contact</option>
+                <option value="inscription_devis">Inscription (avec devis)</option>
+                <option value="partnership">Demande de partenariat</option>
+                <option value="other">Autre</option>
+              </select>
+            </label>
+            <label>
+              Fichiers
+              <input type="file" name="files" multiple />
+            </label>
+            <label>
+              Message
+              <textarea
+                name="message"
+                rows="5"
+                placeholder="Expliquez votre besoin, votre objectif ou votre projet."
+                required
+              ></textarea>
+            </label>
+            <label class="checkbox-row">
+              <input type="checkbox" name="newsletter" />
+              <span class="custom-check" aria-hidden="true"></span>
+              <span>S'inscrire &agrave; la newsletter</span>
+            </label>
+            <button class="button button-primary" type="submit">
+              Envoyer l'inscription
+            </button>
+            <p class="form-note" id="form-note">
+              Structure pr&ecirc;te. Les pi&egrave;ces jointes devront encore passer par une int&eacute;gration plus compl&egrave;te.
+            </p>
+          </form>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <div class="container footer-grid footer-grid-compact">
+          <div>
+            <strong>Zero Limit Agency</strong>
+            <p>Agence e-sport, management, marketing et design.</p>
+          </div>
+          <div>
+            <strong>Contact</strong>
+            <a href="mailto:z0agency.contact@gmail.com">z0agency.contact@gmail.com</a>
+          </div>
+          <div>
+            <strong>R&eacute;seaux</strong>
+            <div class="social-links">
+              <a class="social-link" href="https://x.com/z0agency" target="_blank" rel="noreferrer">
+                <span class="social-icon">X</span>
+                <span>@z0agency</span>
+              </a>
+              <a class="social-link" href="https://tiktok.com/@z0agency" target="_blank" rel="noreferrer">
+                <span class="social-icon">T</span>
+                <span>@z0agency</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
