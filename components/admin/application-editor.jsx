@@ -77,7 +77,7 @@ function formatProjectDate(value) {
 }
 
 function buildSpaceStatusLabel(status) {
-  return status === "active" ? "Accompagnement debloque" : "Espace en preparation";
+  return status === "active" ? "Accompagnement débloqué" : "Espace en préparation";
 }
 
 function buildDefaultTimeline(application, profile) {
@@ -415,11 +415,11 @@ export function ApplicationEditor({ application, profile, access, postCallZeroPa
         <div className="admin-meta-grid">
           <div className="admin-subpanel">
             <small>Etat de l'acces</small>
-            <strong>{access ? "Compte lie" : "Compte non lie"}</strong>
+            <strong>{access ? "Compte lié" : "Compte non lié"}</strong>
             <p className="admin-inline-note">
               {access
-                ? "Le compte client est bien relie a ce dossier."
-                : "Aucun lien compte/dossier n'a encore ete retrouve pour ce client."}
+                ? "Le compte client est bien lié à ce dossier."
+                : "Aucun lien compte/dossier n'a encore été retrouvé pour ce client."}
             </p>
           </div>
 
@@ -428,22 +428,22 @@ export function ApplicationEditor({ application, profile, access, postCallZeroPa
             <strong>{buildSpaceStatusLabel(form.space_status)}</strong>
             <p className="admin-inline-note">
               {form.space_status === "active"
-                ? "Le client voit les ressources reelles et l'accompagnement complet."
-                : "Le client voit un espace en preparation et un appel a prise de rendez-vous."}
+                ? "Le client voit les ressources réelles et l'accompagnement complet."
+                : "Le client voit un espace en préparation et un appel à prise de rendez-vous."}
             </p>
           </div>
 
           <div className="admin-subpanel">
-            <small>Derniere mise a jour</small>
+            <small>Dernière mise à jour</small>
             <strong>{formatAdminDate(application.updated_at)}</strong>
-            <p className="admin-inline-note">Le dossier reste modifiable a tout moment depuis cet ecran.</p>
+            <p className="admin-inline-note">Le dossier reste modifiable à tout moment depuis cet écran.</p>
           </div>
         </div>
 
         <label className="admin-toggle-row" htmlFor="space-status-active">
           <div>
-            <strong>Debloquer l'espace client</strong>
-            <span>Active les ressources reelles apres l'appel et le plan d'accompagnement.</span>
+            <strong>Débloquer l'espace client</strong>
+            <span>Active les ressources réelles après l'appel et le plan d'accompagnement.</span>
           </div>
           <input
             id="space-status-active"
@@ -525,7 +525,7 @@ export function ApplicationEditor({ application, profile, access, postCallZeroPa
         <div className="admin-panel-heading">
           <div>
             <p className="eyebrow">Ressources</p>
-            <h2>Liens et outils</h2>
+            <h2>Ressources</h2>
           </div>
         </div>
 
@@ -814,8 +814,8 @@ export function ApplicationEditor({ application, profile, access, postCallZeroPa
       <section className="admin-panel">
         <div className="admin-panel-heading">
           <div>
-            <p className="eyebrow">Timeline</p>
-            <h2>Etapes du projet</h2>
+            <p className="eyebrow">Suivi du projet</p>
+            <h2>Suivi du projet</h2>
           </div>
         </div>
 

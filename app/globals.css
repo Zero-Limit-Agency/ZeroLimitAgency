@@ -4194,3 +4194,57 @@ body {
     align-items: flex-start;
   }
 }
+
+.project-media,
+.news-image,
+.team-logo {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 245, 243, 0.08);
+  background: rgba(255, 245, 243, 0.04);
+}
+
+.project-media,
+.news-image {
+  aspect-ratio: 16 / 9;
+}
+
+.team-logo {
+  width: 4.8rem;
+  height: 4.8rem;
+  object-fit: contain;
+  padding: 0.7rem;
+  margin-bottom: 0.6rem;
+}
+
+.review-stars {
+  display: inline-flex;
+  gap: 0.25rem;
+  margin-bottom: 0.8rem;
+  color: rgba(255, 245, 243, 0.28);
+}
+
+.review-star.is-filled {
+  color: #f3c36d;
+}
+
+.admin-link-card h3,
+.admin-link-card h4,
+.admin-link-card strong {
+  margin: 0;
+}
+
+.admin-link-card .auth-field,
+.admin-link-card .admin-subpanel-grid {
+  margin: 0;
+}
+
+.admin-link-card .admin-panel-heading {
+  margin-bottom: 0.35rem;
+}
+
+.admin-link-card .button-compact {
+  align-self: start;
+}

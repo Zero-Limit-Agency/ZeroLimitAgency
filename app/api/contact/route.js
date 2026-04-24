@@ -72,7 +72,7 @@ export async function POST(request) {
     const email = formData.get("email")?.toString().trim().toLowerCase() || "";
     const password = formData.get("password")?.toString() || "";
     const company = formData.get("company")?.toString() || "";
-    const country = formData.get("country")?.toString() || "";
+    const country = formData.get("country")?.toString() || "Non renseigné";
     const language = formData.get("language")?.toString() || "";
     const requestType = formData.get("request")?.toString() || "";
     const message = formData.get("message")?.toString() || "";
@@ -81,7 +81,7 @@ export async function POST(request) {
       .getAll("files")
       .filter((file) => file instanceof File && file.size > 0);
 
-    if (!fullName || !birthDate || !email || !password || !country || !language || !requestType || !message) {
+    if (!fullName || !birthDate || !email || !password || !language || !requestType || !message) {
       return NextResponse.json(
         {
           success: false,
@@ -95,7 +95,7 @@ export async function POST(request) {
       return NextResponse.json(
         {
           success: false,
-          error: "Le mot de passe doit contenir au moins 8 caracteres."
+          error: "Le mot de passe doit contenir au moins 8 caractères."
         },
         { status: 400 }
       );
@@ -118,7 +118,7 @@ export async function POST(request) {
     });
 
     if (authResult.error || !authResult.data?.user?.id) {
-      const rawError = authResult.error?.message || "Impossible de creer le compte pour le moment.";
+      const rawError = authResult.error?.message || "Impossible de créer le compte pour le moment.";
 
       return NextResponse.json(
         {
@@ -196,7 +196,7 @@ export async function POST(request) {
         .single();
 
       if (updateDriveError || !updatedApplication) {
-        throw new Error("Impossible de rattacher le dossier Google Drive a la demande.");
+        throw new Error("Impossible de rattacher le dossier Google Drive à la demande.");
       }
 
       finalApplication = updatedApplication;
@@ -232,7 +232,7 @@ export async function POST(request) {
 
     return NextResponse.json({
       success: true,
-      message: "Inscription reussie",
+      message: "Inscription réussie",
       applicationId: finalApplication.id
     });
   } catch (error) {

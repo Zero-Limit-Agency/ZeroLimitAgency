@@ -2,6 +2,7 @@ import { LandingPage } from "@/components/landing-page";
 import { getUserRole } from "@/lib/auth/admin-access";
 import { getAuthorizedClientAccess } from "@/lib/auth/client-access";
 import { getClientSession } from "@/lib/auth/client-auth";
+import { normalizeSiteContent } from "@/lib/site-content";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 function buildInitialsFromName(firstName, lastName, email) {
@@ -17,9 +18,15 @@ function buildInitialsFromName(firstName, lastName, email) {
 
 export default async function HomePage() {
   const session = await getClientSession();
+  const adminClient = createSupabaseAdminClient();
+  const siteContentResult = await adminClient.globalSiteSettings.get();
+  const siteContent =
+    siteContentResult.ok && Array.isArray(siteContentResult.data) && siteContentResult.data.length > 0
+      ? normalizeSiteContent(siteContentResult.data[0]?.settings || {})
+      : undefined;
 
   if (!session?.user || session.isDemo) {
-    return <LandingPage />;
+    return <LandingPage content={siteContent} />;
   }
 
   const role = await getUserRole(session.user);
@@ -27,6 +34,7 @@ export default async function HomePage() {
   if (role === "admin") {
     return (
       <LandingPage
+        content={siteContent}
         currentUser={{
           href: "/admin",
           initials: buildInitialsFromName(
@@ -35,7 +43,7 @@ export default async function HomePage() {
             session.user?.email
           ),
           avatarUrl: "",
-          ariaLabel: "Accéder à l'administration"
+          ariaLabel: "AccÃ©der Ã  l'administration"
         }}
       />
     );
@@ -44,10 +52,9 @@ export default async function HomePage() {
   const access = await getAuthorizedClientAccess(session.user);
 
   if (!access?.application_id) {
-    return <LandingPage />;
+    return <LandingPage content={siteContent} />;
   }
 
-  const adminClient = createSupabaseAdminClient();
   const applicationResult = await adminClient.applications.getById(access.application_id);
   const profileResult = await adminClient.clientProfiles.getByApplicationId(access.application_id);
 
@@ -62,11 +69,12 @@ export default async function HomePage() {
 
   return (
     <LandingPage
+      content={siteContent}
       currentUser={{
         href: "/espace-client",
         initials: buildInitialsFromName(application?.first_name, application?.last_name, session.user?.email),
         avatarUrl: profile?.avatar_data_url || "",
-        ariaLabel: "Accéder à votre espace client"
+        ariaLabel: "AccÃ©der Ã  votre espace client"
       }}
     />
   );

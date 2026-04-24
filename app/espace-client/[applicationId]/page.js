@@ -35,7 +35,7 @@ function buildContextLine(application) {
     return `${requestType} pour ${company}`;
   }
 
-  return requestType || company || "Suivi personnalisé du dossier client";
+  return requestType || company || "Suivi personnalisÃ© du dossier client";
 }
 
 export default async function ClientApplicationPage({ params, searchParams }) {
@@ -117,9 +117,9 @@ export default async function ClientApplicationPage({ params, searchParams }) {
       <section className="client-dashboard-frame client-profile-frame">
         {isDemoSpace ? (
           <div className="client-demo-banner">
-            <strong>Mode démonstration</strong>
+            <strong>Mode dÃ©monstration</strong>
             <span>
-              Cette page présente un dossier fictif pour visualiser l'expérience client sans utiliser
+              Cette page prÃ©sente un dossier fictif pour visualiser l'expÃ©rience client sans utiliser
               un vrai compte.
             </span>
           </div>
@@ -127,8 +127,8 @@ export default async function ClientApplicationPage({ params, searchParams }) {
 
         {isAdminPreview ? (
           <div className="client-demo-banner client-admin-preview-banner">
-            <strong>Prévisualisation admin</strong>
-            <span>Vous consultez la fiche client dans son rendu normal, sans les outils d'édition.</span>
+            <strong>PrÃ©visualisation admin</strong>
+            <span>Vous consultez la fiche client dans son rendu normal, sans les outils d'Ã©dition.</span>
           </div>
         ) : null}
 
@@ -145,7 +145,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
               <div className="client-profile-copy">
                 <div className="client-profile-topline">
                   <span className="client-identity-chip">
-                    {isWorkspaceReady ? "Dossier actif" : "Dossier accepté"}
+                    {isWorkspaceReady ? "Dossier actif" : "Dossier acceptÃ©"}
                   </span>
                   <span className="client-identity-chip client-identity-chip-soft">{contextLine}</span>
                 </div>
@@ -154,7 +154,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
 
                 <div className="client-profile-meta">
                   <span>
-                    <strong>Prénom</strong>
+                    <strong>PrÃ©nom</strong>
                     {identity.firstName}
                   </span>
                   <span>
@@ -166,13 +166,13 @@ export default async function ClientApplicationPage({ params, searchParams }) {
                     {identity.pseudo}
                   </span>
                   <span>
-                    <strong>Dossier accepté le</strong>
+                    <strong>Dossier acceptÃ© le</strong>
                     {identity.openedAt}
                   </span>
                 </div>
 
                 <div className="client-summary-box">
-                  <p className="eyebrow">Résumé du dossier</p>
+                  <p className="eyebrow">RÃ©sumÃ© du dossier</p>
                   <p className="client-summary">{summary}</p>
                 </div>
               </div>
@@ -181,11 +181,11 @@ export default async function ClientApplicationPage({ params, searchParams }) {
 
           <aside className="client-overview-card">
             <p className="eyebrow">Vue rapide</p>
-            <h2>{isWorkspaceReady ? "Accompagnement en cours" : "Espace en préparation"}</h2>
+            <h2>{isWorkspaceReady ? "Accompagnement en cours" : "Espace en prÃ©paration"}</h2>
             <p>
               {isWorkspaceReady
-                ? "Cet espace regroupe les éléments utiles au suivi de votre dossier, vos ressources associées et les prochaines étapes du projet."
-                : "Votre dossier a été accepté. L'espace complet sera débloqué après le rendez-vous de cadrage avec l'équipe."}
+                ? "Cet espace regroupe les Ã©lÃ©ments utiles au suivi de votre dossier, vos ressources associÃ©es et les prochaines Ã©tapes du projet."
+                : "Votre dossier a Ã©tÃ© acceptÃ©. L'espace complet sera dÃ©bloquÃ© aprÃ¨s le rendez-vous de cadrage avec l'Ã©quipe."}
             </p>
             {!isDemoSpace && !isAdminPreview && isWorkspaceReady ? (
               <p className="client-panel-note">
@@ -193,9 +193,9 @@ export default async function ClientApplicationPage({ params, searchParams }) {
               </p>
             ) : null}
             <div className="client-overview-points">
-              <span>Accès personnel</span>
-              <span>{isWorkspaceReady ? "Suivi centralisé" : "Plan à cadrer"}</span>
-              <span>{isWorkspaceReady ? "Ressources évolutives" : "Ressources en attente"}</span>
+              <span>AccÃ¨s personnel</span>
+              <span>{isWorkspaceReady ? "Suivi centralisÃ©" : "Plan Ã  cadrer"}</span>
+              <span>{isWorkspaceReady ? "Ressources Ã©volutives" : "Ressources en attente"}</span>
             </div>
           </aside>
         </header>
@@ -204,17 +204,17 @@ export default async function ClientApplicationPage({ params, searchParams }) {
           {!isWorkspaceReady ? (
             <article className="client-panel client-panel-preparation">
               <div className="client-panel-heading">
-                <p className="eyebrow">Préparation</p>
+                <p className="eyebrow">PrÃ©paration</p>
                 <h2>Veuillez prendre rendez-vous pour le plan.</h2>
               </div>
               <p className="client-panel-note">
-                Votre espace client existe déjà, mais les accès Drive, Notion et le suivi complet seront
-                débloqués après l'appel de cadrage.
+                Votre espace client existe dÃ©jÃ , mais les accÃ¨s Drive, Notion et le suivi complet seront
+                dÃ©bloquÃ©s aprÃ¨s l'appel de cadrage.
               </p>
               <div className="client-overview-points">
-                <span>Dossier accepté</span>
-                <span>Plan à définir</span>
-                <span>Accompagnement à débloquer</span>
+                <span>Dossier acceptÃ©</span>
+                <span>Plan Ã  dÃ©finir</span>
+                <span>Accompagnement Ã  dÃ©bloquer</span>
               </div>
               {bookingUrl ? (
                 <a className="button button-primary" href={bookingUrl} target="_blank" rel="noreferrer">
@@ -222,8 +222,8 @@ export default async function ClientApplicationPage({ params, searchParams }) {
                 </a>
               ) : (
                 <div className="client-resource-placeholder">
-                  <strong>Prise de rendez-vous à configurer</strong>
-                  <span>Lien Google Agenda / booking à ajouter dans la configuration du projet.</span>
+                  <strong>Prise de rendez-vous Ã  configurer</strong>
+                  <span>Lien Google Agenda / booking Ã  ajouter dans la configuration du projet.</span>
                 </div>
               )}
             </article>
@@ -231,7 +231,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
 
           <article className="client-panel client-panel-details">
             <div className="client-panel-heading">
-              <p className="eyebrow">Détails du dossier</p>
+              <p className="eyebrow">DÃ©tails du dossier</p>
               <h2>Informations principales</h2>
             </div>
 
@@ -248,7 +248,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
           <article className="client-panel client-panel-resources">
             <div className="client-panel-heading">
               <p className="eyebrow">Outils & ressources</p>
-              <h2>Accès utiles du dossier</h2>
+              <h2>AccÃ¨s utiles du dossier</h2>
             </div>
 
             <div className="client-resource-list">
@@ -276,11 +276,11 @@ export default async function ClientApplicationPage({ params, searchParams }) {
                     </a>
                   ) : (
                     <div className="client-resource-placeholder">
-                      <strong>{isWorkspaceReady ? resource.cta : "Disponible après le rendez-vous"}</strong>
+                      <strong>{isWorkspaceReady ? resource.cta : "Disponible aprÃ¨s le rendez-vous"}</strong>
                       <span>
                         {isWorkspaceReady
-                          ? "Emplacement prêt pour ajouter un outil, son logo et son lien depuis l'administration."
-                          : "Les accès réels seront activés une fois le plan validé avec l'équipe."}
+                          ? "Emplacement prÃªt pour ajouter un outil, son logo et son lien depuis l'administration."
+                          : "Les accÃ¨s rÃ©els seront activÃ©s une fois le plan validÃ© avec l'Ã©quipe."}
                       </span>
                     </div>
                   )}
@@ -292,8 +292,8 @@ export default async function ClientApplicationPage({ params, searchParams }) {
           <article className="client-panel client-panel-timeline">
             <div className="client-panel-heading client-panel-heading-split">
               <div>
-                <p className="eyebrow">Timeline</p>
-                <h2>Suivi temporel du projet</h2>
+                <p className="eyebrow">Suivi du projet</p>
+                <h2>Suivi du projet</h2>
               </div>
               <p className="client-panel-note">
                 Cette frise peut accueillir les paiements, jalons, deadlines et étapes d'accompagnement.
@@ -329,7 +329,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
           {!isDemoSpace && !isAdminPreview ? (
             <form action="/api/auth/logout" method="post">
               <button className="button button-dark" type="submit">
-                Se déconnecter
+                Se dÃ©connecter
               </button>
             </form>
           ) : null}
@@ -338,3 +338,4 @@ export default async function ClientApplicationPage({ params, searchParams }) {
     </main>
   );
 }
+

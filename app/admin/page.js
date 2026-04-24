@@ -2,8 +2,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { GlobalMarketEditor } from "@/components/admin/global-market-editor";
+import { SiteContentEditor } from "@/components/admin/site-content-editor";
 import { getUserRole, isAdminUser } from "@/lib/auth/admin-access";
 import { getClientSession } from "@/lib/auth/client-auth";
+import { normalizeSiteContent } from "@/lib/site-content";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const metadata = {
@@ -38,7 +40,7 @@ function formatApplicationDate(value) {
 }
 
 function RequestCard({ application, tone }) {
-  const badgeLabel = tone === "rejected" ? "Refusée" : "En attente";
+  const badgeLabel = tone === "rejected" ? "RefusÃ©e" : "En attente";
 
   return (
     <article className="admin-list-card admin-request-card">
@@ -49,10 +51,9 @@ function RequestCard({ application, tone }) {
         </div>
         <h2>{buildDisplayName(application)}</h2>
         <p>
-          {application.email || "Email à préciser"} · {application.country || "Pays à préciser"} ·{" "}
-          {application.language || "Langue à préciser"}
+          {application.email || "Email Ã  prÃ©ciser"} Â· {application.language || "Langue Ã  prÃ©ciser"}
         </p>
-        <p className="admin-inline-note">Reçue le {formatApplicationDate(application.created_at)}</p>
+        <p className="admin-inline-note">ReÃ§ue le {formatApplicationDate(application.created_at)}</p>
       </div>
 
       <div className="admin-list-actions">
@@ -74,17 +75,16 @@ function ClientCard({ application }) {
         </div>
         <h2>{buildDisplayName(application)}</h2>
         <p>
-          {application.company || "Structure à préciser"} · {application.country || "Pays à préciser"} ·{" "}
-          {application.language || "Langue à préciser"}
+          {application.company || "Structure Ã  prÃ©ciser"} Â· {application.language || "Langue Ã  prÃ©ciser"}
         </p>
         <p className="admin-inline-note">
-          {application.request_type || "Dossier client"} · Validé le {formatApplicationDate(application.updated_at)}
+          {application.request_type || "Dossier client"} Â· ValidÃ© le {formatApplicationDate(application.updated_at)}
         </p>
       </div>
 
       <div className="admin-list-actions">
         <Link className="button button-primary" href={`/admin/${application.id}`}>
-          Gérer le client
+          GÃ©rer le client
         </Link>
         <Link className="button button-dark" href={`/espace-client/${application.id}`}>
           Voir l'espace client
@@ -126,17 +126,17 @@ function AdminSection({ eyebrow, title, note, items, kind }) {
         ) : kind === "pending_review" ? (
           <EmptyState
             title="Aucune demande en attente."
-            description="Les nouvelles inscriptions apparaîtront ici tant qu'elles n'ont pas été traitées."
+            description="Les nouvelles inscriptions apparaÃ®tront ici tant qu'elles n'ont pas Ã©tÃ© traitÃ©es."
           />
         ) : kind === "rejected" ? (
           <EmptyState
-            title="Aucune demande refusée."
-            description="Les dossiers refusés sont conservés ici pour garder un historique propre."
+            title="Aucune demande refusÃ©e."
+            description="Les dossiers refusÃ©s sont conservÃ©s ici pour garder un historique propre."
           />
         ) : (
           <EmptyState
             title="Aucun client actif."
-            description="Une demande acceptée quitte immédiatement les requêtes pour rejoindre cette section."
+            description="Une demande acceptÃ©e quitte immÃ©diatement l'attente pour rejoindre cette section."
           />
         )}
       </div>
@@ -164,11 +164,16 @@ export default async function AdminPage({ searchParams }) {
   const adminClient = createSupabaseAdminClient();
   const result = await adminClient.applications.list();
   const globalMarketResult = await adminClient.globalMarketSettings.get();
+  const siteContentResult = await adminClient.globalSiteSettings.get();
   const applications = result.ok && Array.isArray(result.data) ? result.data : [];
   const globalMarketSettings =
     globalMarketResult.ok && Array.isArray(globalMarketResult.data) && globalMarketResult.data.length > 0
       ? globalMarketResult.data[0]?.settings || {}
       : {};
+  const globalSiteSettings =
+    siteContentResult.ok && Array.isArray(siteContentResult.data) && siteContentResult.data.length > 0
+      ? normalizeSiteContent(siteContentResult.data[0]?.settings || {})
+      : undefined;
   const activeFilter = ["pending_review", "approved", "rejected"].includes(searchParams?.status)
     ? searchParams.status
     : "all";
@@ -183,10 +188,10 @@ export default async function AdminPage({ searchParams }) {
         <header className="admin-header">
           <div>
             <p className="eyebrow">Administration</p>
-            <h1>Requêtes et clients</h1>
+            <h1>Demandes, clients et contenus</h1>
             <p className="admin-lead">
-              Traitez les demandes en attente, archivez les refus et suivez les clients validés depuis
-              un seul espace clair.
+              GÃ©rez les inscriptions, les clients actifs, le site public et le Zero Limit Market depuis un
+              seul espace.
             </p>
           </div>
 
@@ -196,7 +201,7 @@ export default async function AdminPage({ searchParams }) {
             </Link>
             <form action="/api/auth/logout" method="post">
               <button className="button button-dark" type="submit">
-                Se déconnecter
+                Se dÃ©connecter
               </button>
             </form>
           </div>
@@ -206,17 +211,17 @@ export default async function AdminPage({ searchParams }) {
           <article className="admin-subpanel">
             <small>En attente</small>
             <strong>{pendingApplications.length}</strong>
-            <p className="admin-inline-note">Demandes à traiter avant toute décision.</p>
+            <p className="admin-inline-note">Demandes Ã  traiter avant toute dÃ©cision.</p>
           </article>
           <article className="admin-subpanel">
-            <small>Refusés</small>
+            <small>RefusÃ©s</small>
             <strong>{rejectedApplications.length}</strong>
-            <p className="admin-inline-note">Dossiers refusés, sortis du traitement actif.</p>
+            <p className="admin-inline-note">Dossiers refusÃ©s, sortis du traitement actif.</p>
           </article>
           <article className="admin-subpanel">
             <small>Clients</small>
             <strong>{approvedApplications.length}</strong>
-            <p className="admin-inline-note">Dossiers validés et gérés comme vrais clients.</p>
+            <p className="admin-inline-note">Dossiers validÃ©s et gÃ©rÃ©s comme vrais clients.</p>
           </article>
         </section>
 
@@ -234,7 +239,7 @@ export default async function AdminPage({ searchParams }) {
             className={`admin-filter-chip${activeFilter === "rejected" ? " is-active" : ""}`}
             href="/admin?status=rejected"
           >
-            Refusés
+            RefusÃ©s
           </Link>
           <Link
             className={`admin-filter-chip${activeFilter === "approved" ? " is-active" : ""}`}
@@ -245,13 +250,14 @@ export default async function AdminPage({ searchParams }) {
         </nav>
 
         <div className="admin-sections">
+          <SiteContentEditor initialSettings={globalSiteSettings} />
           <GlobalMarketEditor initialSettings={globalMarketSettings} />
 
           {(activeFilter === "all" || activeFilter === "pending_review") && (
             <AdminSection
               eyebrow="En attente"
-              title="Demandes à traiter"
-              note="Les demandes présentes ici sont les seules encore actives côté revue."
+              title="Demandes Ã  traiter"
+              note="Les demandes prÃ©sentes ici sont les seules encore actives cÃ´tÃ© revue."
               items={pendingApplications}
               kind="pending_review"
             />
@@ -259,9 +265,9 @@ export default async function AdminPage({ searchParams }) {
 
           {(activeFilter === "all" || activeFilter === "rejected") && (
             <AdminSection
-              eyebrow="Refusés"
-              title="Demandes refusées"
-              note="Ces dossiers restent en base, mais ne doivent plus apparaître comme des demandes à traiter."
+              eyebrow="RefusÃ©s"
+              title="Demandes refusÃ©es"
+              note="Ces dossiers restent en base, mais ne doivent plus apparaÃ®tre comme des demandes Ã  traiter."
               items={rejectedApplications}
               kind="rejected"
             />
@@ -270,8 +276,8 @@ export default async function AdminPage({ searchParams }) {
           {(activeFilter === "all" || activeFilter === "approved") && (
             <AdminSection
               eyebrow="Clients"
-              title="Clients validés"
-              note="Une demande acceptée quitte l'attente et rejoint cette section comme client."
+              title="Clients validÃ©s"
+              note="Une demande acceptÃ©e quitte l'attente et rejoint cette section comme client."
               items={approvedApplications}
               kind="clients"
             />

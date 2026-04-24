@@ -2,10 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getUserRole } from "@/lib/auth/admin-access";
-import {
-  buildClientApplicationUrl,
-  getClientWorkspaceContext
-} from "@/lib/auth/client-access";
+import { buildClientApplicationUrl, getClientWorkspaceContext } from "@/lib/auth/client-access";
 import { getClientSession } from "@/lib/auth/client-auth";
 
 export const metadata = {
@@ -17,16 +14,16 @@ function buildStatusContent(application) {
     return {
       title: "Votre espace client n'est pas encore disponible",
       description:
-        "Votre dossier n'est pas encore relie a un espace client utilisable. Contactez Zero Limit Agency si besoin.",
+        "Votre dossier n'est pas encore relié à un espace client utilisable. Contactez Zero Limit Agency si besoin.",
       tone: "neutral"
     };
   }
 
   if (application.status === "rejected") {
     return {
-      title: "Votre inscription a ete refusee par l'equipe",
+      title: "Votre inscription a été refusée par l'équipe",
       description:
-        "Pour toute question complementaire, vous pouvez nous contacter par email afin d'echanger sur votre demande.",
+        "Pour toute question complémentaire, vous pouvez nous contacter par email afin d'échanger sur votre demande.",
       tone: "rejected"
     };
   }
@@ -34,7 +31,7 @@ function buildStatusContent(application) {
   return {
     title: "Votre demande est en cours d'analyse",
     description:
-      "Nous etudions actuellement votre inscription. Vous pourrez acceder a votre espace client complet des validation par l'equipe.",
+      "Nous étudions actuellement votre inscription. Vous pourrez accéder à votre espace client complet dès validation par l'équipe.",
     tone: "pending"
   };
 }
@@ -53,31 +50,31 @@ export default async function ClientSpaceIndexPage() {
         <section className="client-hub-frame">
           <div className="client-hub-copy">
             <p className="eyebrow">Espace client</p>
-            <h1>Un espace prive pour suivre votre dossier.</h1>
+            <h1>Un espace privé pour suivre votre dossier.</h1>
             <p>
-              Votre espace client est separe du site public. Une fois connecte, vous accedez
-              uniquement a votre dossier, a ses ressources utiles et au suivi de votre accompagnement.
+              Votre espace client est séparé du site public. Une fois connecté, vous accédez uniquement
+              à votre dossier, à ses ressources utiles et au suivi de votre accompagnement.
             </p>
           </div>
 
           <div className="client-hub-grid">
             <article className="client-hub-card">
-              <strong>Acces personnel</strong>
-              <p>Chaque client se connecte avec l'email et le mot de passe definis a l'inscription.</p>
+              <strong>Accès personnel</strong>
+              <p>Chaque client se connecte avec l'email et le mot de passe définis à l'inscription.</p>
             </article>
             <article className="client-hub-card">
               <strong>Validation humaine</strong>
-              <p>Le dossier est relu par l'equipe avant d'ouvrir l'accompagnement reel.</p>
+              <p>Le dossier est relu par l'équipe avant d'ouvrir l'accompagnement réel.</p>
             </article>
             <article className="client-hub-card">
-              <strong>Suivi evolutif</strong>
-              <p>Le dossier peut ensuite etre enrichi avec Drive, Notion, timeline et suivi projet.</p>
+              <strong>Suivi structuré</strong>
+              <p>Le dossier peut ensuite être enrichi avec Drive, Notion, ressources et suivi du projet.</p>
             </article>
           </div>
 
           <div className="client-hub-actions">
             <Link className="button button-primary" href="/connexion">
-              Acceder a la connexion client
+              Accéder à la connexion client
             </Link>
             <Link className="button button-dark" href="/">
               Retour au site public
@@ -110,15 +107,15 @@ export default async function ClientSpaceIndexPage() {
             <strong>Dossier</strong>
             <p>
               {application
-                ? `${application.request_type || "Demande"} • ${application.country || "Pays non renseigne"}`
-                : "Aucune demande exploitable n'a encore ete retrouvee pour ce compte."}
+                ? `${application.request_type || "Demande"} · ${application.language || "Langue non renseignée"}`
+                : "Aucune demande exploitable n'a encore été retrouvée pour ce compte."}
             </p>
           </article>
           <article className="client-hub-card">
             <strong>Statut actuel</strong>
             <p>
               {application?.status === "rejected"
-                ? "Refuse"
+                ? "Refusé"
                 : application?.status === "pending_review"
                   ? "En cours d'analyse"
                   : "En attente"}
@@ -136,7 +133,7 @@ export default async function ClientSpaceIndexPage() {
           </Link>
           <form action="/api/auth/logout" method="post">
             <button className="button button-dark" type="submit">
-              Se deconnecter
+              Se déconnecter
             </button>
           </form>
         </div>
