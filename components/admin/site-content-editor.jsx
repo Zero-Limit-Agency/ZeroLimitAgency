@@ -113,9 +113,18 @@ function SectionHeader({ eyebrow, title, note }) {
   );
 }
 
+const EDITABLE_SECTIONS = [
+  { key: "reviews", eyebrow: "Avis", title: "Avis clients" },
+  { key: "projects", eyebrow: "Projets", title: "Projets" },
+  { key: "news", eyebrow: "Actualités", title: "Actualités" },
+  { key: "partners", eyebrow: "Partenaires", title: "Outils & partenaires" },
+  { key: "faq", eyebrow: "FAQ", title: "Questions fréquentes" }
+];
+
 export function SiteContentEditor({ initialSettings }) {
   const [state, setState] = useState({ status: "idle", message: "" });
   const [form, setForm] = useState(() => createInitialForm(initialSettings));
+  const [uploads, setUploads] = useState({});
   const previewCount = useMemo(
     () =>
       form.reviews.items.length +
@@ -209,6 +218,21 @@ export function SiteContentEditor({ initialSettings }) {
     }));
   }
 
+  function setAssetUpload(group, index, file) {
+    setUploads((current) => {
+      const key = `${group}-${index}`;
+      const next = { ...current };
+
+      if (file instanceof File && file.size > 0) {
+        next[key] = file;
+      } else {
+        delete next[key];
+      }
+
+      return next;
+    });
+  }
+
   async function handleSave() {
     setState({
       status: "loading",
@@ -216,12 +240,17 @@ export function SiteContentEditor({ initialSettings }) {
     });
 
     try {
+      const body = new FormData();
+      body.append("payload", JSON.stringify(form));
+
+      Object.entries(uploads).forEach(([key, file]) => {
+        const [group, index] = key.split("-");
+        body.append(`${group}-${index}-image`, file, file.name);
+      });
+
       const response = await fetch("/api/admin/site-content", {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(form)
+        body
       });
 
       const result = await response.json().catch(() => null);
@@ -235,6 +264,7 @@ export function SiteContentEditor({ initialSettings }) {
         message: result.message || "Le contenu public a bien été mis à jour."
       });
       setForm(createInitialForm(result.settings || form));
+      setUploads({});
     } catch (error) {
       setState({
         status: "error",
@@ -248,7 +278,7 @@ export function SiteContentEditor({ initialSettings }) {
       <SectionHeader
         eyebrow="Site public"
         title="Contenu éditorial"
-        note="Cette zone pilote les textes et les blocs visibles sur la landing. Les visuels peuvent utiliser une URL externe ou un chemin local de type /assets/..."
+        note="Cette zone pilote les textes et les blocs visibles sur la landing. Les visuels de projets et d'actualités peuvent être envoyés directement depuis votre ordinateur."
       />
 
       <div className="admin-overview-grid">
@@ -378,13 +408,7 @@ export function SiteContentEditor({ initialSettings }) {
           </div>
         </section>
 
-        {[
-          { key: "reviews", eyebrow: "Avis", title: "Avis clients" },
-          { key: "projects", eyebrow: "Projets", title: "Projets" },
-          { key: "news", eyebrow: "Actualités", title: "Actualités" },
-          { key: "partners", eyebrow: "Partenaires", title: "Outils & partenaires" },
-          { key: "faq", eyebrow: "FAQ", title: "Questions fréquentes" }
-        ].map((section) => (
+        {EDITABLE_SECTIONS.map((section) => (
           <section key={section.key} className="admin-subpanel">
             <SectionHeader eyebrow={section.eyebrow} title={section.title} />
             <div className="admin-meta-grid">
@@ -435,8 +459,16 @@ export function SiteContentEditor({ initialSettings }) {
                   ) : section.key === "projects" || section.key === "news" ? (
                     <div className="admin-subpanel-grid">
                       <label className="auth-field">
-                        <span>Image (URL ou /assets/...)</span>
-                        <input value={item.image} onChange={(event) => updateNestedArrayItem(section.key, index, "image", event.target.value)} />
+                        <span>Visuel actuel</span>
+                        <input value={item.image} readOnly placeholder="Aucun visuel enregistré" />
+                      </label>
+                      <label className="auth-field">
+                        <span>Envoyer une image</span>
+                        <input
+                          type="file"
+                          accept="image/png,image/jpeg,image/webp,image/avif"
+                          onChange={(event) => setAssetUpload(section.key, index, event.target.files?.[0] || null)}
+                        />
                       </label>
                       <label className="auth-field">
                         <span>Date</span>
@@ -450,6 +482,11 @@ export function SiteContentEditor({ initialSettings }) {
                         <span>Description</span>
                         <textarea className="admin-textarea admin-textarea-compact" rows={4} value={item.description} onChange={(event) => updateNestedArrayItem(section.key, index, "description", event.target.value)} />
                       </label>
+                      {uploads[`${section.key}-${index}`] ? (
+                        <p className="admin-inline-note admin-field-full">
+                          Fichier prêt à envoyer : {uploads[`${section.key}-${index}`].name}
+                        </p>
+                      ) : null}
                     </div>
                   ) : section.key === "partners" ? (
                     <div className="admin-subpanel-grid">

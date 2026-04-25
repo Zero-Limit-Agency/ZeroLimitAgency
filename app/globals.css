@@ -2395,6 +2395,8 @@ h3 {
 html,
 body {
   min-height: 100%;
+  overflow-x: clip;
+  background-color: #0d0709;
 }
 
 body.site-root {
@@ -2408,6 +2410,7 @@ body.site-root {
   min-height: 100vh;
   position: relative;
   isolation: isolate;
+  overflow-x: clip;
 }
 
 img,
@@ -4599,5 +4602,210 @@ body {
 
   .maintenance-admin-link {
     width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-shell,
+  .client-hub-shell,
+  .client-dashboard-shell,
+  .auth-shell {
+    padding-inline: 0.65rem;
+  }
+
+  .admin-frame,
+  .client-hub-frame,
+  .client-dashboard-frame {
+    width: 100%;
+    padding: 0.35rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .admin-sections,
+  .client-dashboard-grid,
+  .client-hub-grid,
+  .admin-list,
+  .admin-editor,
+  .client-resource-list,
+  .client-timeline {
+    gap: 0.8rem;
+  }
+
+  .admin-header,
+  .client-dashboard-header,
+  .client-profile-header,
+  .client-panel-heading-split,
+  .admin-panel-heading,
+  .admin-list-card {
+    gap: 0.8rem;
+  }
+
+  .client-profile-card,
+  .client-overview-card,
+  .client-panel,
+  .client-resource-card,
+  .client-summary-box,
+  .client-timeline-content,
+  .admin-panel,
+  .admin-subpanel,
+  .admin-list-card,
+  .admin-link-card,
+  .client-demo-banner,
+  .client-admin-preview-banner {
+    padding: 0.95rem;
+    border-radius: 20px;
+    box-shadow: 0 12px 28px rgba(4, 2, 3, 0.18);
+  }
+
+  .client-profile-card {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+
+  .client-profile-main,
+  .client-profile-copy,
+  .client-dashboard-header,
+  .admin-list-copy {
+    gap: 0.7rem;
+  }
+
+  .client-profile-topline,
+  .client-overview-points,
+  .admin-card-topline {
+    gap: 0.55rem;
+  }
+
+  .client-profile-meta,
+  .client-info-grid-refined,
+  .admin-meta-grid,
+  .admin-subpanel-grid,
+  .admin-overview-grid {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+  }
+
+  .client-overview-card,
+  .client-panel-details,
+  .client-panel-resources,
+  .client-panel-timeline,
+  .client-panel-market {
+    width: 100%;
+    grid-column: span 12;
+  }
+
+  .client-resource-topline,
+  .client-timeline-topline,
+  .admin-list-actions,
+  .admin-header-actions,
+  .client-dashboard-footer {
+    gap: 0.7rem;
+  }
+
+  .client-resource-card .button,
+  .client-dashboard-footer .button,
+  .client-dashboard-footer form,
+  .client-dashboard-footer form .button,
+  .admin-list-actions .button,
+  .admin-list-actions a,
+  .admin-header-actions .button,
+  .admin-header-actions form,
+  .admin-header-actions form .button,
+  .admin-actions .button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .client-panel-heading,
+  .admin-panel-heading {
+    margin-bottom: 0.75rem;
+  }
+
+  .client-panel-heading h2,
+  .admin-panel-heading h2,
+  .client-overview-card h2,
+  .admin-frame h1,
+  .client-dashboard-frame h1,
+  .client-hub-frame h1 {
+    font-size: clamp(1.3rem, 5.8vw, 1.9rem);
+    line-height: 1.08;
+  }
+
+  .client-panel-note,
+  .client-overview-card p,
+  .client-resource-card p,
+  .admin-inline-note,
+  .admin-lead {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .admin-filter-chip,
+  .market-view-chip,
+  .market-month-chip {
+    min-height: 2.6rem;
+    padding-inline: 0.9rem;
+  }
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+  .admin-shell,
+  .client-hub-shell,
+  .client-dashboard-shell,
+  .auth-shell {
+    padding-top: 0.4rem;
+    padding-bottom: 0.8rem;
+  }
+
+  .admin-frame,
+  .client-hub-frame,
+  .client-dashboard-frame {
+    padding: 0.25rem;
+  }
+
+  .client-dashboard-header,
+  .admin-header {
+    margin-bottom: 0.2rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-shell,
+  .client-hub-shell,
+  .client-dashboard-shell,
+  .auth-shell {
+    padding-inline: 0.45rem;
+  }
+
+  .client-profile-card,
+  .client-overview-card,
+  .client-panel,
+  .client-resource-card,
+  .client-summary-box,
+  .client-timeline-content,
+  .admin-panel,
+  .admin-subpanel,
+  .admin-list-card,
+  .admin-link-card,
+  .client-demo-banner,
+  .client-admin-preview-banner {
+    padding: 0.85rem;
+    border-radius: 18px;
+  }
+
+  .client-resource-logo,
+  .client-profile-avatar {
+    transform: scale(0.92);
+    transform-origin: top left;
+  }
+
+  .client-profile-meta span,
+  .client-info-card,
+  .admin-subpanel,
+  .admin-link-card {
+    gap: 0.35rem;
   }
 }
