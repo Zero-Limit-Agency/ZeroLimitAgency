@@ -296,7 +296,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
                 <h2>Suivi du projet</h2>
               </div>
               <p className="client-panel-note">
-                Cette frise peut accueillir les paiements, jalons, deadlines et �tapes d'accompagnement.
+                Cette frise peut accueillir les paiements, jalons, deadlines et étapes d'accompagnement.
               </p>
             </div>
 
@@ -323,7 +323,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
 
         <footer className="client-dashboard-footer client-dashboard-footer-refined">
           <Link className="button button-dark" href={isAdminPreview ? `/admin/${params.applicationId}` : "/"}>
-            {isAdminPreview ? "Retour � la gestion client" : "Retour au site public"}
+            {isAdminPreview ? "Retour à la gestion client" : "Retour au site public"}
           </Link>
 
           {!isDemoSpace && !isAdminPreview ? (

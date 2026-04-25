@@ -258,7 +258,7 @@ export function SiteContentEditor({ initialSettings }) {
           <p className="admin-inline-note">Hero, sections, FAQ et footer.</p>
         </article>
         <article className="admin-subpanel">
-          <small>�?léments gérés</small>
+          <small>Éléments gérés</small>
           <strong>{previewCount}</strong>
           <p className="admin-inline-note">Avis, projets, actualités et partenaires.</p>
         </article>
@@ -404,7 +404,7 @@ export function SiteContentEditor({ initialSettings }) {
                   <div className="admin-panel-heading admin-panel-heading-tight">
                     <div>
                       <small>{section.title}</small>
-                      <strong>�?lément {index + 1}</strong>
+                      <strong>Élément {index + 1}</strong>
                     </div>
                     {form[section.key].items.length > 1 ? (
                       <button className="button button-dark button-compact" type="button" onClick={() => removeNestedItem(section.key, index)}>
@@ -424,7 +424,7 @@ export function SiteContentEditor({ initialSettings }) {
                         <input value={item.date} onChange={(event) => updateNestedArrayItem(section.key, index, "date", event.target.value)} />
                       </label>
                       <label className="auth-field">
-                        <span>�?toiles</span>
+                        <span>Étoiles</span>
                         <input type="number" min="1" max="5" value={item.stars} onChange={(event) => updateNestedArrayItem(section.key, index, "stars", event.target.value)} />
                       </label>
                       <label className="auth-field admin-field-full">
