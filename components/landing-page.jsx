@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { DEFAULT_SITE_CONTENT, normalizeSiteContent } from "@/lib/site-content";
 
@@ -30,6 +30,21 @@ function normalizeBirthDateInput(value) {
     .replace(/[^\dA-Za-zÀ-ÿ./\-\s]/g, "")
     .replace(/\s+/g, " ")
     .trimStart();
+}
+
+function formatBirthDateTyping(value) {
+  const normalized = normalizeBirthDateInput(value);
+
+  if (/[^0-9./\-\s]/.test(normalized)) {
+    return normalized;
+  }
+
+  const digits = normalized.replace(/\D/g, "").slice(0, 8);
+  const first = digits.slice(0, 2);
+  const second = digits.slice(2, 4);
+  const third = digits.slice(4, 8);
+
+  return [first, second, third].filter(Boolean).join("/");
 }
 
 function toValidIsoDate(day, month, year) {
@@ -160,6 +175,7 @@ function renderStars(stars) {
 
 export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT }) {
   const siteContent = useMemo(() => normalizeSiteContent(content), [content]);
+  const birthDatePickerRef = useRef(null);
   const [navOpen, setNavOpen] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
   const [activeMedia, setActiveMedia] = useState("trailer");
@@ -210,6 +226,22 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
       </article>
     );
   }, [activeMedia, activeMediaEntry.title]);
+
+  function openBirthDatePicker() {
+    const picker = birthDatePickerRef.current;
+
+    if (!picker) {
+      return;
+    }
+
+    if (typeof picker.showPicker === "function") {
+      picker.showPicker();
+      return;
+    }
+
+    picker.focus();
+    picker.click();
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -575,24 +607,42 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
                     readOnly
                   />
                   <input
-                    type="text"
-                    value={birthDateDisplay}
-                    inputMode="numeric"
-                    autoComplete="bday"
-                    placeholder="JJ/MM/AAAA"
+                    ref={birthDatePickerRef}
+                    className="contact-native-date-picker"
+                    type="date"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    value={parseBirthDateValue(birthDateDisplay).iso}
                     onChange={(event) => {
-                      setBirthDateDisplay(normalizeBirthDateInput(event.target.value));
-                      if (birthDateError) {
-                        setBirthDateError("");
-                      }
-                    }}
-                    onBlur={() => {
-                      const parsed = parseBirthDateValue(birthDateDisplay);
+                      const parsed = parseBirthDateValue(event.target.value);
                       setBirthDateDisplay(parsed.display);
+                      setBirthDateError("");
                     }}
-                    aria-describedby="birth-date-help"
-                    required
                   />
+                  <div className="contact-date-row">
+                    <input
+                      type="text"
+                      value={birthDateDisplay}
+                      inputMode="numeric"
+                      autoComplete="bday"
+                      placeholder="JJ/MM/AAAA"
+                      onChange={(event) => {
+                        setBirthDateDisplay(formatBirthDateTyping(event.target.value));
+                        if (birthDateError) {
+                          setBirthDateError("");
+                        }
+                      }}
+                      onBlur={() => {
+                        const parsed = parseBirthDateValue(birthDateDisplay);
+                        setBirthDateDisplay(parsed.display);
+                      }}
+                      aria-describedby="birth-date-help"
+                      required
+                    />
+                    <button className="contact-date-picker-button" type="button" onClick={openBirthDatePicker}>
+                      Calendrier
+                    </button>
+                  </div>
                   <small className={`contact-field-help${birthDateError ? " is-error" : ""}`} id="birth-date-help">
                     {birthDateError || "Format accepte : 06/09/2001, 6-9-2001 ou 6 septembre 2001."}
                   </small>
