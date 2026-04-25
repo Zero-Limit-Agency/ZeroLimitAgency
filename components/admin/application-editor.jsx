@@ -131,6 +131,15 @@ export function ApplicationEditor({
     status: "idle",
     message: ""
   });
+  const [manualEmailState, setManualEmailState] = useState({
+    status: "idle",
+    message: ""
+  });
+  const [manualEmailForm, setManualEmailForm] = useState({
+    subject: "",
+    message: ""
+  });
+  const [manualEmailFiles, setManualEmailFiles] = useState([]);
   const [packetForm, setPacketForm] = useState(() => createPacketForm(postCallZeroPacket));
   const [packetFiles, setPacketFiles] = useState({
     welcome_file: null,
@@ -215,6 +224,17 @@ export function ApplicationEditor({
     });
 
     return body;
+  }
+
+  function updateManualEmailField(field, value) {
+    setManualEmailForm((current) => ({
+      ...current,
+      [field]: value
+    }));
+  }
+
+  function updateManualEmailFiles(fileList) {
+    setManualEmailFiles(Array.from(fileList || []).filter((file) => file instanceof File));
   }
 
   function addResource() {
@@ -391,6 +411,55 @@ export function ApplicationEditor({
           error instanceof Error
             ? error.message
             : "Impossible d'envoyer le pack de demarrage client."
+      });
+    }
+  }
+
+  async function handleSendManualEmail() {
+    setState({
+      status: "idle",
+      message: ""
+    });
+    setPostCallZeroState({
+      status: "idle",
+      message: ""
+    });
+    setManualEmailState({
+      status: "loading",
+      message: "Envoi de l'email au client en cours..."
+    });
+
+    try {
+      const body = new FormData();
+      body.set("subject", manualEmailForm.subject);
+      body.set("message", manualEmailForm.message);
+      manualEmailFiles.forEach((file) => {
+        body.append("attachments", file, file.name);
+      });
+
+      const response = await fetch(`/api/admin/applications/${application.id}/manual-email`, {
+        method: "POST",
+        body
+      });
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok || !result?.success) {
+        throw new Error(result?.error || "Impossible d'envoyer l'email au client.");
+      }
+
+      setManualEmailState({
+        status: "success",
+        message: result.message || "L'email a bien ete envoye au client."
+      });
+      setManualEmailForm({
+        subject: "",
+        message: ""
+      });
+      setManualEmailFiles([]);
+    } catch (error) {
+      setManualEmailState({
+        status: "error",
+        message: error instanceof Error ? error.message : "Impossible d'envoyer l'email au client."
       });
     }
   }
@@ -640,6 +709,98 @@ export function ApplicationEditor({
         <button className="button button-dark" type="button" onClick={addResource}>
           Ajouter un outil
         </button>
+      </section>
+
+      <section className="admin-panel">
+        <div className="admin-panel-heading">
+          <div>
+            <p className="eyebrow">Email client</p>
+            <h2>Envoyer un email manuel</h2>
+          </div>
+        </div>
+
+        <p className="admin-inline-note">
+          L'email sera envoye automatiquement a <strong>{form.email || "aucune adresse renseignee"}</strong> depuis
+          l'adresse configuree dans <code>CLIENT_EMAIL</code>.
+        </p>
+
+        <div className="admin-stack admin-stack-tight">
+          <div className="admin-subpanel">
+            <div className="admin-subpanel-grid">
+              <label className="auth-field">
+                <span>Sujet</span>
+                <input
+                  value={manualEmailForm.subject}
+                  onChange={(event) => updateManualEmailField("subject", event.target.value)}
+                  placeholder="Objet de l'email"
+                />
+              </label>
+              <label className="auth-field">
+                <span>Destinataire</span>
+                <input value={form.email} readOnly />
+              </label>
+            </div>
+
+            <label className="auth-field">
+              <span>Message</span>
+              <textarea
+                className="admin-textarea"
+                rows={7}
+                value={manualEmailForm.message}
+                onChange={(event) => updateManualEmailField("message", event.target.value)}
+                placeholder="Ecrivez ici le message a envoyer au client."
+              />
+            </label>
+          </div>
+
+          <div className="admin-subpanel">
+            <div className="admin-panel-heading admin-panel-heading-tight">
+              <div>
+                <small>Pieces jointes</small>
+                <h3>Fichiers optionnels</h3>
+              </div>
+            </div>
+
+            <label className="auth-field admin-file-card">
+              <span>Ajouter des fichiers</span>
+              <input
+                type="file"
+                multiple
+                onChange={(event) => updateManualEmailFiles(event.target.files)}
+              />
+              <small>
+                {manualEmailFiles.length > 0
+                  ? manualEmailFiles.map((file) => file.name).join(" - ")
+                  : "Aucune piece jointe ajoutee"}
+              </small>
+            </label>
+          </div>
+        </div>
+
+        <div className="admin-actions admin-actions-inline">
+          <button
+            className="button button-primary"
+            type="button"
+            onClick={handleSendManualEmail}
+            disabled={manualEmailState.status === "loading"}
+          >
+            {manualEmailState.status === "loading" ? "Envoi en cours..." : "Envoyer l'email"}
+          </button>
+        </div>
+
+        {manualEmailState.message ? (
+          <p
+            className={`auth-feedback ${
+              manualEmailState.status === "error"
+                ? "auth-feedback-error"
+                : manualEmailState.status === "success"
+                  ? "auth-feedback-success"
+                  : ""
+            }`}
+          >
+            {manualEmailState.message}
+          </p>
+        ) : null}
       </section>
 
       <section className="admin-panel">
