@@ -1108,6 +1108,7 @@ h3 {
 
 .contact-form label {
   display: grid;
+  align-content: start;
   gap: 0.45rem;
   color: rgba(255, 245, 243, 0.88);
   min-width: 0;
@@ -1833,6 +1834,101 @@ h3 {
   clip-path: inset(50%);
 }
 
+.client-avatar-editor-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(8, 4, 6, 0.78);
+  backdrop-filter: blur(10px);
+}
+
+.client-avatar-editor {
+  width: min(100%, 34rem);
+  display: grid;
+  gap: 1.15rem;
+  padding: 1.25rem;
+  border-radius: 1.6rem;
+  border: 1px solid rgba(255, 245, 243, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+    rgba(18, 9, 11, 0.96);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.42);
+}
+
+.client-avatar-editor-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.9rem;
+}
+
+.client-avatar-editor-heading .eyebrow {
+  margin-bottom: 0.65rem;
+}
+
+.client-avatar-editor-heading h3 {
+  font-size: clamp(1.45rem, 3vw, 1.8rem);
+}
+
+.client-avatar-editor-preview {
+  display: grid;
+  place-items: center;
+}
+
+.client-avatar-editor-crop {
+  width: min(100%, 18rem);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 245, 243, 0.1);
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.06), transparent 42%),
+    rgba(8, 4, 6, 0.9);
+  box-shadow: inset 0 0 0 1px rgba(255, 245, 243, 0.04);
+}
+
+.client-avatar-editor-crop img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transform-origin: center center;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.client-avatar-editor-controls {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.client-avatar-editor-controls .auth-field {
+  gap: 0.5rem;
+}
+
+.client-avatar-editor-controls .auth-field span {
+  font-size: 0.88rem;
+}
+
+.client-avatar-editor-controls input[type="range"] {
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  accent-color: #d4aa6a;
+  box-shadow: none;
+}
+
+.client-avatar-editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
 .client-profile-copy {
   display: grid;
   gap: 1rem;
@@ -2384,6 +2480,30 @@ h3 {
   }
 
   .client-avatar-button {
+    width: 100%;
+  }
+
+  .client-avatar-editor-backdrop {
+    padding: 1rem;
+    align-items: end;
+  }
+
+  .client-avatar-editor {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 1.35rem;
+  }
+
+  .client-avatar-editor-crop {
+    width: min(100%, 15rem);
+  }
+
+  .client-avatar-editor-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .client-avatar-editor-actions .button {
     width: 100%;
   }
 

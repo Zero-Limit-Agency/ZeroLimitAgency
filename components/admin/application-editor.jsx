@@ -27,16 +27,18 @@ function createTimelineDraft(existing = {}) {
 }
 
 function createPacketForm(existing = {}) {
+  const packet = existing && typeof existing === "object" ? existing : {};
+
   return {
-    summary_message: existing.summary_message || "",
-    payment_url: existing.payment_url || "",
-    status: existing.status === "sent" ? "sent" : "draft",
-    welcome_file_name: existing.welcome_file_name || "",
-    welcome_storage_path: existing.welcome_storage_path || "",
-    quote_file_name: existing.quote_file_name || "",
-    quote_storage_path: existing.quote_storage_path || "",
-    contract_file_name: existing.contract_file_name || "",
-    contract_storage_path: existing.contract_storage_path || ""
+    summary_message: packet.summary_message || "",
+    payment_url: packet.payment_url || "",
+    status: packet.status === "sent" ? "sent" : "draft",
+    welcome_file_name: packet.welcome_file_name || "",
+    welcome_storage_path: packet.welcome_storage_path || "",
+    quote_file_name: packet.quote_file_name || "",
+    quote_storage_path: packet.quote_storage_path || "",
+    contract_file_name: packet.contract_file_name || "",
+    contract_storage_path: packet.contract_storage_path || ""
   };
 }
 
@@ -112,7 +114,14 @@ function buildDefaultTimeline(application, profile) {
   ];
 }
 
-export function ApplicationEditor({ application, profile, access, postCallZeroPacket, clientSpaceUrl }) {
+export function ApplicationEditor({
+  application,
+  profile,
+  access,
+  postCallZeroPacket,
+  clientSpaceUrl,
+  hasPostCallZeroPacket = false
+}) {
   const router = useRouter();
   const [state, setState] = useState({
     status: "idle",
@@ -645,6 +654,14 @@ export function ApplicationEditor({ application, profile, access, postCallZeroPa
           Ce pack reste separe de l'espace client. Les documents sont envoyes en pieces jointes, puis les acces utiles
           sont synchronises dans le dossier client apres l'envoi.
         </p>
+
+        {!hasPostCallZeroPacket ? (
+          <div className="admin-system-warning">
+            <small>Etat du pack</small>
+            <strong>Pack de demarrage non prepare</strong>
+            <p>Vous pouvez commencer avec un brouillon vide, puis enregistrer le pack quand il est pret.</p>
+          </div>
+        ) : null}
 
         <div className="admin-stack admin-stack-tight">
           <div className="admin-subpanel">

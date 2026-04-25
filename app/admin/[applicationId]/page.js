@@ -16,6 +16,20 @@ export async function generateMetadata({ params }) {
   };
 }
 
+function createEmptyPostCallZeroPacket() {
+  return {
+    summary_message: "",
+    payment_url: "",
+    status: "draft",
+    welcome_file_name: null,
+    quote_file_name: null,
+    contract_file_name: null,
+    welcome_storage_path: null,
+    quote_storage_path: null,
+    contract_storage_path: null
+  };
+}
+
 export default async function AdminApplicationPage({ params }) {
   const session = await getClientSession();
 
@@ -59,6 +73,7 @@ export default async function AdminApplicationPage({ params }) {
     postCallZeroPacketResult.data.length > 0
       ? postCallZeroPacketResult.data[0]
       : null;
+  const safePostCallZeroPacket = postCallZeroPacket || createEmptyPostCallZeroPacket();
 
   const isClientFolder = application.status === "approved";
 
@@ -93,7 +108,8 @@ export default async function AdminApplicationPage({ params }) {
             application={application}
             profile={profile}
             access={access}
-            postCallZeroPacket={postCallZeroPacket}
+            postCallZeroPacket={safePostCallZeroPacket}
+            hasPostCallZeroPacket={Boolean(postCallZeroPacket)}
             clientSpaceUrl={`/espace-client/${params.applicationId}`}
           />
         ) : (
