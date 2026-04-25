@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { isAdminUser } from "@/lib/auth/admin-access";
 import { getClientSession } from "@/lib/auth/client-auth";
 import { normalizeSiteContent } from "@/lib/site-content";
+import { formatSupabaseAdminError } from "@/lib/supabase/errors";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export async function PATCH(request) {
@@ -28,10 +29,15 @@ export async function PATCH(request) {
     });
 
     if (!result.ok) {
+      const errorMessage = formatSupabaseAdminError(
+        result.data,
+        "Impossible d'enregistrer le contenu public."
+      );
+
       return NextResponse.json(
         {
           success: false,
-          error: result.error || "Impossible d'enregistrer le contenu public."
+          error: errorMessage
         },
         { status: result.status || 500 }
       );
@@ -52,4 +58,3 @@ export async function PATCH(request) {
     );
   }
 }
-
