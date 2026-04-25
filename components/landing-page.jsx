@@ -177,7 +177,6 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
   const siteContent = useMemo(() => normalizeSiteContent(content), [content]);
   const [navOpen, setNavOpen] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
-  const [activeMedia, setActiveMedia] = useState("trailer");
   const [birthDateDisplay, setBirthDateDisplay] = useState("");
   const [birthDateError, setBirthDateError] = useState("");
   const [formState, setFormState] = useState({
@@ -185,46 +184,20 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
     message: "Le formulaire est prêt. Votre demande sera traitée par l'équipe Zero Limit Agency."
   });
 
-  const activeMediaEntry =
-    siteContent.media.find((item) => item.id === activeMedia) ||
-    siteContent.media[0] || { id: "trailer", title: "Trailer" };
+  const trailerTitle = siteContent.media[0]?.title || "Trailer";
 
-  const activeMediaContent = useMemo(() => {
-    if (activeMedia === "trailer") {
-      return (
-        <article className="media-panel is-active" id="trailer-panel">
-          <video
-            className="trailer-video"
-            src="/assets/zero-limit-trailer.mov"
-            controls
-            muted
-            playsInline
-            preload="metadata"
-          />
-        </article>
-      );
-    }
-
-    if (activeMedia === "interview") {
-      return (
-        <article className="media-panel" id="interview-panel">
-          <div className="media-placeholder">
-            <strong>{activeMediaEntry.title}</strong>
-            <p>Bloc prêt pour intégrer une interview, une vidéo ou une prise de parole liée à l'agence.</p>
-          </div>
-        </article>
-      );
-    }
-
-    return (
-      <article className="media-panel" id="market-panel">
-        <div className="media-placeholder media-placeholder-alt">
-          <strong>{activeMediaEntry.title}</strong>
-          <p>Bloc prêt pour présenter le Zero Limit Market ou un autre contenu média stratégique.</p>
-        </div>
-      </article>
-    );
-  }, [activeMedia, activeMediaEntry.title]);
+  const activeMediaContent = (
+    <article className="media-panel is-active" id="trailer-panel">
+      <video
+        className="trailer-video"
+        src="/assets/zero-limit-trailer.mov"
+        controls
+        muted
+        playsInline
+        preload="metadata"
+      />
+    </article>
+  );
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -396,18 +369,11 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
             </div>
 
             <div className="media-shell reveal is-visible" id="media">
-              <div className="media-tabs" role="tablist" aria-label="Médias Zero Limit Agency">
-                {siteContent.media.map((item) => (
-                  <button
-                    key={item.id}
-                    className={`media-tab${activeMedia === item.id ? " is-active" : ""}`}
-                    type="button"
-                    onClick={() => setActiveMedia(item.id)}
-                  >
-                    <span className="tab-dot" />
-                    <span>{item.title}</span>
-                  </button>
-                ))}
+              <div className="media-tabs" aria-label="Media Zero Limit Agency">
+                <div className="media-tab is-active">
+                  <span className="tab-dot" />
+                  <span>{trailerTitle}</span>
+                </div>
               </div>
               <div className="media-panels">{activeMediaContent}</div>
             </div>
@@ -702,3 +668,5 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
     </>
   );
 }
+
+
