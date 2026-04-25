@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { ApplicationEditor } from "@/components/admin/application-editor";
 import { ApplicationReview } from "@/components/admin/application-review";
+import { LogoutButton } from "@/components/auth/logout-button";
 import { getUserRole, isAdminUser } from "@/lib/auth/admin-access";
 import { getClientSession } from "@/lib/auth/client-auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -83,11 +84,7 @@ export default async function AdminApplicationPage({ params }) {
             <Link className="button button-dark" href="/admin">
               Retour a l'administration
             </Link>
-            <form action="/api/auth/logout" method="post">
-              <button className="button button-dark" type="submit">
-                Se deconnecter
-              </button>
-            </form>
+            <LogoutButton label="Se deconnecter" />
           </div>
         </header>
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { LogoutButton } from "@/components/auth/logout-button";
 import { MaintenanceScreen } from "@/components/maintenance-screen";
 import { getUserRole } from "@/lib/auth/admin-access";
 import { buildClientApplicationUrl, getClientWorkspaceContext } from "@/lib/auth/client-access";
@@ -139,11 +140,7 @@ export default async function ClientSpaceIndexPage() {
           <Link className="button button-dark" href="/">
             Retour au site public
           </Link>
-          <form action="/api/auth/logout" method="post">
-            <button className="button button-dark" type="submit">
-              Se déconnecter
-            </button>
-          </form>
+          <LogoutButton />
         </div>
       </section>
     </main>

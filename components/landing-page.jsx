@@ -23,11 +23,17 @@ function UserNavButton({ currentUser, closeNav, label }) {
       onClick={closeNav}
       aria-label={currentUser.ariaLabel || "Accéder à votre espace"}
     >
-      {currentUser.avatarUrl ? (
-        <img className="nav-profile-avatar" src={currentUser.avatarUrl} alt="" />
-      ) : (
-        <span className="nav-profile-fallback">{currentUser.initials}</span>
-      )}
+      <span className="nav-profile-badge">
+        {currentUser.avatarUrl ? (
+          <img className="nav-profile-avatar" src={currentUser.avatarUrl} alt="" />
+        ) : (
+          <span className="nav-profile-fallback">{currentUser.initials}</span>
+        )}
+      </span>
+      <span className="nav-profile-copy">
+        <strong>{currentUser.label || "Mon espace"}</strong>
+        <small>{currentUser.email || "Compte connecte"}</small>
+      </span>
     </Link>
   );
 }

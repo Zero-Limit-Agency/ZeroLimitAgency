@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { AvatarUploader } from "@/components/client/avatar-uploader";
+import { LogoutButton } from "@/components/auth/logout-button";
 import { MaintenanceScreen } from "@/components/maintenance-screen";
 import { ZeroLimitMarket } from "@/components/client/zero-limit-market";
 import { getUserRole } from "@/lib/auth/admin-access";
@@ -334,11 +335,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
           </Link>
 
           {!isDemoSpace && !isAdminPreview ? (
-            <form action="/api/auth/logout" method="post">
-              <button className="button button-dark" type="submit">
-                Se déconnecter
-              </button>
-            </form>
+            <LogoutButton />
           ) : null}
         </footer>
       </section>

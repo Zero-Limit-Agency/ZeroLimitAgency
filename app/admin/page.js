@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { GlobalMarketEditor } from "@/components/admin/global-market-editor";
 import { MaintenanceModeEditor } from "@/components/admin/maintenance-mode-editor";
 import { SiteContentEditor } from "@/components/admin/site-content-editor";
+import { LogoutButton } from "@/components/auth/logout-button";
 import { getUserRole, isAdminUser } from "@/lib/auth/admin-access";
 import { getClientSession } from "@/lib/auth/client-auth";
 import { getMaintenanceModeState } from "@/lib/maintenance";
@@ -202,11 +203,7 @@ export default async function AdminPage({ searchParams }) {
             <Link className="button button-dark" href="/">
               Retour au site
             </Link>
-            <form action="/api/auth/logout" method="post">
-              <button className="button button-dark" type="submit">
-                Se deconnecter
-              </button>
-            </form>
+            <LogoutButton label="Se deconnecter" />
           </div>
         </header>
 

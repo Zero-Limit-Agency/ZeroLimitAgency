@@ -44,6 +44,8 @@ export default async function HomePage() {
         content={siteContent}
         currentUser={{
           href: "/admin",
+          label: "Administration",
+          email: session.user?.email || "",
           initials: buildInitialsFromName(
             session.user?.user_metadata?.first_name,
             session.user?.user_metadata?.last_name,
@@ -87,6 +89,10 @@ export default async function HomePage() {
       content={siteContent}
       currentUser={{
         href: "/espace-client",
+        label: application?.first_name
+          ? `${application.first_name}${application.last_name ? ` ${application.last_name}` : ""}`
+          : "Espace client",
+        email: session.user?.email || "",
         initials: buildInitialsFromName(application?.first_name, application?.last_name, session.user?.email),
         avatarUrl: profile?.avatar_data_url || "",
         ariaLabel: "Accéder à votre espace client"
