@@ -1742,6 +1742,8 @@ h3 {
   display: grid;
   gap: 1rem;
   flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
 }
 
 .client-profile-card,
@@ -1761,6 +1763,7 @@ h3 {
   gap: 1.25rem;
   padding: 1.4rem;
   border-radius: 28px;
+  width: 100%;
 }
 
 .client-profile-avatar {
@@ -3472,6 +3475,10 @@ main {
   .market-region-focus-header {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .market-month-switcher {
+    display: none;
   }
 
   .market-signal-badge-wrapper {
