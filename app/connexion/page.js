@@ -1,20 +1,29 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { MaintenanceScreen } from "@/components/maintenance-screen";
 import { ClientLoginForm } from "@/components/auth/client-login-form";
 import { getUserRole } from "@/lib/auth/admin-access";
 import { buildClientApplicationUrl, getClientWorkspaceContext } from "@/lib/auth/client-access";
 import { getClientSession } from "@/lib/auth/client-auth";
 import { DEMO_CLIENT_USER_ID } from "@/lib/auth/demo-client";
+import { getMaintenanceModeState } from "@/lib/maintenance";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const metadata = {
   title: "Connexion | Zero Limit Agency"
 };
 
-export default async function ConnexionPage() {
+export default async function ConnexionPage({ searchParams }) {
   const session = await getClientSession();
   const role = session?.user ? await getUserRole(session.user) : null;
   const workspace = session?.user ? await getClientWorkspaceContext(session.user) : null;
+  const maintenanceSettings = await getMaintenanceModeState(createSupabaseAdminClient());
+  const allowAdminAccess = searchParams?.admin_access === "1";
+
+  if (maintenanceSettings.enabled && role !== "admin" && !allowAdminAccess) {
+    return <MaintenanceScreen settings={maintenanceSettings} />;
+  }
 
   if (session?.user && !session.isDemo && session.user.id !== DEMO_CLIENT_USER_ID && role === "admin") {
     redirect("/admin");

@@ -2,9 +2,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { GlobalMarketEditor } from "@/components/admin/global-market-editor";
+import { MaintenanceModeEditor } from "@/components/admin/maintenance-mode-editor";
 import { SiteContentEditor } from "@/components/admin/site-content-editor";
 import { getUserRole, isAdminUser } from "@/lib/auth/admin-access";
 import { getClientSession } from "@/lib/auth/client-auth";
+import { getMaintenanceModeState } from "@/lib/maintenance";
 import { normalizeSiteContent } from "@/lib/site-content";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -165,6 +167,7 @@ export default async function AdminPage({ searchParams }) {
   const result = await adminClient.applications.list();
   const globalMarketResult = await adminClient.globalMarketSettings.get();
   const siteContentResult = await adminClient.globalSiteSettings.get();
+  const maintenanceSettings = await getMaintenanceModeState(adminClient);
   const applications = result.ok && Array.isArray(result.data) ? result.data : [];
   const globalMarketSettings =
     globalMarketResult.ok && Array.isArray(globalMarketResult.data) && globalMarketResult.data.length > 0
@@ -250,6 +253,7 @@ export default async function AdminPage({ searchParams }) {
         </nav>
 
         <div className="admin-sections">
+          <MaintenanceModeEditor initialSettings={maintenanceSettings} />
           <SiteContentEditor initialSettings={globalSiteSettings} />
           <GlobalMarketEditor initialSettings={globalMarketSettings} />
 

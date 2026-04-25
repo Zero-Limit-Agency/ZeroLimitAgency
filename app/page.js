@@ -1,7 +1,9 @@
 import { LandingPage } from "@/components/landing-page";
+import { MaintenanceScreen } from "@/components/maintenance-screen";
 import { getUserRole } from "@/lib/auth/admin-access";
 import { getAuthorizedClientAccess } from "@/lib/auth/client-access";
 import { getClientSession } from "@/lib/auth/client-auth";
+import { getMaintenanceModeState } from "@/lib/maintenance";
 import { normalizeSiteContent } from "@/lib/site-content";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -24,8 +26,13 @@ export default async function HomePage() {
     siteContentResult.ok && Array.isArray(siteContentResult.data) && siteContentResult.data.length > 0
       ? normalizeSiteContent(siteContentResult.data[0]?.settings || {})
       : undefined;
+  const maintenanceSettings = await getMaintenanceModeState(adminClient);
 
   if (!session?.user || session.isDemo) {
+    if (maintenanceSettings.enabled) {
+      return <MaintenanceScreen settings={maintenanceSettings} />;
+    }
+
     return <LandingPage content={siteContent} />;
   }
 
@@ -52,7 +59,15 @@ export default async function HomePage() {
   const access = await getAuthorizedClientAccess(session.user);
 
   if (!access?.application_id) {
+    if (maintenanceSettings.enabled) {
+      return <MaintenanceScreen settings={maintenanceSettings} />;
+    }
+
     return <LandingPage content={siteContent} />;
+  }
+
+  if (maintenanceSettings.enabled) {
+    return <MaintenanceScreen settings={maintenanceSettings} />;
   }
 
   const applicationResult = await adminClient.applications.getById(access.application_id);

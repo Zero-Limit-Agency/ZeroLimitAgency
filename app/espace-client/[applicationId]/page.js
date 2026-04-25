@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { AvatarUploader } from "@/components/client/avatar-uploader";
+import { MaintenanceScreen } from "@/components/maintenance-screen";
 import { ZeroLimitMarket } from "@/components/client/zero-limit-market";
 import { getUserRole } from "@/lib/auth/admin-access";
 import {
@@ -17,6 +18,7 @@ import {
 import { createDemoApplication, createDemoProfile, DEMO_CLIENT_APPLICATION_ID } from "@/lib/auth/demo-client";
 import { getAuthorizedClientAccess } from "@/lib/auth/client-access";
 import { getClientSession } from "@/lib/auth/client-auth";
+import { getMaintenanceModeState } from "@/lib/maintenance";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
@@ -41,6 +43,8 @@ function buildContextLine(application) {
 export default async function ClientApplicationPage({ params, searchParams }) {
   const session = await getClientSession();
   const isDemoSpace = params.applicationId === DEMO_CLIENT_APPLICATION_ID;
+  const adminClient = createSupabaseAdminClient();
+  const maintenanceSettings = await getMaintenanceModeState(adminClient);
 
   if (!isDemoSpace && !session?.user) {
     redirect(`/connexion?next=/espace-client/${params.applicationId}`);
@@ -51,6 +55,10 @@ export default async function ClientApplicationPage({ params, searchParams }) {
 
   if (role === "admin" && !isAdminPreview) {
     redirect("/admin");
+  }
+
+  if (maintenanceSettings.enabled && role !== "admin") {
+    return <MaintenanceScreen settings={maintenanceSettings} />;
   }
 
   if (!isDemoSpace && !isAdminPreview) {
@@ -73,7 +81,6 @@ export default async function ClientApplicationPage({ params, searchParams }) {
     application = createDemoApplication();
     profile = createDemoProfile();
   } else {
-    const adminClient = createSupabaseAdminClient();
     const result = await adminClient.applications.getById(params.applicationId);
 
     if (!result.ok || !Array.isArray(result.data) || result.data.length === 0) {

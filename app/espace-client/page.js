@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { MaintenanceScreen } from "@/components/maintenance-screen";
 import { getUserRole } from "@/lib/auth/admin-access";
 import { buildClientApplicationUrl, getClientWorkspaceContext } from "@/lib/auth/client-access";
 import { getClientSession } from "@/lib/auth/client-auth";
+import { getMaintenanceModeState } from "@/lib/maintenance";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const metadata = {
   title: "Espace client | Zero Limit Agency"
@@ -39,9 +42,14 @@ function buildStatusContent(application) {
 export default async function ClientSpaceIndexPage() {
   const session = await getClientSession();
   const role = session?.user ? await getUserRole(session.user) : null;
+  const maintenanceSettings = await getMaintenanceModeState(createSupabaseAdminClient());
 
   if (role === "admin") {
     redirect("/admin");
+  }
+
+  if (maintenanceSettings.enabled) {
+    return <MaintenanceScreen settings={maintenanceSettings} />;
   }
 
   if (!session?.user) {
