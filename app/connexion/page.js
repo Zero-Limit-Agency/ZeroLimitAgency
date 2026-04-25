@@ -38,17 +38,17 @@ export default async function ConnexionPage() {
       <section className="auth-card auth-card-wide">
         <div className="auth-copy">
           <p className="eyebrow">Connexion client</p>
-          <h1>AccÃ©der Ã  votre espace personnel</h1>
+          <h1>Acceder a votre espace personnel</h1>
           <p>
             Connectez-vous avec les identifiants fournis par Zero Limit Agency lors de votre inscription
-            pour retrouver votre dossier, son statut et toutes les informations liÃ©es Ã  votre
+            pour retrouver votre dossier, son statut et toutes les informations liees a votre
             accompagnement.
           </p>
           <div className="auth-copy-note">
-            <strong>AccÃ¨s sÃ©curisÃ©</strong>
+            <strong>Acces securise</strong>
             <p>
-              Chaque client accÃ¨de uniquement Ã  son propre espace. Une fois connectÃ©, vous retrouvez
-              votre profil, vos ressources et l'Ã©tat de votre accompagnement.
+              Chaque client accede uniquement a son propre espace. Une fois connecte, vous retrouvez
+              votre profil, vos ressources et l'etat de votre accompagnement.
             </p>
           </div>
           <div className="auth-actions auth-actions-stacked auth-copy-actions">

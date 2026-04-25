@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 
 import { DEFAULT_SITE_CONTENT, normalizeSiteContent } from "@/lib/site-content";
 
-const languageOptions = ["FranÃ§ais", "Anglais", "Espagnol", "Allemand", "Italien", "Autre"];
+const languageOptions = ["Francais", "Anglais", "Espagnol", "Allemand", "Italien", "Autre"];
 
 function UserNavButton({ currentUser, closeNav, label }) {
   if (!currentUser) {
@@ -21,7 +21,7 @@ function UserNavButton({ currentUser, closeNav, label }) {
       className="nav-profile-link"
       href={currentUser.href}
       onClick={closeNav}
-      aria-label={currentUser.ariaLabel || "AccÃ©der Ã  votre espace"}
+      aria-label={currentUser.ariaLabel || "Acceder a votre espace"}
     >
       {currentUser.avatarUrl ? (
         <img className="nav-profile-avatar" src={currentUser.avatarUrl} alt="" />
@@ -37,7 +37,7 @@ function renderStars(stars) {
 
   return Array.from({ length: 5 }, (_, index) => (
     <span key={`star-${index}`} className={`review-star${index < safeStars ? " is-filled" : ""}`}>
-      â˜…
+      *
     </span>
   ));
 }
@@ -49,11 +49,12 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
   const [activeMedia, setActiveMedia] = useState("trailer");
   const [formState, setFormState] = useState({
     status: "idle",
-    message: "Le formulaire est prÃªt. Votre demande sera traitÃ©e par l'Ã©quipe Zero Limit Agency."
+    message: "Le formulaire est pret. Votre demande sera traitee par l'equipe Zero Limit Agency."
   });
 
   const activeMediaEntry =
-    siteContent.media.find((item) => item.id === activeMedia) || siteContent.media[0] || { id: "trailer", title: "Trailer" };
+    siteContent.media.find((item) => item.id === activeMedia) ||
+    siteContent.media[0] || { id: "trailer", title: "Trailer" };
 
   const activeMediaContent = useMemo(() => {
     if (activeMedia === "trailer") {
@@ -76,7 +77,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
         <article className="media-panel" id="interview-panel">
           <div className="media-placeholder">
             <strong>{activeMediaEntry.title}</strong>
-            <p>Bloc prÃªt pour intÃ©grer une interview, une vidÃ©o ou une prise de parole liÃ©e Ã  l'agence.</p>
+            <p>Bloc pret pour integrer une interview, une video ou une prise de parole liee a l'agence.</p>
           </div>
         </article>
       );
@@ -86,7 +87,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
       <article className="media-panel" id="market-panel">
         <div className="media-placeholder media-placeholder-alt">
           <strong>{activeMediaEntry.title}</strong>
-          <p>Bloc prÃªt pour prÃ©senter le Zero Limit Market ou un autre contenu mÃ©dia stratÃ©gique.</p>
+          <p>Bloc pret pour presenter le Zero Limit Market ou un autre contenu media strategique.</p>
         </div>
       </article>
     );
@@ -134,8 +135,8 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
         const text = await response.text();
 
         throw new Error(
-          `Le serveur a renvoyÃ© une rÃ©ponse non JSON (${response.status}). ${
-            text.startsWith("<!DOCTYPE") ? "Une page d'erreur Next.js a Ã©tÃ© renvoyÃ©e." : "RÃ©ponse inattendue."
+          `Le serveur a renvoye une reponse non JSON (${response.status}). ${
+            text.startsWith("<!DOCTYPE") ? "Une page d'erreur Next.js a ete renvoyee." : "Reponse inattendue."
           }`
         );
       }
@@ -146,7 +147,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
 
       setFormState({
         status: "success",
-        message: result.message || "Votre demande a bien Ã©tÃ© envoyÃ©e."
+        message: result.message || "Votre demande a bien ete envoyee."
       });
       form.reset();
 
@@ -204,7 +205,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
               Projets
             </a>
             <a href="#news" onClick={() => setNavOpen(false)}>
-              ActualitÃ©s
+              Actualites
             </a>
             <a href="#contact" onClick={() => setNavOpen(false)}>
               Inscription
@@ -250,7 +251,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
             </div>
 
             <div className="media-shell reveal is-visible" id="media">
-              <div className="media-tabs" role="tablist" aria-label="MÃ©dias Zero Limit Agency">
+              <div className="media-tabs" role="tablist" aria-label="Medias Zero Limit Agency">
                 {siteContent.media.map((item) => (
                   <button
                     key={item.id}
@@ -300,7 +301,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
             <div className="reviews-grid">
               {siteContent.reviews.items.map((review) => (
                 <article key={review.id} className="review-card reveal is-visible">
-                  <div className="review-stars" aria-label={`${review.stars} Ã©toiles`}>
+                  <div className="review-stars" aria-label={`${review.stars} etoiles`}>
                     {renderStars(review.stars)}
                   </div>
                   <p>"{review.message}"</p>
@@ -353,7 +354,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
                   {item.image ? (
                     <img className="news-image" src={item.image} alt={item.title} />
                   ) : (
-                    <div className="news-media news-media-image">ActualitÃ©</div>
+                    <div className="news-media news-media-image">Actualite</div>
                   )}
                   <span>{item.date}</span>
                   <h3>{item.title}</h3>
@@ -423,15 +424,15 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
               <p className="eyebrow">Inscription</p>
               <h2>Rejoindre l'agence</h2>
               <p>
-                Envoyez votre demande pour prÃ©senter votre projet, votre ambition et le type
-                d'accompagnement recherchÃ©.
+                Envoyez votre demande pour presenter votre projet, votre ambition et le type
+                d'accompagnement recherche.
               </p>
             </div>
             <form className="contact-form reveal is-visible" id="contact-form" onSubmit={handleSubmit}>
               <div className="form-row">
                 <label>
-                  Nom et prÃ©nom
-                  <input type="text" name="fullName" placeholder="Votre nom et prÃ©nom" required />
+                  Nom et prenom
+                  <input type="text" name="fullName" placeholder="Votre nom et prenom" required />
                 </label>
               </div>
               <div className="form-row form-row-two">
@@ -451,13 +452,13 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
                 </label>
                 <label>
                   Mot de passe
-                  <input type="password" name="password" placeholder="Minimum 8 caractÃ¨res" minLength={8} required />
+                  <input type="password" name="password" placeholder="Minimum 8 caracteres" minLength={8} required />
                 </label>
               </div>
               <div className="form-row form-row-two">
                 <label>
-                  SociÃ©tÃ©
-                  <input type="text" name="company" placeholder="Votre sociÃ©tÃ©" />
+                  Societe
+                  <input type="text" name="company" placeholder="Votre societe" />
                 </label>
                 <label>
                   Langue
@@ -498,7 +499,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
               <label className="checkbox-row">
                 <input type="checkbox" name="newsletter" />
                 <span className="custom-check" aria-hidden="true" />
-                <span>S'inscrire Ã  la newsletter</span>
+                <span>S'inscrire a la newsletter</span>
               </label>
               <button className="button button-primary" type="submit" disabled={formState.status === "loading"}>
                 {formState.status === "loading" ? "Envoi en cours..." : "Envoyer l'inscription"}
@@ -521,8 +522,8 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
               <a href={`mailto:${siteContent.footer.email}`}>{siteContent.footer.email}</a>
             </div>
             <div className="footer-column">
-              <strong>RÃ©seaux</strong>
-              <p>Ã€ complÃ©ter</p>
+              <strong>Reseaux</strong>
+              <p>A completer</p>
             </div>
           </div>
         </footer>

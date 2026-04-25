@@ -43,7 +43,7 @@ export default async function HomePage() {
             session.user?.email
           ),
           avatarUrl: "",
-          ariaLabel: "AccÃ©der Ã  l'administration"
+          ariaLabel: "Acceder a l'administration"
         }}
       />
     );
@@ -74,7 +74,7 @@ export default async function HomePage() {
         href: "/espace-client",
         initials: buildInitialsFromName(application?.first_name, application?.last_name, session.user?.email),
         avatarUrl: profile?.avatar_data_url || "",
-        ariaLabel: "AccÃ©der Ã  votre espace client"
+        ariaLabel: "Acceder a votre espace client"
       }}
     />
   );

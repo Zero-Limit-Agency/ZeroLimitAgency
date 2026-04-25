@@ -232,7 +232,7 @@ export function SiteContentEditor({ initialSettings }) {
 
       setState({
         status: "success",
-        message: result.message || "Le contenu public a bien Ã©tÃ© mis Ã  jour."
+        message: result.message || "Le contenu public a bien été mis à jour."
       });
       setForm(createInitialForm(result.settings || form));
     } catch (error) {
@@ -247,7 +247,7 @@ export function SiteContentEditor({ initialSettings }) {
     <section className="admin-panel">
       <SectionHeader
         eyebrow="Site public"
-        title="Contenu Ã©ditorial"
+        title="Contenu éditorial"
         note="Cette zone pilote les textes et les blocs visibles sur la landing. Les visuels peuvent utiliser une URL externe ou un chemin local de type /assets/..."
       />
 
@@ -258,14 +258,14 @@ export function SiteContentEditor({ initialSettings }) {
           <p className="admin-inline-note">Hero, sections, FAQ et footer.</p>
         </article>
         <article className="admin-subpanel">
-          <small>Ã‰lÃ©ments gÃ©rÃ©s</small>
+          <small>�?léments gérés</small>
           <strong>{previewCount}</strong>
-          <p className="admin-inline-note">Avis, projets, actualitÃ©s et partenaires.</p>
+          <p className="admin-inline-note">Avis, projets, actualités et partenaires.</p>
         </article>
         <article className="admin-subpanel">
           <small>Connexion</small>
-          <strong>Textes alignÃ©s</strong>
-          <p className="admin-inline-note">Le wording de connexion a aussi Ã©tÃ© simplifiÃ© cÃ´tÃ© public.</p>
+          <strong>Textes alignés</strong>
+          <p className="admin-inline-note">Le wording de connexion a aussi été simplifié côté public.</p>
         </article>
       </div>
 
@@ -293,7 +293,7 @@ export function SiteContentEditor({ initialSettings }) {
         </section>
 
         <section className="admin-subpanel">
-          <SectionHeader eyebrow="PrÃ©sentation" title="Description & blocs" />
+          <SectionHeader eyebrow="Présentation" title="Description & blocs" />
           <div className="admin-meta-grid">
             <label className="auth-field">
               <span>Titre de section</span>
@@ -332,11 +332,11 @@ export function SiteContentEditor({ initialSettings }) {
         </section>
 
         <section className="admin-subpanel">
-          <SectionHeader eyebrow="MÃ©dias" title="Onglets mÃ©dias" />
+          <SectionHeader eyebrow="Médias" title="Onglets médias" />
           <div className="admin-packet-documents-grid">
             {form.media.map((item, index) => (
               <label key={item.id} className="auth-field admin-link-card">
-                <span>MÃ©dia {index + 1}</span>
+                <span>Média {index + 1}</span>
                 <input value={item.title} onChange={(event) => updateArrayItem("media", index, "title", event.target.value)} />
               </label>
             ))}
@@ -381,9 +381,9 @@ export function SiteContentEditor({ initialSettings }) {
         {[
           { key: "reviews", eyebrow: "Avis", title: "Avis clients" },
           { key: "projects", eyebrow: "Projets", title: "Projets" },
-          { key: "news", eyebrow: "ActualitÃ©s", title: "ActualitÃ©s" },
+          { key: "news", eyebrow: "Actualités", title: "Actualités" },
           { key: "partners", eyebrow: "Partenaires", title: "Outils & partenaires" },
-          { key: "faq", eyebrow: "FAQ", title: "Questions frÃ©quentes" }
+          { key: "faq", eyebrow: "FAQ", title: "Questions fréquentes" }
         ].map((section) => (
           <section key={section.key} className="admin-subpanel">
             <SectionHeader eyebrow={section.eyebrow} title={section.title} />
@@ -404,7 +404,7 @@ export function SiteContentEditor({ initialSettings }) {
                   <div className="admin-panel-heading admin-panel-heading-tight">
                     <div>
                       <small>{section.title}</small>
-                      <strong>Ã‰lÃ©ment {index + 1}</strong>
+                      <strong>�?lément {index + 1}</strong>
                     </div>
                     {form[section.key].items.length > 1 ? (
                       <button className="button button-dark button-compact" type="button" onClick={() => removeNestedItem(section.key, index)}>
@@ -424,7 +424,7 @@ export function SiteContentEditor({ initialSettings }) {
                         <input value={item.date} onChange={(event) => updateNestedArrayItem(section.key, index, "date", event.target.value)} />
                       </label>
                       <label className="auth-field">
-                        <span>Ã‰toiles</span>
+                        <span>�?toiles</span>
                         <input type="number" min="1" max="5" value={item.stars} onChange={(event) => updateNestedArrayItem(section.key, index, "stars", event.target.value)} />
                       </label>
                       <label className="auth-field admin-field-full">
@@ -473,7 +473,7 @@ export function SiteContentEditor({ initialSettings }) {
                         <input value={item.question} onChange={(event) => updateNestedArrayItem(section.key, index, "question", event.target.value)} />
                       </label>
                       <label className="auth-field admin-field-full">
-                        <span>RÃ©ponse</span>
+                        <span>Réponse</span>
                         <textarea className="admin-textarea admin-textarea-compact" rows={4} value={item.answer} onChange={(event) => updateNestedArrayItem(section.key, index, "answer", event.target.value)} />
                       </label>
                     </div>
@@ -483,7 +483,7 @@ export function SiteContentEditor({ initialSettings }) {
             </div>
 
             <button className="button button-dark" type="button" onClick={() => addNestedItem(section.key)}>
-              Ajouter un Ã©lÃ©ment
+              Ajouter un élément
             </button>
           </section>
         ))}

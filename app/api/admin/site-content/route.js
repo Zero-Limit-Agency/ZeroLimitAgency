@@ -12,7 +12,7 @@ export async function PATCH(request) {
     return NextResponse.json(
       {
         success: false,
-        error: "AccÃ¨s administrateur requis."
+        error: "Accès administrateur requis."
       },
       { status: 403 }
     );
@@ -39,7 +39,7 @@ export async function PATCH(request) {
 
     return NextResponse.json({
       success: true,
-      message: "Le contenu public a bien Ã©tÃ© enregistrÃ©.",
+      message: "Le contenu public a bien été enregistré.",
       settings
     });
   } catch (error) {
