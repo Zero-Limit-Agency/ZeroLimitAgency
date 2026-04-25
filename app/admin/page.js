@@ -89,7 +89,7 @@ function ClientCard({ application }) {
         <Link className="button button-primary" href={`/admin/${application.id}`}>
           Gerer le client
         </Link>
-        <Link className="button button-dark" href={`/espace-client/${application.id}`}>
+        <Link className="button button-dark" href={`/espace-client/${application.id}?admin_preview=1`}>
           Voir l'espace client
         </Link>
       </div>

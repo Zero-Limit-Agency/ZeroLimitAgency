@@ -35,6 +35,55 @@ function splitFullName(fullName) {
   return { firstName, lastName };
 }
 
+function normalizeBirthDate(value) {
+  const raw = String(value || "").trim();
+
+  if (!raw) {
+    return "";
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+    return raw;
+  }
+
+  const numericMatch = raw.match(/^(\d{1,2})[./\-\s](\d{1,2})[./\-\s](\d{4})$/);
+
+  if (numericMatch) {
+    const [, day, month, year] = numericMatch;
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  }
+
+  const normalized = raw
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+  const textMatch = normalized.match(/^(\d{1,2})\s+([a-z]+)\s+(\d{4})$/);
+
+  if (!textMatch) {
+    return raw;
+  }
+
+  const monthMap = {
+    janvier: "01",
+    fevrier: "02",
+    mars: "03",
+    avril: "04",
+    mai: "05",
+    juin: "06",
+    juillet: "07",
+    aout: "08",
+    septembre: "09",
+    octobre: "10",
+    novembre: "11",
+    decembre: "12"
+  };
+
+  const [, day, monthLabel, year] = textMatch;
+  const month = monthMap[monthLabel];
+
+  return month ? `${year}-${month}-${day.padStart(2, "0")}` : raw;
+}
+
 async function rollbackSignup(userId, applicationId) {
   if (applicationId) {
     await supabase.from("applications").delete().eq("id", applicationId).catch(() => null);
@@ -67,7 +116,7 @@ export async function POST(request) {
     const formData = await request.formData();
 
     const fullName = formData.get("fullName")?.toString() || "";
-    const birthDate = formData.get("birthDate")?.toString() || "";
+    const birthDate = normalizeBirthDate(formData.get("birthDate")?.toString() || "");
     const username = formData.get("username")?.toString() || "";
     const email = formData.get("email")?.toString().trim().toLowerCase() || "";
     const password = formData.get("password")?.toString() || "";
@@ -86,6 +135,16 @@ export async function POST(request) {
         {
           success: false,
           error: "Merci de remplir tous les champs obligatoires."
+        },
+        { status: 400 }
+      );
+    }
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "La date de naissance doit etre valide et au format jour/mois/annee."
         },
         { status: 400 }
       );

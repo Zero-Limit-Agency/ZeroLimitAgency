@@ -128,91 +128,106 @@ export function ZeroLimitMarket({ market }) {
           </div>
         ) : null}
 
-        <svg
-          className="market-chart"
-          viewBox={`0 0 ${geometry.width} ${geometry.height}`}
-          role="img"
-          aria-label={activeRegion ? `Evolution du marche ${activeRegion.label}` : "Comparaison globale du Zero Limit Market"}
-        >
-          {Y_AXIS_VALUES.map((guide) => {
-            const y = getY(guide, geometry);
+        <div className="market-chart-scroll">
+          <svg
+            className="market-chart"
+            viewBox={`0 0 ${geometry.width} ${geometry.height}`}
+            role="img"
+            aria-label={activeRegion ? `Evolution du marche ${activeRegion.label}` : "Comparaison globale du Zero Limit Market"}
+          >
+            {Y_AXIS_VALUES.map((guide) => {
+              const y = getY(guide, geometry);
 
-            return (
-              <g key={guide}>
-                <line
-                  x1={geometry.left}
-                  y1={y}
-                  x2={geometry.width - geometry.right}
-                  y2={y}
-                  stroke="rgba(255,245,243,0.12)"
-                  strokeDasharray="4 8"
-                />
-                <text
-                  x={geometry.left - 10}
-                  y={y + 4}
-                  textAnchor="end"
-                  fill="rgba(255,245,243,0.58)"
-                  fontSize="11"
-                >
-                  {guide}
-                </text>
-              </g>
-            );
-          })}
-
-          {market.labels.map((label, index) => (
-            <text
-              key={label}
-              x={getX(index, geometry)}
-              y={geometry.height - 10}
-              textAnchor="middle"
-              fill="rgba(255,245,243,0.72)"
-              fontSize="11"
-            >
-              {label}
-            </text>
-          ))}
-
-          {visibleSeries.map((series) => (
-            <g key={series.key}>
-              <polyline
-                fill="none"
-                stroke={series.color}
-                strokeWidth={activeRegion ? "3.5" : "3"}
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                points={buildLinePoints(series.monthly, geometry)}
-              />
-
-              {series.monthly.map((value, index) => {
-                const monthKey = market.monthKeys[index];
-                const isSelected = monthKey === selectedMonthKey;
-
-                return (
-                  <circle
-                    key={`${series.key}-${monthKey}`}
-                    cx={getX(index, geometry)}
-                    cy={getY(value, geometry)}
-                    r={isSelected ? "5.4" : activeRegion ? "4.4" : "3.8"}
-                    fill={series.color}
-                    stroke={isSelected ? "#fff5f3" : "#180f14"}
-                    strokeWidth={isSelected ? "3" : "2"}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`${series.label} ${market.monthLabels[monthKey]} ${value}`}
-                    onClick={() => setSelectedMonthKey(monthKey)}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        setSelectedMonthKey(monthKey);
-                      }
-                    }}
+              return (
+                <g key={guide}>
+                  <line
+                    x1={geometry.left}
+                    y1={y}
+                    x2={geometry.width - geometry.right}
+                    y2={y}
+                    stroke="rgba(255,245,243,0.12)"
+                    strokeDasharray="4 8"
                   />
-                );
-              })}
-            </g>
-          ))}
-        </svg>
+                  <text
+                    x={geometry.left - 10}
+                    y={y + 4}
+                    textAnchor="end"
+                    fill="rgba(255,245,243,0.58)"
+                    fontSize="11"
+                  >
+                    {guide}
+                  </text>
+                </g>
+              );
+            })}
+
+            {market.labels.map((label, index) => (
+              <text
+                key={label}
+                x={getX(index, geometry)}
+                y={geometry.height - 10}
+                textAnchor="middle"
+                fill="rgba(255,245,243,0.72)"
+                fontSize="11"
+              >
+                {label}
+              </text>
+            ))}
+
+            {visibleSeries.map((series) => (
+              <g key={series.key}>
+                <polyline
+                  fill="none"
+                  stroke={series.color}
+                  strokeWidth={activeRegion ? "3.5" : "3"}
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                  points={buildLinePoints(series.monthly, geometry)}
+                />
+
+                {series.monthly.map((value, index) => {
+                  const monthKey = market.monthKeys[index];
+                  const isSelected = monthKey === selectedMonthKey;
+
+                  return (
+                    <circle
+                      key={`${series.key}-${monthKey}`}
+                      cx={getX(index, geometry)}
+                      cy={getY(value, geometry)}
+                      r={isSelected ? "6.2" : activeRegion ? "5.1" : "4.2"}
+                      fill={series.color}
+                      stroke={isSelected ? "#fff5f3" : "#180f14"}
+                      strokeWidth={isSelected ? "3" : "2"}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`${series.label} ${market.monthLabels[monthKey]} ${value}`}
+                      onClick={() => setSelectedMonthKey(monthKey)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          setSelectedMonthKey(monthKey);
+                        }
+                      }}
+                    />
+                  );
+                })}
+              </g>
+            ))}
+          </svg>
+        </div>
+      </div>
+
+      <div className="market-month-switcher" role="tablist" aria-label="Selection du mois">
+        {market.monthKeys.map((monthKey) => (
+          <button
+            key={monthKey}
+            type="button"
+            className={`market-month-chip ${selectedMonthKey === monthKey ? "is-active" : ""}`}
+            onClick={() => setSelectedMonthKey(monthKey)}
+          >
+            {market.monthLabels[monthKey]}
+          </button>
+        ))}
       </div>
 
       {!activeRegion ? (

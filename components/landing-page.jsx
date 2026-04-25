@@ -7,6 +7,116 @@ import { DEFAULT_SITE_CONTENT, normalizeSiteContent } from "@/lib/site-content";
 
 const languageOptions = ["Français", "Anglais", "Espagnol", "Allemand", "Italien", "Autre"];
 
+const frenchMonthMap = {
+  janvier: 1,
+  fevrier: 2,
+  février: 2,
+  mars: 3,
+  avril: 4,
+  mai: 5,
+  juin: 6,
+  juillet: 7,
+  aout: 8,
+  août: 8,
+  septembre: 9,
+  octobre: 10,
+  novembre: 11,
+  decembre: 12,
+  décembre: 12
+};
+
+function normalizeBirthDateInput(value) {
+  return String(value || "")
+    .replace(/[^\dA-Za-zÀ-ÿ./\-\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trimStart();
+}
+
+function toValidIsoDate(day, month, year) {
+  if (!day || !month || !year || String(year).length !== 4) {
+    return "";
+  }
+
+  const numericDay = Number(day);
+  const numericMonth = Number(month);
+  const numericYear = Number(year);
+
+  if (
+    !Number.isInteger(numericDay) ||
+    !Number.isInteger(numericMonth) ||
+    !Number.isInteger(numericYear) ||
+    numericMonth < 1 ||
+    numericMonth > 12 ||
+    numericDay < 1 ||
+    numericDay > 31
+  ) {
+    return "";
+  }
+
+  const candidate = new Date(Date.UTC(numericYear, numericMonth - 1, numericDay));
+
+  if (
+    candidate.getUTCFullYear() !== numericYear ||
+    candidate.getUTCMonth() !== numericMonth - 1 ||
+    candidate.getUTCDate() !== numericDay
+  ) {
+    return "";
+  }
+
+  return `${numericYear.toString().padStart(4, "0")}-${numericMonth
+    .toString()
+    .padStart(2, "0")}-${numericDay.toString().padStart(2, "0")}`;
+}
+
+function parseBirthDateValue(value) {
+  const normalized = normalizeBirthDateInput(value);
+
+  if (!normalized) {
+    return { iso: "", display: "" };
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(normalized)) {
+    const [year, month, day] = normalized.split("-");
+    const iso = toValidIsoDate(day, month, year);
+
+    return {
+      iso,
+      display: iso ? `${day}/${month}/${year}` : normalized
+    };
+  }
+
+  const numericMatch = normalized.match(/^(\d{1,2})[./\-\s](\d{1,2})[./\-\s](\d{4})$/);
+
+  if (numericMatch) {
+    const [, day, month, year] = numericMatch;
+    const iso = toValidIsoDate(day, month, year);
+
+    return {
+      iso,
+      display: `${day.padStart(2, "0")}/${month.padStart(2, "0")}/${year}`
+    };
+  }
+
+  const textMatch = normalized
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .match(/^(\d{1,2})\s+([a-z]+)\s+(\d{4})$/);
+
+  if (textMatch) {
+    const [, day, monthLabel, year] = textMatch;
+    const month = frenchMonthMap[monthLabel];
+    const iso = month ? toValidIsoDate(day, month, year) : "";
+
+    return {
+      iso,
+      display: iso ? `${day.padStart(2, "0")}/${String(month).padStart(2, "0")}/${year}` : normalized
+    };
+  }
+
+  return { iso: "", display: normalized };
+}
+
 function UserNavButton({ currentUser, closeNav, label }) {
   if (!currentUser) {
     return (
@@ -53,6 +163,8 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
   const [navOpen, setNavOpen] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
   const [activeMedia, setActiveMedia] = useState("trailer");
+  const [birthDateDisplay, setBirthDateDisplay] = useState("");
+  const [birthDateError, setBirthDateError] = useState("");
   const [formState, setFormState] = useState({
     status: "idle",
     message: "Le formulaire est prêt. Votre demande sera traitée par l'équipe Zero Limit Agency."
@@ -105,8 +217,15 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
     const rawData = new FormData(form);
     const data = new FormData();
     const files = rawData.getAll("files").filter((file) => file instanceof File && file.size > 0);
+    const parsedBirthDate = parseBirthDateValue(birthDateDisplay);
 
-    ["fullName", "birthDate", "username", "email", "password", "company", "language", "request", "message"].forEach(
+    if (!parsedBirthDate.iso) {
+      setBirthDateError("Entrez une date valide au format jour/mois/annee.");
+      setFormState({ status: "error", message: "Corrigez la date de naissance avant d'envoyer le formulaire." });
+      return;
+    }
+
+    ["fullName", "username", "email", "password", "company", "language", "request", "message"].forEach(
       (field) => {
         const value = rawData.get(field);
 
@@ -116,6 +235,8 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
       }
     );
 
+    data.append("birthDate", parsedBirthDate.iso);
+
     if (rawData.get("newsletter")) {
       data.append("newsletter", "on");
     }
@@ -124,6 +245,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
       data.append("files", file, file.name);
     });
 
+    setBirthDateError("");
     setFormState({ status: "loading", message: "Envoi en cours..." });
 
     try {
@@ -156,6 +278,8 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
         message: result.message || "Votre demande a bien été envoyée."
       });
       form.reset();
+      setBirthDateDisplay("");
+      setBirthDateError("");
 
       if (result.client_space_url) {
         window.setTimeout(() => {
@@ -444,7 +568,34 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
               <div className="form-row form-row-two">
                 <label>
                   Date de naissance
-                  <input type="date" name="birthDate" required />
+                  <input
+                    type="hidden"
+                    name="birthDate"
+                    value={parseBirthDateValue(birthDateDisplay).iso}
+                    readOnly
+                  />
+                  <input
+                    type="text"
+                    value={birthDateDisplay}
+                    inputMode="numeric"
+                    autoComplete="bday"
+                    placeholder="JJ/MM/AAAA"
+                    onChange={(event) => {
+                      setBirthDateDisplay(normalizeBirthDateInput(event.target.value));
+                      if (birthDateError) {
+                        setBirthDateError("");
+                      }
+                    }}
+                    onBlur={() => {
+                      const parsed = parseBirthDateValue(birthDateDisplay);
+                      setBirthDateDisplay(parsed.display);
+                    }}
+                    aria-describedby="birth-date-help"
+                    required
+                  />
+                  <small className={`contact-field-help${birthDateError ? " is-error" : ""}`} id="birth-date-help">
+                    {birthDateError || "Format accepte : 06/09/2001, 6-9-2001 ou 6 septembre 2001."}
+                  </small>
                 </label>
                 <label>
                   Pseudo
