@@ -22,7 +22,155 @@ function createTimelineDraft(existing = {}) {
     label: existing.label || "",
     date: existing.date || "",
     description: existing.description || "",
-    tone: existing.tone || "upcoming"
+    tone: existing.tone || "upcoming",
+    order: Number.isFinite(Number(existing.order)) ? Number(existing.order) : 0
+  };
+}
+
+function createCallTaskDraft(existing = {}) {
+  return {
+    key: existing.key || "",
+    label: existing.label || ""
+  };
+}
+
+function createImportantDateDraft(existing = {}) {
+  return {
+    key: existing.key || "",
+    label: existing.label || "",
+    value: existing.value || ""
+  };
+}
+
+function createCallReportDraft(existing = {}) {
+  const report = existing && typeof existing === "object" ? existing : {};
+
+  return {
+    call_type: report.call_type || "intro",
+    raw_notes: report.raw_notes || "",
+    client_summary: report.client_summary || "",
+    suggested_email: report.suggested_email || "",
+    suggested_timeline_events: Array.isArray(report.suggested_timeline_events)
+      ? report.suggested_timeline_events.map(createTimelineDraft)
+      : [],
+    internal_tasks: Array.isArray(report.internal_tasks) ? report.internal_tasks.map(createCallTaskDraft) : [],
+    important_dates: Array.isArray(report.important_dates)
+      ? report.important_dates.map(createImportantDateDraft)
+      : [],
+    status: report.status || "draft"
+  };
+}
+
+function normalizeTimelineCollection(items) {
+  return (Array.isArray(items) ? items : []).map((item, index) => ({
+    ...createTimelineDraft(item),
+    key: item?.key || `timeline-${index + 1}`,
+    order: index + 1
+  }));
+}
+
+function buildCallTypeMeta(type) {
+  switch (type) {
+    case "training":
+      return {
+        label: "formation",
+        nextStep: "une mise en pratique accompagnee"
+      };
+    case "follow_up":
+      return {
+        label: "suivi client",
+        nextStep: "un point d'avancement sur les actions en cours"
+      };
+    case "other":
+      return {
+        label: "echange",
+        nextStep: "une suite adaptee a votre dossier"
+      };
+    default:
+      return {
+        label: "appel d'introduction",
+        nextStep: "un cadrage du projet et des prochaines etapes"
+      };
+  }
+}
+
+function detectImportantDatesFromNotes(notes) {
+  const text = String(notes || "");
+  const matches = [...text.matchAll(/\b(\d{1,2}[\/.-]\d{1,2}(?:[\/.-]\d{2,4})?)\b/g)];
+
+  return matches.slice(0, 4).map((match, index) => ({
+    key: `important-date-detected-${index + 1}`,
+    label: `Date reperee ${index + 1}`,
+    value: match[1]
+  }));
+}
+
+function buildCallAssistantDraft(notes, callType) {
+  const trimmedNotes = String(notes || "").trim();
+  const meta = buildCallTypeMeta(callType);
+  const rawLines = trimmedNotes
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const fallbackLine = rawLines[0] || "Un echange client a eu lieu.";
+  const summaryLines = rawLines.slice(0, 3);
+  const actionLines = rawLines.slice(0, 3).map((line, index) => ({
+    key: `internal-task-${index + 1}`,
+    label: line
+  }));
+  const detectedDates = detectImportantDatesFromNotes(trimmedNotes);
+  const timelineEvents = normalizeTimelineCollection([
+    {
+      key: "call-report-summary",
+      label: "Compte rendu d'appel valide",
+      date: "A confirmer",
+      description: fallbackLine,
+      tone: "done"
+    },
+    {
+      key: "call-report-next-step",
+      label: "Prochaine etape definie",
+      date: detectedDates[0]?.value || "A planifier",
+      description: `Suite prevue apres ${meta.label} : ${meta.nextStep}.`,
+      tone: "current"
+    }
+  ]);
+
+  return {
+    client_summary:
+      summaryLines.length > 0
+        ? summaryLines.join("\n")
+        : "Resume client a completer apres l'appel.",
+    suggested_email: [
+      "Bonjour,",
+      "",
+      `Merci pour votre ${meta.label}.`,
+      summaryLines.length > 0 ? `Voici le resume retenu : ${summaryLines.join(" ")}` : fallbackLine,
+      "",
+      `Prochaine etape : ${meta.nextStep}.`,
+      "",
+      "Zero Limit Agency"
+    ].join("\n"),
+    suggested_timeline_events: timelineEvents,
+    internal_tasks:
+      actionLines.length > 0
+        ? actionLines
+        : [
+            {
+              key: "internal-task-1",
+              label: "Completer les actions internes a partir du compte rendu."
+            }
+          ],
+    important_dates:
+      detectedDates.length > 0
+        ? detectedDates
+        : [
+            {
+              key: "important-date-1",
+              label: "Date a confirmer",
+              value: ""
+            }
+          ]
   };
 }
 
@@ -119,6 +267,7 @@ export function ApplicationEditor({
   profile,
   access,
   postCallZeroPacket,
+  callReport,
   clientSpaceUrl,
   hasPostCallZeroPacket = false
 }) {
@@ -135,11 +284,16 @@ export function ApplicationEditor({
     status: "idle",
     message: ""
   });
+  const [callAssistantState, setCallAssistantState] = useState({
+    status: "idle",
+    message: ""
+  });
   const [manualEmailForm, setManualEmailForm] = useState({
     subject: "",
     message: ""
   });
   const [manualEmailFiles, setManualEmailFiles] = useState([]);
+  const [callAssistantForm, setCallAssistantForm] = useState(() => createCallReportDraft(callReport));
   const [packetForm, setPacketForm] = useState(() => createPacketForm(postCallZeroPacket));
   const [packetFiles, setPacketFiles] = useState({
     welcome_file: null,
@@ -164,7 +318,7 @@ export function ApplicationEditor({
       Array.isArray(profile?.resource_links) && profile.resource_links.length > 0
         ? profile.resource_links.map(createResourceDraft)
         : [createResourceDraft()],
-    timeline_events: buildDefaultTimeline(application, profile)
+    timeline_events: normalizeTimelineCollection(buildDefaultTimeline(application, profile))
   });
 
   function updateField(field, value) {
@@ -237,6 +391,34 @@ export function ApplicationEditor({
     setManualEmailFiles(Array.from(fileList || []).filter((file) => file instanceof File));
   }
 
+  function updateCallAssistantField(field, value) {
+    setCallAssistantForm((current) => ({
+      ...current,
+      [field]: value
+    }));
+  }
+
+  function updateCallAssistantArrayField(field, index, key, value) {
+    setCallAssistantForm((current) => ({
+      ...current,
+      [field]: current[field].map((item, itemIndex) =>
+        itemIndex === index
+          ? {
+              ...item,
+              [key]: value
+            }
+          : item
+      )
+    }));
+  }
+
+  function applyTimelineNormalization(items) {
+    setForm((current) => ({
+      ...current,
+      timeline_events: normalizeTimelineCollection(items)
+    }));
+  }
+
   function addResource() {
     setForm((current) => ({
       ...current,
@@ -252,17 +434,232 @@ export function ApplicationEditor({
   }
 
   function addTimelineEvent() {
-    setForm((current) => ({
-      ...current,
-      timeline_events: [...current.timeline_events, createTimelineDraft()]
-    }));
+    applyTimelineNormalization([
+      ...form.timeline_events,
+      createTimelineDraft({
+        key: `timeline-${Date.now()}`,
+        label: "",
+        date: "",
+        description: "",
+        tone: "upcoming"
+      })
+    ]);
   }
 
   function removeTimelineEvent(index) {
-    setForm((current) => ({
-      ...current,
-      timeline_events: current.timeline_events.filter((_, itemIndex) => itemIndex !== index)
+    applyTimelineNormalization(form.timeline_events.filter((_, itemIndex) => itemIndex !== index));
+  }
+
+  function moveTimelineEvent(index, direction) {
+    const nextIndex = index + direction;
+
+    if (nextIndex < 0 || nextIndex >= form.timeline_events.length) {
+      return;
+    }
+
+    const items = [...form.timeline_events];
+    const [item] = items.splice(index, 1);
+    items.splice(nextIndex, 0, item);
+    applyTimelineNormalization(items);
+  }
+
+  function insertTimelineEventAfter(index) {
+    const items = [...form.timeline_events];
+    items.splice(index + 1, 0, createTimelineDraft({
+      key: `timeline-${Date.now()}-${index + 1}`,
+      label: "",
+      date: "",
+      description: "",
+      tone: "upcoming"
     }));
+    applyTimelineNormalization(items);
+  }
+
+  function addCallTask() {
+    setCallAssistantForm((current) => ({
+      ...current,
+      internal_tasks: [
+        ...current.internal_tasks,
+        createCallTaskDraft({
+          key: `internal-task-${Date.now()}`
+        })
+      ]
+    }));
+  }
+
+  function removeCallTask(index) {
+    setCallAssistantForm((current) => ({
+      ...current,
+      internal_tasks: current.internal_tasks.filter((_, itemIndex) => itemIndex !== index)
+    }));
+  }
+
+  function addImportantDate() {
+    setCallAssistantForm((current) => ({
+      ...current,
+      important_dates: [
+        ...current.important_dates,
+        createImportantDateDraft({
+          key: `important-date-${Date.now()}`
+        })
+      ]
+    }));
+  }
+
+  function removeImportantDate(index) {
+    setCallAssistantForm((current) => ({
+      ...current,
+      important_dates: current.important_dates.filter((_, itemIndex) => itemIndex !== index)
+    }));
+  }
+
+  function addCallTimelineSuggestion() {
+    setCallAssistantForm((current) => ({
+      ...current,
+      suggested_timeline_events: normalizeTimelineCollection([
+        ...current.suggested_timeline_events,
+        createTimelineDraft({
+          key: `call-event-${Date.now()}`,
+          tone: "upcoming"
+        })
+      ])
+    }));
+  }
+
+  function removeCallTimelineSuggestion(index) {
+    setCallAssistantForm((current) => ({
+      ...current,
+      suggested_timeline_events: normalizeTimelineCollection(
+        current.suggested_timeline_events.filter((_, itemIndex) => itemIndex !== index)
+      )
+    }));
+  }
+
+  async function saveCallAssistantDraft(nextState) {
+    const response = await fetch(`/api/admin/applications/${application.id}/call-assistant`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(nextState)
+    });
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok || !result?.success) {
+      throw new Error(result?.error || "Impossible d'enregistrer le brouillon d'appel.");
+    }
+
+    return result;
+  }
+
+  async function handleGenerateCallAssistantDraft() {
+    const generatedDraft = buildCallAssistantDraft(callAssistantForm.raw_notes, callAssistantForm.call_type);
+    const nextDraft = {
+      ...callAssistantForm,
+      ...generatedDraft,
+      status: "draft"
+    };
+
+    setCallAssistantState({
+      status: "loading",
+      message: "Generation du brouillon en cours..."
+    });
+
+    try {
+      const result = await saveCallAssistantDraft(nextDraft);
+      setCallAssistantForm(createCallReportDraft(result.report));
+      setCallAssistantState({
+        status: "success",
+        message: result.message || "Le brouillon d'assistant d'appel a bien ete genere."
+      });
+    } catch (error) {
+      setCallAssistantState({
+        status: "error",
+        message:
+          error instanceof Error ? error.message : "Impossible de generer le brouillon d'assistant d'appel."
+      });
+    }
+  }
+
+  async function handleApplyCallAssistant() {
+    setCallAssistantState({
+      status: "loading",
+      message: "Application du brouillon a l'espace client en cours..."
+    });
+
+    try {
+      await saveCallAssistantDraft(callAssistantForm);
+      const response = await fetch(`/api/admin/applications/${application.id}/call-assistant`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          action: "apply"
+        })
+      });
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok || !result?.success) {
+        throw new Error(result?.error || "Impossible d'appliquer le brouillon a l'espace client.");
+      }
+
+      setCallAssistantForm((current) => ({
+        ...current,
+        status: "applied"
+      }));
+      setCallAssistantState({
+        status: "success",
+        message: result.message || "Le brouillon a bien ete applique a l'espace client."
+      });
+      router.refresh();
+    } catch (error) {
+      setCallAssistantState({
+        status: "error",
+        message:
+          error instanceof Error ? error.message : "Impossible d'appliquer le brouillon a l'espace client."
+      });
+    }
+  }
+
+  async function handleSendCallAssistantEmail() {
+    setCallAssistantState({
+      status: "loading",
+      message: "Envoi de l'email propose en cours..."
+    });
+
+    try {
+      await saveCallAssistantDraft(callAssistantForm);
+      const response = await fetch(`/api/admin/applications/${application.id}/call-assistant`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          action: "send_email"
+        })
+      });
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok || !result?.success) {
+        throw new Error(result?.error || "Impossible d'envoyer l'email propose au client.");
+      }
+
+      setCallAssistantForm((current) => ({
+        ...current,
+        status: "sent"
+      }));
+      setCallAssistantState({
+        status: "success",
+        message: result.message || "L'email propose a bien ete envoye au client."
+      });
+    } catch (error) {
+      setCallAssistantState({
+        status: "error",
+        message:
+          error instanceof Error ? error.message : "Impossible d'envoyer l'email propose au client."
+      });
+    }
   }
 
   async function handleSubmit(event) {
@@ -483,7 +880,7 @@ export function ApplicationEditor({
         <div className="admin-panel-heading">
           <div>
             <p className="eyebrow">Compte client</p>
-            <h2>Etat du dossier et accompagnement</h2>
+            <h2>État du dossier et accompagnement</h2>
           </div>
           <a className="button button-dark" href={`${clientSpaceUrl}?admin_preview=1`}>
             Voir l'espace client
@@ -536,14 +933,14 @@ export function ApplicationEditor({
       <section className="admin-panel">
         <div className="admin-panel-heading">
           <div>
-            <p className="eyebrow">Identite</p>
+            <p className="eyebrow">Identité</p>
             <h2>Profil client</h2>
           </div>
         </div>
 
         <div className="admin-meta-grid">
           <label className="auth-field">
-            <span>Prenom</span>
+            <span>Prénom</span>
             <input value={form.first_name} onChange={(event) => updateField("first_name", event.target.value)} />
           </label>
           <label className="auth-field">
@@ -565,7 +962,7 @@ export function ApplicationEditor({
         <div className="admin-panel-heading">
           <div>
             <p className="eyebrow">Dossier client</p>
-            <h2>Resume et informations</h2>
+            <h2>Résumé et informations</h2>
           </div>
         </div>
 
@@ -575,7 +972,7 @@ export function ApplicationEditor({
             <input value={form.request_type} onChange={(event) => updateField("request_type", event.target.value)} />
           </label>
           <label className="auth-field">
-            <span>Societe</span>
+            <span>Société</span>
             <input value={form.company} onChange={(event) => updateField("company", event.target.value)} />
           </label>
           <label className="auth-field">
@@ -589,7 +986,7 @@ export function ApplicationEditor({
         </div>
 
         <label className="auth-field">
-          <span>Resume du dossier</span>
+          <span>Résumé du dossier</span>
           <textarea
             className="admin-textarea"
             rows={6}
@@ -669,7 +1066,7 @@ export function ApplicationEditor({
                   />
                 </label>
                 <label className="auth-field">
-                  <span>Categorie</span>
+                  <span>Catégorie</span>
                   <input
                     value={resource.kind}
                     onChange={(event) => updateArrayField("resource_links", index, "kind", event.target.value)}
@@ -714,6 +1111,298 @@ export function ApplicationEditor({
       <section className="admin-panel">
         <div className="admin-panel-heading">
           <div>
+            <p className="eyebrow">Assistant d'appel</p>
+            <h2>Préparation post-appel</h2>
+          </div>
+        </div>
+
+        <p className="admin-inline-note">
+          Cette zone reste interne a l'administration. Rien n'est applique ni envoye sans validation manuelle.
+        </p>
+
+        <div className="admin-stack admin-stack-tight">
+          <div className="admin-subpanel">
+            <div className="admin-subpanel-grid">
+              <label className="auth-field">
+                <span>Type d'appel</span>
+                <select
+                  className="admin-select"
+                  value={callAssistantForm.call_type}
+                  onChange={(event) => updateCallAssistantField("call_type", event.target.value)}
+                >
+                  <option value="intro">Appel d'introduction</option>
+                  <option value="training">Formation</option>
+                  <option value="follow_up">Suivi client</option>
+                  <option value="other">Autre</option>
+                </select>
+              </label>
+              <div className="admin-link-card">
+                <small>Etat du brouillon</small>
+                <strong>
+                  {callAssistantForm.status === "sent"
+                    ? "Email envoye"
+                    : callAssistantForm.status === "applied"
+                      ? "Applique a l'espace client"
+                      : "Brouillon"}
+                </strong>
+              </div>
+            </div>
+
+            <label className="auth-field">
+              <span>Résumé brut de l'appel</span>
+              <textarea
+                className="admin-textarea"
+                rows={8}
+                value={callAssistantForm.raw_notes}
+                onChange={(event) => updateCallAssistantField("raw_notes", event.target.value)}
+                placeholder="Collez ici votre compte rendu libre de l'appel."
+              />
+            </label>
+          </div>
+
+          <div className="admin-subpanel">
+            <div className="admin-panel-heading admin-panel-heading-tight">
+              <div>
+                <small>Brouillon généré</small>
+                <h3>Résultats proposés</h3>
+              </div>
+            </div>
+
+            <label className="auth-field">
+              <span>Résumé client</span>
+              <textarea
+                className="admin-textarea"
+                rows={5}
+                value={callAssistantForm.client_summary}
+                onChange={(event) => updateCallAssistantField("client_summary", event.target.value)}
+              />
+            </label>
+
+            <label className="auth-field">
+              <span>Email proposé</span>
+              <textarea
+                className="admin-textarea"
+                rows={7}
+                value={callAssistantForm.suggested_email}
+                onChange={(event) => updateCallAssistantField("suggested_email", event.target.value)}
+              />
+            </label>
+          </div>
+
+          <div className="admin-subpanel">
+            <div className="admin-panel-heading admin-panel-heading-tight">
+              <div>
+                <small>Timeline suggérée</small>
+                <h3>Étapes proposées</h3>
+              </div>
+              <button className="button button-dark button-compact" type="button" onClick={addCallTimelineSuggestion}>
+                Ajouter une étape
+              </button>
+            </div>
+
+            <div className="admin-stack admin-stack-tight">
+              {callAssistantForm.suggested_timeline_events.map((eventItem, index) => (
+                <div key={`call-suggested-${index}`} className="admin-subpanel">
+                  <div className="admin-panel-heading admin-panel-heading-tight">
+                    <div>
+                      <small>Étape suggérée {index + 1}</small>
+                    </div>
+                    <button
+                      className="button button-dark button-compact"
+                      type="button"
+                      onClick={() => removeCallTimelineSuggestion(index)}
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+
+                  <div className="admin-subpanel-grid">
+                    <label className="auth-field">
+                      <span>Étape</span>
+                      <input
+                        value={eventItem.label}
+                        onChange={(event) =>
+                          updateCallAssistantArrayField("suggested_timeline_events", index, "label", event.target.value)
+                        }
+                      />
+                    </label>
+                    <label className="auth-field">
+                      <span>Date ou repère</span>
+                      <input
+                        value={eventItem.date}
+                        onChange={(event) =>
+                          updateCallAssistantArrayField("suggested_timeline_events", index, "date", event.target.value)
+                        }
+                      />
+                    </label>
+                    <label className="auth-field">
+                      <span>État visuel</span>
+                      <select
+                        className="admin-select"
+                        value={eventItem.tone}
+                        onChange={(event) =>
+                          updateCallAssistantArrayField("suggested_timeline_events", index, "tone", event.target.value)
+                        }
+                      >
+                        <option value="done">Terminée</option>
+                        <option value="current">En cours</option>
+                        <option value="upcoming">À venir</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <label className="auth-field">
+                    <span>Description</span>
+                    <textarea
+                      className="admin-textarea admin-textarea-compact"
+                      rows={3}
+                      value={eventItem.description}
+                      onChange={(event) =>
+                        updateCallAssistantArrayField(
+                          "suggested_timeline_events",
+                          index,
+                          "description",
+                          event.target.value
+                        )
+                      }
+                    />
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="admin-subpanel">
+            <div className="admin-panel-heading admin-panel-heading-tight">
+              <div>
+                <small>Tâches internes</small>
+                <h3>Actions équipe</h3>
+              </div>
+              <button className="button button-dark button-compact" type="button" onClick={addCallTask}>
+                Ajouter une tâche
+              </button>
+            </div>
+
+            <div className="admin-stack admin-stack-tight">
+              {callAssistantForm.internal_tasks.map((task, index) => (
+                <div key={`call-task-${index}`} className="admin-subpanel">
+                  <div className="admin-panel-heading admin-panel-heading-tight">
+                    <div>
+                      <small>Tâche {index + 1}</small>
+                    </div>
+                    <button
+                      className="button button-dark button-compact"
+                      type="button"
+                      onClick={() => removeCallTask(index)}
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                  <label className="auth-field">
+                    <span>Action</span>
+                    <input
+                      value={task.label}
+                      onChange={(event) => updateCallAssistantArrayField("internal_tasks", index, "label", event.target.value)}
+                    />
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="admin-subpanel">
+            <div className="admin-panel-heading admin-panel-heading-tight">
+              <div>
+                <small>Dates importantes</small>
+                <h3>Repères</h3>
+              </div>
+              <button className="button button-dark button-compact" type="button" onClick={addImportantDate}>
+                Ajouter une date
+              </button>
+            </div>
+
+            <div className="admin-stack admin-stack-tight">
+              {callAssistantForm.important_dates.map((item, index) => (
+                <div key={`important-date-${index}`} className="admin-subpanel">
+                  <div className="admin-panel-heading admin-panel-heading-tight">
+                    <div>
+                      <small>Date {index + 1}</small>
+                    </div>
+                    <button
+                      className="button button-dark button-compact"
+                      type="button"
+                      onClick={() => removeImportantDate(index)}
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                  <div className="admin-subpanel-grid">
+                    <label className="auth-field">
+                      <span>Libellé</span>
+                      <input
+                        value={item.label}
+                        onChange={(event) => updateCallAssistantArrayField("important_dates", index, "label", event.target.value)}
+                      />
+                    </label>
+                    <label className="auth-field">
+                      <span>Date / repère</span>
+                      <input
+                        value={item.value}
+                        onChange={(event) => updateCallAssistantArrayField("important_dates", index, "value", event.target.value)}
+                      />
+                    </label>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="admin-actions admin-actions-inline">
+          <button
+            className="button button-dark"
+            type="button"
+            onClick={handleGenerateCallAssistantDraft}
+            disabled={callAssistantState.status === "loading"}
+          >
+            {callAssistantState.status === "loading" ? "Génération..." : "Générer un brouillon"}
+          </button>
+          <button
+            className="button button-dark"
+            type="button"
+            onClick={handleApplyCallAssistant}
+            disabled={callAssistantState.status === "loading"}
+          >
+            Appliquer à l'espace client
+          </button>
+          <button
+            className="button button-primary"
+            type="button"
+            onClick={handleSendCallAssistantEmail}
+            disabled={callAssistantState.status === "loading"}
+          >
+            Envoyer l'email au client
+          </button>
+        </div>
+
+        {callAssistantState.message ? (
+          <p
+            className={`auth-feedback ${
+              callAssistantState.status === "error"
+                ? "auth-feedback-error"
+                : callAssistantState.status === "success"
+                  ? "auth-feedback-success"
+                  : ""
+            }`}
+          >
+            {callAssistantState.message}
+          </p>
+        ) : null}
+      </section>
+
+      <section className="admin-panel">
+        <div className="admin-panel-heading">
+          <div>
             <p className="eyebrow">Email client</p>
             <h2>Envoyer un email manuel</h2>
           </div>
@@ -748,7 +1437,7 @@ export function ApplicationEditor({
                 rows={7}
                 value={manualEmailForm.message}
                 onChange={(event) => updateManualEmailField("message", event.target.value)}
-                placeholder="Ecrivez ici le message a envoyer au client."
+                placeholder="Écrivez ici le message à envoyer au client."
               />
             </label>
           </div>
@@ -806,21 +1495,21 @@ export function ApplicationEditor({
       <section className="admin-panel">
         <div className="admin-panel-heading">
           <div>
-            <p className="eyebrow">Pack de demarrage client</p>
-            <h2>Preparation du pack</h2>
+            <p className="eyebrow">Pack de démarrage client</p>
+            <h2>Préparation du pack</h2>
           </div>
         </div>
 
         <p className="admin-inline-note">
-          Ce pack reste separe de l'espace client. Les documents sont envoyes en pieces jointes, puis les acces utiles
-          sont synchronises dans le dossier client apres l'envoi.
+          Ce pack reste séparé de l'espace client. Les documents sont envoyés en pièces jointes, puis les accès utiles
+          sont synchronisés dans le dossier client après l'envoi.
         </p>
 
         {!hasPostCallZeroPacket ? (
           <div className="admin-system-warning">
-            <small>Etat du pack</small>
-            <strong>Pack de demarrage non prepare</strong>
-            <p>Vous pouvez commencer avec un brouillon vide, puis enregistrer le pack quand il est pret.</p>
+            <small>État du pack</small>
+            <strong>Pack de démarrage non préparé</strong>
+            <p>Vous pouvez commencer avec un brouillon vide, puis enregistrer le pack quand il est prêt.</p>
           </div>
         ) : null}
 
@@ -829,15 +1518,15 @@ export function ApplicationEditor({
             <div className="admin-panel-heading admin-panel-heading-tight">
               <div>
                 <small>Section 1</small>
-                <h3>Resume</h3>
+                <h3>Résumé</h3>
               </div>
               <span className="admin-status-pill">
-                {packetForm.status === "sent" ? "Pack envoye" : "Brouillon"}
+                {packetForm.status === "sent" ? "Pack envoyé" : "Brouillon"}
               </span>
             </div>
 
             <label className="auth-field">
-              <span>Resume personnalise</span>
+              <span>Résumé personnalisé</span>
               <textarea
                 className="admin-textarea"
                 rows={6}
@@ -864,7 +1553,7 @@ export function ApplicationEditor({
                   onChange={(event) => updatePacketField("status", event.target.value)}
                 >
                   <option value="draft">Brouillon</option>
-                  <option value="sent">Deja envoye</option>
+                  <option value="sent">Déjà envoyé</option>
                 </select>
               </label>
               <label className="auth-field">
@@ -970,7 +1659,7 @@ export function ApplicationEditor({
           >
             {postCallZeroState.status === "loading"
               ? "Envoi en cours..."
-              : "Envoyer le pack de demarrage"}
+              : "Envoyer le pack de démarrage"}
           </button>
         </div>
 
@@ -1004,15 +1693,40 @@ export function ApplicationEditor({
                 <div>
                   <small>Etape {index + 1}</small>
                 </div>
-                {form.timeline_events.length > 1 ? (
+                <div className="admin-actions admin-actions-inline">
                   <button
                     className="button button-dark button-compact"
                     type="button"
-                    onClick={() => removeTimelineEvent(index)}
+                    onClick={() => moveTimelineEvent(index, -1)}
+                    disabled={index === 0}
                   >
-                    Supprimer
+                    Monter
                   </button>
-                ) : null}
+                  <button
+                    className="button button-dark button-compact"
+                    type="button"
+                    onClick={() => moveTimelineEvent(index, 1)}
+                    disabled={index === form.timeline_events.length - 1}
+                  >
+                    Descendre
+                  </button>
+                  <button
+                    className="button button-dark button-compact"
+                    type="button"
+                    onClick={() => insertTimelineEventAfter(index)}
+                  >
+                    Insérer dessous
+                  </button>
+                  {form.timeline_events.length > 1 ? (
+                    <button
+                      className="button button-dark button-compact"
+                      type="button"
+                      onClick={() => removeTimelineEvent(index)}
+                    >
+                      Supprimer
+                    </button>
+                  ) : null}
+                </div>
               </div>
 
               <div className="admin-subpanel-grid">
@@ -1024,22 +1738,22 @@ export function ApplicationEditor({
                   />
                 </label>
                 <label className="auth-field">
-                  <span>Date ou repere</span>
+                  <span>Date ou repère</span>
                   <input
                     value={eventItem.date}
                     onChange={(event) => updateArrayField("timeline_events", index, "date", event.target.value)}
                   />
                 </label>
                 <label className="auth-field">
-                  <span>Etat visuel</span>
+                  <span>État visuel</span>
                   <select
                     className="admin-select"
                     value={eventItem.tone}
                     onChange={(event) => updateArrayField("timeline_events", index, "tone", event.target.value)}
                   >
-                    <option value="done">Terminee</option>
+                    <option value="done">Terminée</option>
                     <option value="current">En cours</option>
-                    <option value="upcoming">A venir</option>
+                    <option value="upcoming">À venir</option>
                   </select>
                 </label>
               </div>
@@ -1060,7 +1774,7 @@ export function ApplicationEditor({
         </div>
 
         <button className="button button-dark" type="button" onClick={addTimelineEvent}>
-          Ajouter une etape
+          Ajouter une étape
         </button>
       </section>
 
@@ -1088,7 +1802,7 @@ export function ApplicationEditor({
         <div className="admin-panel-heading">
           <div>
             <p className="eyebrow">Zone sensible</p>
-            <h2>Suppression definitive</h2>
+            <h2>Suppression définitive</h2>
           </div>
         </div>
 

@@ -5078,3 +5078,152 @@ body {
     gap: 0.35rem;
   }
 }
+
+.admin-panel,
+.admin-subpanel,
+.client-panel,
+.client-profile-card,
+.client-overview-card,
+.client-resource-card,
+.client-summary-box,
+.client-timeline-content,
+.market-region-card,
+.market-info-card,
+.market-month-index,
+.admin-market-auto-card,
+.admin-market-hero-card,
+.admin-market-month-preview {
+  gap: 0.9rem;
+}
+
+.admin-meta-grid,
+.admin-subpanel-grid,
+.admin-subpanel-grid-market,
+.admin-packet-documents-grid,
+.admin-packet-links-grid,
+.market-region-grid,
+.market-info-grid,
+.market-info-grid-region,
+.market-region-metrics {
+  gap: 1rem;
+}
+
+.admin-panel-heading,
+.client-panel-heading {
+  margin-bottom: 1rem;
+}
+
+.admin-panel-heading-tight {
+  margin-bottom: 0.75rem;
+}
+
+.admin-actions-inline,
+.admin-panel > .admin-actions,
+.admin-panel > .button,
+.admin-panel > .auth-feedback,
+.client-panel > .auth-feedback,
+.client-dashboard-footer,
+.market-month-focus,
+.admin-market-editor {
+  margin-top: 1rem;
+}
+
+.admin-actions-inline,
+.admin-panel > .admin-actions,
+.client-dashboard-footer {
+  gap: 0.8rem;
+}
+
+.admin-stack,
+.client-profile-main,
+.client-profile-copy,
+.client-resource-list,
+.client-timeline {
+  gap: 0.95rem;
+}
+
+.market-chart-shell,
+.market-month-index,
+.market-region-card,
+.market-info-card {
+  border-radius: 26px;
+}
+
+.market-month-focus-header,
+.market-region-focus-header,
+.client-panel-heading-split,
+.admin-panel-heading {
+  align-items: flex-start;
+}
+
+.market-region-card,
+.market-info-card,
+.admin-link-card,
+.admin-file-card {
+  min-height: 100%;
+}
+
+.market-list {
+  gap: 0.45rem;
+}
+
+.market-info-card p,
+.admin-inline-note,
+.client-panel-note {
+  line-height: 1.65;
+}
+
+@media (max-width: 1080px) {
+  .admin-panel,
+  .admin-subpanel,
+  .client-panel,
+  .client-profile-card,
+  .client-overview-card,
+  .client-resource-card,
+  .client-summary-box,
+  .client-timeline-content {
+    padding: 1.1rem;
+  }
+
+  .admin-actions-inline,
+  .admin-panel > .admin-actions,
+  .client-dashboard-footer {
+    flex-direction: column;
+  }
+
+  .admin-actions-inline .button,
+  .admin-panel > .admin-actions .button,
+  .client-dashboard-footer .button,
+  .client-dashboard-footer form,
+  .client-dashboard-footer form .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 720px) {
+  .admin-meta-grid,
+  .admin-subpanel-grid,
+  .admin-subpanel-grid-market,
+  .admin-packet-documents-grid,
+  .admin-packet-links-grid,
+  .market-region-grid,
+  .market-info-grid,
+  .market-info-grid-region,
+  .market-region-metrics,
+  .client-profile-meta,
+  .client-info-grid-refined {
+    grid-template-columns: 1fr;
+  }
+
+  .client-panel-heading-split,
+  .market-region-focus-header,
+  .market-month-focus-header,
+  .admin-panel-heading {
+    gap: 0.8rem;
+  }
+
+  .market-chart-shell {
+    padding: 0.95rem;
+  }
+}

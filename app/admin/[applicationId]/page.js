@@ -30,6 +30,19 @@ function createEmptyPostCallZeroPacket() {
   };
 }
 
+function createEmptyCallReport() {
+  return {
+    call_type: "intro",
+    raw_notes: "",
+    client_summary: "",
+    suggested_email: "",
+    suggested_timeline_events: [],
+    internal_tasks: [],
+    important_dates: [],
+    status: "draft"
+  };
+}
+
 export default async function AdminApplicationPage({ params }) {
   const session = await getClientSession();
 
@@ -58,6 +71,7 @@ export default async function AdminApplicationPage({ params }) {
   const profileResult = await adminClient.clientProfiles.getByApplicationId(params.applicationId);
   const accessResult = await adminClient.clientAccess.getByApplicationId(params.applicationId);
   const postCallZeroPacketResult = await adminClient.postCallZeroPackets.getByApplicationId(params.applicationId);
+  const callReportResult = await adminClient.clientCallReports.getByApplicationId(params.applicationId);
 
   const profile =
     profileResult.ok && Array.isArray(profileResult.data) && profileResult.data.length > 0
@@ -74,6 +88,11 @@ export default async function AdminApplicationPage({ params }) {
       ? postCallZeroPacketResult.data[0]
       : null;
   const safePostCallZeroPacket = postCallZeroPacket || createEmptyPostCallZeroPacket();
+  const callReport =
+    callReportResult.ok && Array.isArray(callReportResult.data) && callReportResult.data.length > 0
+      ? callReportResult.data[0]
+      : null;
+  const safeCallReport = callReport || createEmptyCallReport();
 
   const isClientFolder = application.status === "approved";
 
@@ -82,7 +101,7 @@ export default async function AdminApplicationPage({ params }) {
       <section className="admin-frame">
         <header className="admin-header admin-header-compact">
           <div>
-            <p className="eyebrow">{isClientFolder ? "Client" : "Requete"}</p>
+            <p className="eyebrow">{isClientFolder ? "Client" : "Requête"}</p>
             <h1>
               {[application.first_name, application.last_name].filter(Boolean).join(" ") ||
                 application.pseudo ||
@@ -90,16 +109,16 @@ export default async function AdminApplicationPage({ params }) {
             </h1>
             <p className="admin-lead">
               {isClientFolder
-                ? "Gerez le profil client, ses ressources utiles et la progression du dossier."
+                ? "Gérez le profil client, ses ressources utiles et la progression du dossier."
                 : "Relisez la demande, puis acceptez-la pour en faire un client ou refusez-la sans perdre l'historique."}
             </p>
           </div>
 
           <div className="admin-header-actions">
             <Link className="button button-dark" href="/admin">
-              Retour a l'administration
+              Retour à l'administration
             </Link>
-            <LogoutButton label="Se deconnecter" />
+            <LogoutButton label="Se déconnecter" />
           </div>
         </header>
 
@@ -110,6 +129,7 @@ export default async function AdminApplicationPage({ params }) {
             access={access}
             postCallZeroPacket={safePostCallZeroPacket}
             hasPostCallZeroPacket={Boolean(postCallZeroPacket)}
+            callReport={safeCallReport}
             clientSpaceUrl={`/espace-client/${params.applicationId}`}
           />
         ) : (

@@ -39,9 +39,15 @@ function normalizeTimelineEvents(items) {
       label: normalizeText(item?.label),
       date: normalizeText(item?.date),
       description: normalizeText(item?.description),
-      tone: ["done", "current", "upcoming"].includes(item?.tone) ? item.tone : "upcoming"
+      tone: ["done", "current", "upcoming"].includes(item?.tone) ? item.tone : "upcoming",
+      order: Number.isFinite(Number(item?.order)) ? Number(item.order) : index + 1
     }))
-    .filter((item) => item.label || item.description || item.date);
+    .filter((item) => item.label || item.description || item.date)
+    .sort((a, b) => a.order - b.order)
+    .map((item, index) => ({
+      ...item,
+      order: index + 1
+    }));
 }
 
 async function requireAdminSession() {

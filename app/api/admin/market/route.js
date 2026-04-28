@@ -46,15 +46,14 @@ function normalizeMarketPayload(body) {
             (Array.isArray(region?.months) ? region.months : []).map((month) => [
               normalizeText(month?.key),
               {
-                academic: normalizeScore(month?.academic, `Academique ${month?.label || month?.key}`),
-                structures: normalizeScore(month?.structures, `Structures ${month?.label || month?.key}`),
-                saturation: normalizeScore(month?.saturation, `Saturation ${month?.label || month?.key}`),
+                academic: normalizeScore(month?.academic, `Marché des académies ${month?.label || month?.key}`),
+                structures: normalizeScore(month?.structures, `Investissement des structures ${month?.label || month?.key}`),
+                saturation: normalizeScore(month?.saturation, `Saturation du marché ${month?.label || month?.key}`),
                 hype: normalizeScore(month?.hype, `Hype ${month?.label || month?.key}`),
-                globalState: normalizeScore(month?.globalState, `Etat global ${month?.label || month?.key}`),
+                globalState: normalizeScore(month?.globalState, `Opportunité globale ${month?.label || month?.key}`),
                 majorActive: Boolean(month?.majorActive),
                 fncsActive: Boolean(month?.fncsActive),
-                ewcActive: Boolean(month?.ewcActive),
-                comment: normalizeText(month?.comment)
+                ewcActive: Boolean(month?.ewcActive)
               }
             ])
           )
@@ -75,8 +74,33 @@ export async function PATCH(request) {
     const body = await request.json();
     const settings = normalizeMarketPayload(body);
     const adminClient = createSupabaseAdminClient();
+    const existingResult = await adminClient.globalMarketSettings.get();
+    const existingSettings =
+      existingResult.ok && Array.isArray(existingResult.data) && existingResult.data.length > 0
+        ? existingResult.data[0]?.settings || {}
+        : {};
+    const mergedRegions = Object.fromEntries(
+      Object.entries(settings.regions).map(([regionKey, regionValue]) => {
+        const existingRegion = existingSettings?.regions?.[regionKey] || {};
+        return [
+          regionKey,
+          {
+            ...existingRegion,
+            ...regionValue,
+            months: {
+              ...(existingRegion.months || {}),
+              ...(regionValue.months || {})
+            }
+          }
+        ];
+      })
+    );
     const result = await adminClient.globalMarketSettings.upsert({
-      settings,
+      settings: {
+        ...existingSettings,
+        outlook: settings.outlook,
+        regions: mergedRegions
+      },
       updated_by: session.user.id
     });
 

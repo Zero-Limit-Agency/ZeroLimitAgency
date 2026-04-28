@@ -44,7 +44,10 @@ function getActiveSeries(market, view) {
 }
 
 function getGlobalMonthDetails(market, monthKey) {
-  return market.global.months.find((month) => month.key === monthKey) || market.global.months[market.global.months.length - 1];
+  return (
+    market.global.months.find((month) => month.key === monthKey) ||
+    market.global.months[market.global.months.length - 1]
+  );
 }
 
 function getRegionMonthDetails(region, monthKey) {
@@ -52,24 +55,7 @@ function getRegionMonthDetails(region, monthKey) {
 }
 
 function getDetailMonthLabel(market, monthKey) {
-  const label = market.monthLabels?.[monthKey] || monthKey;
-
-  switch (monthKey) {
-    case "nov":
-      return "Novembre";
-    case "dec":
-      return "Décembre";
-    case "jan":
-      return "Janvier";
-    case "feb":
-      return "Février";
-    case "mar":
-      return "Mars";
-    case "apr":
-      return "Avril";
-    default:
-      return label;
-  }
+  return market.monthFullLabels?.[monthKey] || market.monthLabels?.[monthKey] || monthKey;
 }
 
 export function ZeroLimitMarket({ market }) {
@@ -133,7 +119,11 @@ export function ZeroLimitMarket({ market }) {
             className="market-chart"
             viewBox={`0 0 ${geometry.width} ${geometry.height}`}
             role="img"
-            aria-label={activeRegion ? `Evolution du marche ${activeRegion.label}` : "Comparaison globale du Zero Limit Market"}
+            aria-label={
+              activeRegion
+                ? `Évolution du marché ${activeRegion.label}`
+                : "Comparaison globale du Zero Limit Market"
+            }
           >
             {Y_AXIS_VALUES.map((guide) => {
               const y = getY(guide, geometry);
@@ -217,7 +207,7 @@ export function ZeroLimitMarket({ market }) {
         </div>
       </div>
 
-      <div className="market-month-switcher" role="tablist" aria-label="Selection du mois">
+      <div className="market-month-switcher" role="tablist" aria-label="Sélection du mois">
         {market.monthKeys.map((monthKey) => (
           <button
             key={monthKey}
@@ -268,9 +258,9 @@ export function ZeroLimitMarket({ market }) {
                 <small>Lecture du mois</small>
                 <p>{monthDetails.summary}</p>
                 <ul className="market-list">
-                  <li>Hausse : {monthDetails.rising.length > 0 ? monthDetails.rising.join(", ") : "Aucune region"}</li>
-                  <li>Baisse : {monthDetails.falling.length > 0 ? monthDetails.falling.join(", ") : "Aucune region"}</li>
-                  <li>Stable : {monthDetails.stable.length > 0 ? monthDetails.stable.join(", ") : "Aucune region"}</li>
+                  <li>Hausse : {monthDetails.rising.length > 0 ? monthDetails.rising.join(", ") : "Aucune région"}</li>
+                  <li>Baisse : {monthDetails.falling.length > 0 ? monthDetails.falling.join(", ") : "Aucune région"}</li>
+                  <li>Stable : {monthDetails.stable.length > 0 ? monthDetails.stable.join(", ") : "Aucune région"}</li>
                 </ul>
               </div>
 
@@ -286,11 +276,12 @@ export function ZeroLimitMarket({ market }) {
               </div>
 
               <div className="market-info-card">
-                <small>Regions du mois</small>
+                <small>Régions du mois</small>
                 <ul className="market-list">
                   {monthDetails.regionNotes.map((region) => (
                     <li key={region.key}>
-                      {region.label} : {region.index} ({region.delta >= 0 ? "+" : ""}{region.delta})
+                      {region.label} : {region.index} ({region.delta >= 0 ? "+" : ""}
+                      {region.delta})
                     </li>
                   ))}
                 </ul>
@@ -310,7 +301,7 @@ export function ZeroLimitMarket({ market }) {
 
           <div className="market-region-metrics">
             <div className="market-info-card">
-              <small>Base regionale</small>
+              <small>Base régionale</small>
               <strong>{activeRegion.base}</strong>
             </div>
             <div className="market-info-card">
@@ -318,11 +309,11 @@ export function ZeroLimitMarket({ market }) {
               <strong>{activeRegion.currentIndex}</strong>
             </div>
             <div className="market-info-card">
-              <small>Variation recente</small>
+              <small>Variation récente</small>
               <strong>{activeRegion.deltaLabel}</strong>
             </div>
             <div className="market-info-card">
-              <small>Etat du marche</small>
+              <small>État du marché</small>
               <strong>{activeRegion.signalMeta.title}</strong>
             </div>
           </div>
@@ -332,11 +323,11 @@ export function ZeroLimitMarket({ market }) {
               <small>Lecture du marché</small>
               <p>{activeRegion.summary}</p>
               <ul className="market-list">
-                <li>Académique : {monthDetails.values.academic}/10 ({monthDetails.changes?.academic || "stable"})</li>
-                <li>Structures : {monthDetails.values.structures}/10 ({monthDetails.changes?.structures || "stable"})</li>
-                <li>Saturation : {monthDetails.values.saturation}/10 ({monthDetails.changes?.saturation || "stable"})</li>
-                <li>Hype : {monthDetails.values.hype}/10 ({monthDetails.changes?.hype || "stable"})</li>
-                <li>État global : {monthDetails.values.globalState}/10 ({monthDetails.changes?.globalState || "stable"})</li>
+                <li>Marché des académies : {monthDetails.values.academic}/10 ({monthDetails.changes?.academic || "stable"})</li>
+                <li>Investissement des structures : {monthDetails.values.structures}/10 ({monthDetails.changes?.structures || "stable"})</li>
+                <li>Saturation du marché : {monthDetails.values.saturation}/10 ({monthDetails.changes?.saturation || "stable"})</li>
+                <li>Hype du moment : {monthDetails.values.hype}/10 ({monthDetails.changes?.hype || "stable"})</li>
+                <li>Opportunité globale : {monthDetails.values.globalState}/10 ({monthDetails.changes?.globalState || "stable"})</li>
               </ul>
             </div>
 
@@ -360,7 +351,7 @@ export function ZeroLimitMarket({ market }) {
                 <li>FNCS : {monthDetails.events.fncsActive ? "Actif" : "Inactif"}</li>
                 <li>EWC : {monthDetails.events.ewcActive ? "Actif" : "Inactif"}</li>
               </ul>
-              <p>{monthDetails.comment || "Aucune analyse ajoutee pour ce mois."}</p>
+              <p>{monthDetails.reading || "Lecture automatique du mois en attente."}</p>
             </div>
 
             <div className="market-info-card">

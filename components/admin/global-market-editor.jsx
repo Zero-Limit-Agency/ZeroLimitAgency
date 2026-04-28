@@ -1,56 +1,71 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-import { buildMarketEditorModel, MARKET_VIEW_ORDER } from "@/lib/applications/client-space";
+import {
+  buildMarketEditorModel,
+  buildZeroLimitMarketData,
+  MARKET_METRICS,
+  MARKET_VIEW_ORDER
+} from "@/lib/applications/client-space";
 
 function buildViewLabel(view) {
   return view === "global" ? "Global" : view.toUpperCase();
 }
 
-function computeRegionPreview(region) {
-  const months = region.months.map((month) => {
-    const academic = Number(month.academic || 0);
-    const structures = Number(month.structures || 0);
-    const saturation = Number(month.saturation || 0);
-    const hype = Number(month.hype || 0);
-    const globalState = Number(month.globalState || 0);
-    const base = Number(region.base || 0);
-    const boost = (month.majorActive ? 4 : 0) + (month.fncsActive ? 6 : 0) + (month.ewcActive ? 8 : 0);
-    const raw = base + academic * 1 + structures * 1.4 - saturation * 0.9 + hype * 1.1 + globalState * 1.2 + boost;
-    return Math.min(Math.max(Math.round(raw), 60), 120);
-  });
-
-  const currentIndex = months[months.length - 1] || Number(region.base || 0);
-  const previous = months[months.length - 2] || currentIndex;
-  const delta = currentIndex - previous;
-  const pressure = currentIndex - Number(region.base || 0);
-  const signal = pressure <= 6 ? "Bon moment" : pressure <= 14 ? "Neutre" : "Mauvais moment";
-  const trend =
-    delta >= 4 ? "Hausse marquee" : delta >= 1 ? "Hausse moderee" : delta <= -4 ? "Baisse marquee" : delta <= -1 ? "Baisse moderee" : "Stable";
-
+function buildPreviewPayload(form) {
   return {
-    months,
-    currentIndex,
-    trend,
-    signal
+    regions: Object.fromEntries(
+      form.regions.map((region) => [
+        region.key,
+        {
+          base: Number(region.base || 0),
+          months: Object.fromEntries(
+            region.months.map((month) => [
+              month.key,
+              {
+                academic: Number(month.academic || 0),
+                structures: Number(month.structures || 0),
+                saturation: Number(month.saturation || 0),
+                hype: Number(month.hype || 0),
+                globalState: Number(month.globalState || 0),
+                majorActive: Boolean(month.majorActive),
+                fncsActive: Boolean(month.fncsActive),
+                ewcActive: Boolean(month.ewcActive)
+              }
+            ])
+          )
+        }
+      ])
+    ),
+    outlook: form.outlook
   };
 }
 
 export function GlobalMarketEditor({ initialSettings }) {
   const [state, setState] = useState({ status: "idle", message: "" });
   const [selectedRegionKey, setSelectedRegionKey] = useState("global");
-  const [selectedMonthKey, setSelectedMonthKey] = useState("apr");
   const [baseEditRegion, setBaseEditRegion] = useState(null);
   const [form, setForm] = useState(buildMarketEditorModel(initialSettings));
+  const [selectedMonthKey, setSelectedMonthKey] = useState(
+    form.monthDefinitions[form.monthDefinitions.length - 1]?.key || ""
+  );
 
+  const preview = useMemo(() => buildZeroLimitMarketData(buildPreviewPayload(form)), [form]);
   const selectedRegion =
     selectedRegionKey === "global"
       ? null
       : form.regions.find((region) => region.key === selectedRegionKey) || null;
+  const selectedRegionPreview =
+    selectedRegionKey === "global"
+      ? null
+      : preview.regions.find((region) => region.key === selectedRegionKey) || null;
   const selectedMonth =
     selectedRegion?.months.find((month) => month.key === selectedMonthKey) || selectedRegion?.months[0] || null;
-  const selectedRegionPreview = selectedRegion ? computeRegionPreview(selectedRegion) : null;
+  const selectedMonthPreview =
+    selectedRegionPreview?.months.find((month) => month.key === selectedMonthKey) ||
+    selectedRegionPreview?.months[0] ||
+    null;
 
   function updateField(field, value) {
     setForm((current) => ({
@@ -107,7 +122,7 @@ export function GlobalMarketEditor({ initialSettings }) {
 
       setState({
         status: "success",
-        message: result?.message || "Market global mis a jour."
+        message: result?.message || "Market global mis à jour."
       });
     } catch (error) {
       setState({
@@ -122,9 +137,9 @@ export function GlobalMarketEditor({ initialSettings }) {
       <div className="admin-panel-heading">
         <div>
           <p className="eyebrow">Zero Limit Market</p>
-          <h2>Configuration globale du marche</h2>
+          <h2>Configuration globale du marché</h2>
           <p className="admin-inline-note">
-            Cette configuration est partagée par tous les clients. Le toggle par client décide seulement de l'affichage.
+            Cette configuration est partagée par tous les clients. Le toggle par client décide seulement de l&apos;affichage.
           </p>
         </div>
       </div>
@@ -136,13 +151,13 @@ export function GlobalMarketEditor({ initialSettings }) {
         </label>
         <div className="admin-market-auto-card">
           <span>Lecture globale</span>
-          <strong>Generee automatiquement</strong>
-          <p>Le resume global se met a jour a partir des indices regionaux et des variations mensuelles.</p>
+          <strong>Générée automatiquement</strong>
+          <p>Le résumé global se met à jour à partir des indices régionaux et des variations mensuelles.</p>
         </div>
         <div className="admin-market-auto-card">
-          <span>Etat du marche</span>
-          <strong>Genere automatiquement</strong>
-          <p>L'etat du marche depend du niveau de tension calcule sur l'ensemble des regions.</p>
+          <span>État du marché</span>
+          <strong>Généré automatiquement</strong>
+          <p>L&apos;état du marché dépend du niveau de tension calculé sur l&apos;ensemble des régions.</p>
         </div>
       </div>
 
@@ -163,46 +178,45 @@ export function GlobalMarketEditor({ initialSettings }) {
         <div className="admin-subpanel admin-market-summary-panel">
           <strong>Vue globale</strong>
           <p className="admin-inline-note">
-            Choisissez une region pour modifier la base, les mois, les periodes competitives et les analyses.
+            Choisissez une région pour modifier la base, les mois récents et les périodes compétitives.
           </p>
           <div className="market-region-grid">
-            {form.regions.map((region) => {
-              const preview = computeRegionPreview(region);
-
-              return (
-                <button
-                  key={region.key}
-                  type="button"
-                  className="market-region-card market-region-card-button"
-                  onClick={() => setSelectedRegionKey(region.key)}
-                >
-                  <div className="market-region-topline">
-                    <span className="market-region-swatch" style={{ backgroundColor: region.color }} />
-                    <strong className="market-region-label">{region.label}</strong>
-                  </div>
-                  <span>Base {region.base}</span>
-                  <span>Indice calcule {preview.currentIndex}</span>
-                  <span>{preview.trend}</span>
-                  <span className="market-chip market-chip-admin">{preview.signal}</span>
-                </button>
-              );
-            })}
+            {preview.regions.map((region) => (
+              <button
+                key={region.key}
+                type="button"
+                className="market-region-card market-region-card-button"
+                onClick={() => {
+                  setSelectedRegionKey(region.key);
+                  setSelectedMonthKey(form.monthDefinitions[form.monthDefinitions.length - 1]?.key || "");
+                }}
+              >
+                <div className="market-region-topline">
+                  <span className="market-region-swatch" style={{ backgroundColor: region.color }} />
+                  <strong className="market-region-label">{region.label}</strong>
+                </div>
+                <span>Base {region.base}</span>
+                <span>Indice calculé {region.currentIndex}</span>
+                <span>{region.trend}</span>
+                <span className="market-chip market-chip-admin">{region.signalMeta.label}</span>
+              </button>
+            ))}
           </div>
         </div>
-      ) : selectedRegion ? (
+      ) : selectedRegion && selectedRegionPreview ? (
         <div className="admin-market-editor">
           <div className="admin-subpanel">
             <div className="admin-panel-heading admin-panel-heading-tight">
               <div>
                 <small>{selectedRegion.label}</small>
-                <strong>Configuration regionale</strong>
+                <strong>Configuration régionale</strong>
               </div>
               <span className="market-admin-swatch" style={{ backgroundColor: selectedRegion.color }} />
             </div>
 
             <div className="admin-market-hero">
               <div className="admin-market-hero-card">
-                <small>Base regionale</small>
+                <small>Base régionale</small>
                 {baseEditRegion === selectedRegion.key ? (
                   <div className="admin-market-inline-edit">
                     <input
@@ -237,15 +251,15 @@ export function GlobalMarketEditor({ initialSettings }) {
               </div>
 
               <div className="admin-market-hero-card">
-                <small>Indice actuel calcule</small>
-                <strong>{selectedRegionPreview?.currentIndex}</strong>
-                <span>{selectedRegionPreview?.trend}</span>
+                <small>Indice actuel calculé</small>
+                <strong>{selectedRegionPreview.currentIndex}</strong>
+                <span>{selectedRegionPreview.trend}</span>
               </div>
 
               <div className="admin-market-hero-card">
-                <small>Etat du marche</small>
-                <strong>{selectedRegionPreview?.signal}</strong>
-                <span>Automatique selon l'indice calcule</span>
+                <small>État du marché</small>
+                <strong>{selectedRegionPreview.signalMeta.label}</strong>
+                <span>Automatique selon l&apos;indice calculé</span>
               </div>
             </div>
           </div>
@@ -254,7 +268,7 @@ export function GlobalMarketEditor({ initialSettings }) {
             <div className="admin-panel-heading admin-panel-heading-tight">
               <div>
                 <small>{selectedRegion.label}</small>
-                <strong>Edition mois par mois</strong>
+                <strong>Édition mois par mois</strong>
               </div>
             </div>
 
@@ -271,33 +285,27 @@ export function GlobalMarketEditor({ initialSettings }) {
               ))}
             </div>
 
-            {selectedMonth ? (
+            {selectedMonth && selectedMonthPreview ? (
               <>
                 <div className="admin-subpanel-grid admin-subpanel-grid-market">
-                  <label className="auth-field">
-                    <span>Academique (0 a 10)</span>
-                    <input type="number" min="0" max="10" value={selectedMonth.academic} onChange={(event) => updateSelectedMonthField("academic", event.target.value)} />
-                  </label>
-                  <label className="auth-field">
-                    <span>Structures (0 a 10)</span>
-                    <input type="number" min="0" max="10" value={selectedMonth.structures} onChange={(event) => updateSelectedMonthField("structures", event.target.value)} />
-                  </label>
-                  <label className="auth-field">
-                    <span>Saturation (0 a 10)</span>
-                    <input type="number" min="0" max="10" value={selectedMonth.saturation} onChange={(event) => updateSelectedMonthField("saturation", event.target.value)} />
-                  </label>
-                  <label className="auth-field">
-                    <span>Hype (0 a 10)</span>
-                    <input type="number" min="0" max="10" value={selectedMonth.hype} onChange={(event) => updateSelectedMonthField("hype", event.target.value)} />
-                  </label>
-                  <label className="auth-field">
-                    <span>Etat global (0 a 10)</span>
-                    <input type="number" min="0" max="10" value={selectedMonth.globalState} onChange={(event) => updateSelectedMonthField("globalState", event.target.value)} />
-                  </label>
+                  {MARKET_METRICS.map((metric) => (
+                    <label key={metric.key} className="auth-field">
+                      <span>{metric.label} (0 à 10)</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max="10"
+                        value={selectedMonth[metric.key]}
+                        onChange={(event) => updateSelectedMonthField(metric.key, event.target.value)}
+                      />
+                      <small className="admin-inline-note">{metric.help}</small>
+                    </label>
+                  ))}
+
                   <div className="admin-market-month-preview">
                     <small>Indice du mois</small>
-                    <strong>{selectedRegionPreview?.months[selectedRegion.months.findIndex((month) => month.key === selectedMonth.key)]}</strong>
-                    <span>Calcule automatiquement</span>
+                    <strong>{selectedMonthPreview.index}</strong>
+                    <span>Calculé automatiquement</span>
                   </div>
                 </div>
 
@@ -307,33 +315,35 @@ export function GlobalMarketEditor({ initialSettings }) {
                       <strong>Major actif</strong>
                       <span>Oui / non pour ce mois</span>
                     </div>
-                    <input type="checkbox" checked={selectedMonth.majorActive} onChange={(event) => updateSelectedMonthField("majorActive", event.target.checked)} />
+                    <input
+                      type="checkbox"
+                      checked={selectedMonth.majorActive}
+                      onChange={(event) => updateSelectedMonthField("majorActive", event.target.checked)}
+                    />
                   </label>
                   <label className="admin-toggle-row admin-toggle-row-compact">
                     <div>
                       <strong>FNCS actif</strong>
                       <span>Oui / non pour ce mois</span>
                     </div>
-                    <input type="checkbox" checked={selectedMonth.fncsActive} onChange={(event) => updateSelectedMonthField("fncsActive", event.target.checked)} />
+                    <input
+                      type="checkbox"
+                      checked={selectedMonth.fncsActive}
+                      onChange={(event) => updateSelectedMonthField("fncsActive", event.target.checked)}
+                    />
                   </label>
                   <label className="admin-toggle-row admin-toggle-row-compact">
                     <div>
                       <strong>EWC actif</strong>
                       <span>Oui / non pour ce mois</span>
                     </div>
-                    <input type="checkbox" checked={selectedMonth.ewcActive} onChange={(event) => updateSelectedMonthField("ewcActive", event.target.checked)} />
+                    <input
+                      type="checkbox"
+                      checked={selectedMonth.ewcActive}
+                      onChange={(event) => updateSelectedMonthField("ewcActive", event.target.checked)}
+                    />
                   </label>
                 </div>
-
-                <label className="auth-field">
-                  <span>Commentaire / analyse du mois</span>
-                  <textarea
-                    className="admin-textarea admin-textarea-compact"
-                    rows={4}
-                    value={selectedMonth.comment}
-                    onChange={(event) => updateSelectedMonthField("comment", event.target.value)}
-                  />
-                </label>
               </>
             ) : null}
           </div>
