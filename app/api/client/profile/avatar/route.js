@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 
 import { DEMO_CLIENT_USER_ID } from "@/lib/auth/demo-client";
+import { requireAuthenticatedApiSession } from "@/lib/auth/api-guards";
 import { getAuthorizedClientAccess } from "@/lib/auth/client-access";
-import { getClientSession } from "@/lib/auth/client-auth";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { assertSafeUpload } from "@/lib/security/uploads";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 
 const MAX_AVATAR_SIZE = 1024 * 1024 * 2;
-const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 function buildDataUrl(file, buffer) {
   const base64 = Buffer.from(buffer).toString("base64");
@@ -17,14 +18,23 @@ function buildDataUrl(file, buffer) {
 
 export async function POST(request) {
   try {
-    const session = await getClientSession();
+    const rateLimitResponse = enforceRateLimit(request, {
+      key: "client-avatar-upload",
+      limit: 10,
+      windowMs: 60 * 1000
+    });
 
-    if (!session?.user) {
-      return NextResponse.json(
-        { success: false, error: "Vous devez être connecté pour modifier votre photo." },
-        { status: 401 }
-      );
+    if (rateLimitResponse) {
+      return rateLimitResponse;
     }
+
+    const authAccess = await requireAuthenticatedApiSession();
+
+    if (!authAccess.ok) {
+      return authAccess.response;
+    }
+
+    const session = authAccess.session;
 
     if (session.user.id === DEMO_CLIENT_USER_ID) {
       return NextResponse.json(
@@ -55,19 +65,13 @@ export async function POST(request) {
       );
     }
 
-    if (!ALLOWED_TYPES.has(file.type)) {
-      return NextResponse.json(
-        { success: false, error: "Formats acceptés : PNG, JPG ou WEBP." },
-        { status: 400 }
-      );
-    }
-
-    if (file.size > MAX_AVATAR_SIZE) {
-      return NextResponse.json(
-        { success: false, error: "La photo ne doit pas dépasser 2 Mo." },
-        { status: 400 }
-      );
-    }
+    await assertSafeUpload(file, {
+      label: "photo de profil",
+      maxSizeBytes: MAX_AVATAR_SIZE,
+      allowedExtensions: [".jpg", ".jpeg", ".png", ".webp"],
+      allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"],
+      allowedSignatures: ["jpeg", "png", "webp"]
+    });
 
     const arrayBuffer = await file.arrayBuffer();
     const avatarDataUrl = buildDataUrl(file, arrayBuffer);
@@ -99,15 +103,12 @@ export async function POST(request) {
       avatar_data_url: result.data[0].avatar_data_url
     });
   } catch (error) {
-    console.error("[client-avatar] upload failed", error);
+    console.error("[client-avatar] upload failed", error instanceof Error ? error.message : "unknown");
 
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Une erreur est survenue lors de l'envoi de la photo."
+        error: "Une erreur est survenue lors de l'envoi de la photo."
       },
       { status: 500 }
     );

@@ -1,12 +1,17 @@
 import { Buffer } from "node:buffer";
 import { NextResponse } from "next/server";
 
-import { isAdminUser } from "@/lib/auth/admin-access";
-import { getClientSession } from "@/lib/auth/client-auth";
+import {
+  buildUuidParamError,
+  isUuidLike,
+  requireAdminApiSession
+} from "@/lib/auth/api-guards";
 import {
   buildManualClientEmail,
   sendZeroLimitEmail
 } from "@/lib/emails/zero-limit";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { assertSafeUpload } from "@/lib/security/uploads";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -18,29 +23,31 @@ function normalizeText(value) {
   return String(value || "").trim();
 }
 
-async function requireAdminSession() {
-  const session = await getClientSession();
-
-  if (!session?.user || !(await isAdminUser(session.user))) {
-    return null;
-  }
-
-  return session;
-}
-
 export async function POST(request, { params }) {
   try {
-    const session = await requireAdminSession();
+    const rateLimitResponse = enforceRateLimit(request, {
+      key: "admin-manual-email",
+      limit: 5,
+      windowMs: 60 * 1000
+    });
 
-    if (!session) {
-      return NextResponse.json(
-        { success: false, error: "Acces administrateur requis." },
-        { status: 403 }
-      );
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
+    const guard = await requireAdminApiSession();
+
+    if (!guard.ok) {
+      return guard.response;
     }
 
     const formData = await request.formData();
-    const applicationId = params.applicationId;
+    const applicationId = String(params?.applicationId || "").trim();
+
+    if (!isUuidLike(applicationId)) {
+      return buildUuidParamError("Identifiant de dossier invalide.");
+    }
+
     const subject = normalizeText(formData.get("subject"));
     const message = normalizeText(formData.get("message"));
 
@@ -76,15 +83,36 @@ export async function POST(request, { params }) {
       .slice(0, MAX_ATTACHMENTS);
 
     for (const file of files) {
-      if (file.size > MAX_ATTACHMENT_SIZE) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: `Le fichier ${file.name} depasse la taille maximale autorisee.`
-          },
-          { status: 400 }
-        );
-      }
+      await assertSafeUpload(file, {
+        label: `piece jointe ${file.name}`,
+        maxSizeBytes: MAX_ATTACHMENT_SIZE,
+        allowedExtensions: [
+          ".pdf",
+          ".png",
+          ".jpg",
+          ".jpeg",
+          ".webp",
+          ".zip",
+          ".doc",
+          ".docx",
+          ".xls",
+          ".xlsx",
+          ".txt"
+        ],
+        allowedMimeTypes: [
+          "application/pdf",
+          "image/png",
+          "image/jpeg",
+          "image/webp",
+          "application/zip",
+          "application/x-zip-compressed",
+          "application/msword",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "application/vnd.ms-excel",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "text/plain"
+        ]
+      });
     }
 
     const attachments = await Promise.all(
@@ -123,15 +151,12 @@ export async function POST(request, { params }) {
       message: "L'email a bien ete envoye au client."
     });
   } catch (error) {
-    console.error("[admin-manual-email] send failed", error);
+    console.error("[admin-manual-email] send failed", error instanceof Error ? error.message : "unknown");
 
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Une erreur est survenue lors de l'envoi de l'email."
+        error: "Une erreur est survenue lors de l'envoi de l'email."
       },
       { status: 500 }
     );

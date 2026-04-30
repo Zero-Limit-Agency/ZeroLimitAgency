@@ -7,6 +7,13 @@ import {
   sendZeroLimitEmail
 } from "@/lib/emails/zero-limit";
 import { ensureLeadDriveFolder, uploadFilesToLeadFolder } from "@/lib/google/drive";
+import {
+  assertSafeUploadBatch,
+  clampText,
+  isValidEmailAddress,
+  normalizeEmailAddress
+} from "@/lib/security/uploads";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -84,6 +91,38 @@ function normalizeBirthDate(value) {
   return month ? `${year}-${month}-${day.padStart(2, "0")}` : raw;
 }
 
+function normalizeSignupPayload(formData) {
+  return {
+    fullName: clampText(formData.get("fullName")?.toString() || "", 120),
+    birthDate: normalizeBirthDate(formData.get("birthDate")?.toString() || ""),
+    username: clampText(formData.get("username")?.toString() || "", 80),
+    email: normalizeEmailAddress(formData.get("email")?.toString() || ""),
+    password: formData.get("password")?.toString() || "",
+    company: clampText(formData.get("company")?.toString() || "", 120),
+    country: clampText(formData.get("country")?.toString() || "", 120) || "Non renseigne",
+    language: clampText(formData.get("language")?.toString() || "", 40),
+    requestType: clampText(formData.get("request")?.toString() || "", 80),
+    message: clampText(formData.get("message")?.toString() || "", 4000),
+    newsletter: parseBoolean(formData.get("newsletter")?.toString() || ""),
+    files: formData.getAll("files").filter((file) => file instanceof File && file.size > 0)
+  };
+}
+
+function buildCreateUserErrorMessage(error) {
+  const rawError = String(error?.message || "").toLowerCase();
+
+  if (
+    rawError.includes("already") ||
+    rawError.includes("exists") ||
+    rawError.includes("registered") ||
+    rawError.includes("duplicate")
+  ) {
+    return "Cette adresse email est deja utilisee.";
+  }
+
+  return "Impossible de creer le compte pour le moment.";
+}
+
 async function rollbackSignup(userId, applicationId) {
   if (applicationId) {
     await supabase.from("applications").delete().eq("id", applicationId).catch(() => null);
@@ -113,24 +152,28 @@ async function persistDriveWarning(applicationId, message) {
 
 export async function POST(request) {
   try {
+    const rateLimitResponse = enforceRateLimit(request, {
+      key: "contact",
+      limit: 5,
+      windowMs: 60 * 1000
+    });
+
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
     const formData = await request.formData();
+    const payload = normalizeSignupPayload(formData);
 
-    const fullName = formData.get("fullName")?.toString() || "";
-    const birthDate = normalizeBirthDate(formData.get("birthDate")?.toString() || "");
-    const username = formData.get("username")?.toString() || "";
-    const email = formData.get("email")?.toString().trim().toLowerCase() || "";
-    const password = formData.get("password")?.toString() || "";
-    const company = formData.get("company")?.toString() || "";
-    const country = formData.get("country")?.toString() || "Non renseigné";
-    const language = formData.get("language")?.toString() || "";
-    const requestType = formData.get("request")?.toString() || "";
-    const message = formData.get("message")?.toString() || "";
-    const newsletter = parseBoolean(formData.get("newsletter")?.toString() || "");
-    const files = formData
-      .getAll("files")
-      .filter((file) => file instanceof File && file.size > 0);
-
-    if (!fullName || !birthDate || !email || !password || !language || !requestType || !message) {
+    if (
+      !payload.fullName ||
+      !payload.birthDate ||
+      !payload.email ||
+      !payload.password ||
+      !payload.language ||
+      !payload.requestType ||
+      !payload.message
+    ) {
       return NextResponse.json(
         {
           success: false,
@@ -140,7 +183,7 @@ export async function POST(request) {
       );
     }
 
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(payload.birthDate)) {
       return NextResponse.json(
         {
           success: false,
@@ -150,26 +193,54 @@ export async function POST(request) {
       );
     }
 
-    if (password.length < 8) {
+    if (payload.password.length < 8) {
       return NextResponse.json(
         {
           success: false,
-          error: "Le mot de passe doit contenir au moins 8 caractères."
+          error: "Le mot de passe doit contenir au moins 8 caracteres."
         },
         { status: 400 }
       );
     }
 
-    const { firstName, lastName } = splitFullName(fullName);
+    if (!isValidEmailAddress(payload.email)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "L'adresse email saisie n'est pas valide."
+        },
+        { status: 400 }
+      );
+    }
+
+    await assertSafeUploadBatch(payload.files, {
+      label: "fichier",
+      maxFiles: 6,
+      maxSizeBytes: 10 * 1024 * 1024,
+      maxTotalBytes: 24 * 1024 * 1024,
+      allowedExtensions: [".pdf", ".png", ".jpg", ".jpeg", ".webp", ".zip"],
+      allowedMimeTypes: [
+        "application/pdf",
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "application/zip",
+        "application/x-zip-compressed",
+        "multipart/x-zip"
+      ],
+      allowedSignatures: ["pdf", "png", "jpeg", "webp", "zip"]
+    });
+
+    const { firstName, lastName } = splitFullName(payload.fullName);
 
     const authResult = await supabase.auth.admin.createUser({
-      email,
-      password,
+      email: payload.email,
+      password: payload.password,
       email_confirm: true,
       user_metadata: {
         first_name: firstName,
         last_name: lastName,
-        pseudo: username || null
+        pseudo: payload.username || null
       },
       app_metadata: {
         role: "client"
@@ -177,12 +248,10 @@ export async function POST(request) {
     });
 
     if (authResult.error || !authResult.data?.user?.id) {
-      const rawError = authResult.error?.message || "Impossible de créer le compte pour le moment.";
-
       return NextResponse.json(
         {
           success: false,
-          error: rawError
+          error: buildCreateUserErrorMessage(authResult.error)
         },
         { status: 400 }
       );
@@ -196,16 +265,16 @@ export async function POST(request) {
         {
           first_name: firstName,
           last_name: lastName,
-          pseudo: username || null,
-          email,
-          birth_date: birthDate,
-          company: company || null,
-          country,
-          language,
-          request_type: requestType,
-          message_raw: message,
+          pseudo: payload.username || null,
+          email: payload.email,
+          birth_date: payload.birthDate,
+          company: payload.company || null,
+          country: payload.country,
+          language: payload.language,
+          request_type: payload.requestType,
+          message_raw: payload.message,
           status: "pending_review",
-          newsletter_opt_in: newsletter
+          newsletter_opt_in: payload.newsletter
         }
       ])
       .select()
@@ -230,15 +299,15 @@ export async function POST(request) {
         applicationId: application.id,
         firstName,
         lastName,
-        pseudo: username || null,
+        pseudo: payload.username || null,
         createdAt: application.created_at,
-        email
+        email: payload.email
       });
 
-      if (files.length > 0) {
+      if (payload.files.length > 0) {
         await uploadFilesToLeadFolder({
           folderId: driveFolder.id,
-          files
+          files: payload.files
         });
       }
 
@@ -255,14 +324,17 @@ export async function POST(request) {
         .single();
 
       if (updateDriveError || !updatedApplication) {
-        throw new Error("Impossible de rattacher le dossier Google Drive à la demande.");
+        throw new Error("Impossible de rattacher le dossier Google Drive a la demande.");
       }
 
       finalApplication = updatedApplication;
     } catch (driveError) {
-      console.error("[contact] drive upload failed", driveError);
+      console.error(
+        "[contact] drive upload failed",
+        driveError instanceof Error ? driveError.message : "unknown"
+      );
       const warningMessage =
-        files.length > 0
+        payload.files.length > 0
           ? "Fichiers non transferes vers Google Drive"
           : "Dossier Google Drive non cree";
 
@@ -283,7 +355,7 @@ export async function POST(request) {
         ...internalEmail
       }),
       sendZeroLimitEmail({
-        to: email,
+        to: payload.email,
         from: process.env.INSCRIPTIONS_EMAIL,
         ...confirmationEmail
       })
@@ -291,16 +363,16 @@ export async function POST(request) {
 
     return NextResponse.json({
       success: true,
-      message: "Inscription réussie",
+      message: "Inscription reussie",
       applicationId: finalApplication.id
     });
   } catch (error) {
-    console.error("[contact] fatal error", error);
+    console.error("[contact] fatal error", error instanceof Error ? error.message : "unknown");
 
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Erreur serveur"
+        error: "Erreur serveur."
       },
       { status: 500 }
     );

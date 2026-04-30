@@ -7,11 +7,22 @@ import {
 } from "@/lib/auth/client-auth";
 import { getClientWorkspaceContext } from "@/lib/auth/client-access";
 import { getUserRole } from "@/lib/auth/admin-access";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
 
 export const runtime = "nodejs";
 
 export async function POST(request) {
   try {
+    const rateLimitResponse = enforceRateLimit(request, {
+      key: "auth-login",
+      limit: 10,
+      windowMs: 60 * 1000
+    });
+
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
     const body = await request.json();
     const email = String(body?.email || "").trim().toLowerCase();
     const password = String(body?.password || "").trim();
@@ -29,7 +40,7 @@ export async function POST(request) {
       return NextResponse.json(
         {
           success: false,
-          error: authResult.data?.error_description || authResult.data?.msg || "Connexion impossible."
+          error: "Connexion impossible."
         },
         { status: authResult.status || 401 }
       );
@@ -70,10 +81,12 @@ export async function POST(request) {
     setClientAuthCookies(response, authResult.data);
     return response;
   } catch (error) {
+    console.error("[auth-login] failed", error instanceof Error ? error.message : "unknown");
+
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Erreur de connexion."
+        error: "Erreur de connexion."
       },
       { status: 500 }
     );

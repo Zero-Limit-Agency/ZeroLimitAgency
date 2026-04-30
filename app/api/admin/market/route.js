@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { isAdminUser } from "@/lib/auth/admin-access";
-import { getClientSession } from "@/lib/auth/client-auth";
+import { requireAdminApiSession } from "@/lib/auth/api-guards";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -46,11 +45,23 @@ function normalizeMarketPayload(body) {
             (Array.isArray(region?.months) ? region.months : []).map((month) => [
               normalizeText(month?.key),
               {
-                academic: normalizeScore(month?.academic, `Marché des académies ${month?.label || month?.key}`),
-                structures: normalizeScore(month?.structures, `Investissement des structures ${month?.label || month?.key}`),
-                saturation: normalizeScore(month?.saturation, `Saturation du marché ${month?.label || month?.key}`),
-                hype: normalizeScore(month?.hype, `Hype ${month?.label || month?.key}`),
-                globalState: normalizeScore(month?.globalState, `Opportunité globale ${month?.label || month?.key}`),
+                academic: normalizeScore(
+                  month?.academic,
+                  `Marche des academies ${month?.label || month?.key}`
+                ),
+                structures: normalizeScore(
+                  month?.structures,
+                  `Investissement des structures ${month?.label || month?.key}`
+                ),
+                saturation: normalizeScore(
+                  month?.saturation,
+                  `Saturation du marche ${month?.label || month?.key}`
+                ),
+                hype: normalizeScore(month?.hype, `Hype du moment ${month?.label || month?.key}`),
+                globalState: normalizeScore(
+                  month?.globalState,
+                  `Opportunite globale ${month?.label || month?.key}`
+                ),
                 majorActive: Boolean(month?.majorActive),
                 fncsActive: Boolean(month?.fncsActive),
                 ewcActive: Boolean(month?.ewcActive)
@@ -65,10 +76,10 @@ function normalizeMarketPayload(body) {
 
 export async function PATCH(request) {
   try {
-    const session = await getClientSession();
+    const guard = await requireAdminApiSession();
 
-    if (!session?.user || !(await isAdminUser(session.user))) {
-      return NextResponse.json({ success: false, error: "Acces administrateur requis." }, { status: 403 });
+    if (!guard.ok) {
+      return guard.response;
     }
 
     const body = await request.json();
@@ -101,7 +112,7 @@ export async function PATCH(request) {
         outlook: settings.outlook,
         regions: mergedRegions
       },
-      updated_by: session.user.id
+      updated_by: guard.session.user.id
     });
 
     if (!result.ok || !Array.isArray(result.data) || result.data.length === 0) {
@@ -117,13 +128,12 @@ export async function PATCH(request) {
       market: result.data[0]
     });
   } catch (error) {
+    console.error("[admin-market] failed", error instanceof Error ? error.message : "unknown");
+
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Une erreur est survenue lors de l'enregistrement du market."
+        error: "Une erreur est survenue lors de l'enregistrement du market."
       },
       { status: 500 }
     );

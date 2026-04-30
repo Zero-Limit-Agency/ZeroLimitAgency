@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { buildGoogleOAuthUrl, createGoogleOAuthState } from "@/lib/google/oauth";
+import { requireAdminApiSession } from "@/lib/auth/api-guards";
 
 export const runtime = "nodejs";
 
@@ -18,9 +19,15 @@ function buildCookieOptions() {
 }
 
 export async function GET(request) {
+  const adminAccess = await requireAdminApiSession();
+
+  if (!adminAccess.ok) {
+    return adminAccess.response;
+  }
+
   const url = new URL(request.url);
   const nextPath = url.searchParams.get("next");
-  const safeNextPath = nextPath && nextPath.startsWith("/") ? nextPath : "/connexion";
+  const safeNextPath = nextPath && nextPath.startsWith("/admin") ? nextPath : "/admin";
   const state = createGoogleOAuthState();
   const redirectUrl = buildGoogleOAuthUrl(state);
   const response = NextResponse.redirect(redirectUrl);

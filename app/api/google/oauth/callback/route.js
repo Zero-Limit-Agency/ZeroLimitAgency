@@ -5,6 +5,7 @@ import {
   getStoredGoogleOAuthToken,
   storeGoogleOAuthTokens
 } from "@/lib/google/oauth";
+import { requireAdminApiSession } from "@/lib/auth/api-guards";
 
 export const runtime = "nodejs";
 
@@ -42,6 +43,12 @@ function buildRedirectUrl(requestUrl, pathname, searchParams = {}) {
 }
 
 export async function GET(request) {
+  const adminAccess = await requireAdminApiSession();
+
+  if (!adminAccess.ok) {
+    return adminAccess.response;
+  }
+
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
@@ -53,7 +60,7 @@ export async function GET(request) {
     const response = NextResponse.redirect(
       buildRedirectUrl(request.url, nextPath, {
         google: "error",
-        reason: googleError
+        reason: "provider_error"
       })
     );
 
@@ -90,7 +97,7 @@ export async function GET(request) {
     const response = NextResponse.redirect(
       buildRedirectUrl(request.url, nextPath, {
         google: "error",
-        reason: error instanceof Error ? error.message : "oauth_failed"
+        reason: "oauth_failed"
       })
     );
 

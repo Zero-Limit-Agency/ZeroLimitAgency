@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
 
 import { getUserRole } from "@/lib/auth/admin-access";
+import {
+  buildUuidParamError,
+  isUuidLike,
+  requireAuthenticatedApiSession
+} from "@/lib/auth/api-guards";
 import { getAuthorizedClientAccess } from "@/lib/auth/client-access";
-import { getClientSession } from "@/lib/auth/client-auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
   downloadStorageObject,
@@ -31,14 +35,21 @@ const DOCUMENT_FIELDS = {
 
 export async function GET(_request, { params }) {
   try {
-    const session = await getClientSession();
+    const guard = await requireAuthenticatedApiSession();
 
-    if (!session?.user) {
-      return NextResponse.json({ success: false, error: "Connexion requise." }, { status: 401 });
+    if (!guard.ok) {
+      return guard.response;
+    }
+
+    const session = guard.session;
+    const applicationId = String(params?.applicationId || "").trim();
+    const documentType = String(params?.documentType || "").trim();
+
+    if (!isUuidLike(applicationId)) {
+      return buildUuidParamError("Identifiant de dossier invalide.");
     }
 
     const role = await getUserRole(session.user);
-    const applicationId = params.applicationId;
 
     if (role !== "admin") {
       const authorizedAccess = await getAuthorizedClientAccess(session.user);
@@ -48,7 +59,7 @@ export async function GET(_request, { params }) {
       }
     }
 
-    const document = DOCUMENT_FIELDS[params.documentType];
+    const document = DOCUMENT_FIELDS[documentType];
 
     if (!document) {
       return NextResponse.json({ success: false, error: "Document introuvable." }, { status: 404 });
@@ -85,19 +96,20 @@ export async function GET(_request, { params }) {
       headers: {
         "Content-Type": packet?.[document.contentTypeField] || download.contentType,
         "Content-Disposition": `attachment; filename="${packet?.[document.fileNameField] || "document"}"`,
-        "Cache-Control": "private, no-store"
+        "Cache-Control": "private, no-store",
+        "X-Content-Type-Options": "nosniff"
       }
     });
   } catch (error) {
-    console.error("[client-post-call-zero-file] failed", error);
+    console.error(
+      "[client-post-call-zero-file] failed",
+      error instanceof Error ? error.message : "unknown"
+    );
 
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Une erreur est survenue lors du telechargement du document."
+        error: "Une erreur est survenue lors du telechargement du document."
       },
       { status: 500 }
     );

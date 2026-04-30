@@ -1,22 +1,15 @@
 import { NextResponse } from "next/server";
 
-import { isAdminUser } from "@/lib/auth/admin-access";
-import { getClientSession } from "@/lib/auth/client-auth";
+import { requireAdminApiSession } from "@/lib/auth/api-guards";
 import { normalizeMaintenanceSettings } from "@/lib/maintenance";
-import { formatSupabaseAdminError } from "@/lib/supabase/errors";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { formatSupabaseAdminError } from "@/lib/supabase/errors";
 
 export async function PATCH(request) {
-  const session = await getClientSession();
+  const guard = await requireAdminApiSession();
 
-  if (!session?.user || !(await isAdminUser(session.user))) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Accès administrateur requis."
-      },
-      { status: 403 }
-    );
+  if (!guard.ok) {
+    return guard.response;
   }
 
   try {
@@ -25,7 +18,7 @@ export async function PATCH(request) {
     const adminClient = createSupabaseAdminClient();
     const result = await adminClient.globalMaintenanceSettings.upsert({
       settings,
-      updated_by: session.user.id
+      updated_by: guard.session.user.id
     });
 
     if (!result.ok) {
@@ -46,15 +39,17 @@ export async function PATCH(request) {
     return NextResponse.json({
       success: true,
       message: settings.enabled
-        ? "Le mode maintenance est activé."
-        : "Le mode maintenance est désactivé.",
+        ? "Le mode maintenance est active."
+        : "Le mode maintenance est desactive.",
       settings
     });
   } catch (error) {
+    console.error("[admin-maintenance] failed", error instanceof Error ? error.message : "unknown");
+
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Impossible d'enregistrer le mode maintenance."
+        error: "Impossible d'enregistrer le mode maintenance."
       },
       { status: 500 }
     );

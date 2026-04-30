@@ -1,12 +1,16 @@
 import { Buffer } from "node:buffer";
 import { NextResponse } from "next/server";
 
-import { isAdminUser } from "@/lib/auth/admin-access";
-import { getClientSession } from "@/lib/auth/client-auth";
+import {
+  buildUuidParamError,
+  isUuidLike,
+  requireAdminApiSession
+} from "@/lib/auth/api-guards";
 import {
   buildPostCallZeroPacketEmail,
   sendZeroLimitEmail
 } from "@/lib/emails/zero-limit";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
   downloadStorageObject,
@@ -129,16 +133,28 @@ async function buildAttachments(packet) {
 
 export async function POST(_request, { params }) {
   try {
-    const session = await getClientSession();
+    const rateLimitResponse = enforceRateLimit(request, {
+      key: "admin-post-call-zero-send",
+      limit: 5,
+      windowMs: 60 * 1000
+    });
 
-    if (!session?.user || !(await isAdminUser(session.user))) {
-      return NextResponse.json(
-        { success: false, error: "Acces administrateur requis." },
-        { status: 403 }
-      );
+    if (rateLimitResponse) {
+      return rateLimitResponse;
     }
 
-    const applicationId = params.applicationId;
+    const guard = await requireAdminApiSession();
+
+    if (!guard.ok) {
+      return guard.response;
+    }
+
+    const applicationId = String(params?.applicationId || "").trim();
+
+    if (!isUuidLike(applicationId)) {
+      return buildUuidParamError("Identifiant de dossier invalide.");
+    }
+
     const adminClient = createSupabaseAdminClient();
     const [applicationResult, packetResult, profileResult] = await Promise.all([
       adminClient.applications.getById(applicationId),
@@ -229,15 +245,15 @@ export async function POST(_request, { params }) {
       message: "Le pack de demarrage client a bien ete envoye et l'espace client a ete mis a jour."
     });
   } catch (error) {
-    console.error("[admin-post-call-zero-send] failed", error);
+    console.error(
+      "[admin-post-call-zero-send] failed",
+      error instanceof Error ? error.message : "unknown"
+    );
 
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Une erreur est survenue lors de l'envoi du pack de demarrage client."
+        error: "Une erreur est survenue lors de l'envoi du pack de demarrage client."
       },
       { status: 500 }
     );

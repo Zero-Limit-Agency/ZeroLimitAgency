@@ -1,10 +1,12 @@
+import { Buffer } from "node:buffer";
 import { NextResponse } from "next/server";
 
-import { isAdminUser } from "@/lib/auth/admin-access";
-import { getClientSession } from "@/lib/auth/client-auth";
+import { requireAdminApiSession } from "@/lib/auth/api-guards";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { assertSafeUpload } from "@/lib/security/uploads";
 import { normalizeSiteContent } from "@/lib/site-content";
-import { formatSupabaseAdminError } from "@/lib/supabase/errors";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { formatSupabaseAdminError } from "@/lib/supabase/errors";
 import {
   buildSiteAssetStoragePath,
   getPublicStorageUrl,
@@ -20,7 +22,7 @@ async function parsePayload(request) {
     const rawPayload = formData.get("payload");
 
     if (typeof rawPayload !== "string") {
-      throw new Error("Le contenu envoyé est invalide.");
+      throw new Error("Le contenu envoye est invalide.");
     }
 
     return {
@@ -60,6 +62,14 @@ async function attachUploadedSiteAssets({ settings, formData }) {
         continue;
       }
 
+      await assertSafeUpload(file, {
+        label: "visuel",
+        maxSizeBytes: 8 * 1024 * 1024,
+        allowedExtensions: [".png", ".jpg", ".jpeg", ".webp"],
+        allowedMimeTypes: ["image/png", "image/jpeg", "image/webp"],
+        allowedSignatures: ["png", "jpeg", "webp"]
+      });
+
       const path = buildSiteAssetStoragePath(section, item.id, file.name);
       const upload = await uploadStorageObject({
         bucket: SITE_ASSETS_BUCKET,
@@ -71,7 +81,7 @@ async function attachUploadedSiteAssets({ settings, formData }) {
       if (!upload.ok) {
         throw new Error(
           upload.error ||
-            "Impossible d'envoyer le visuel dans Supabase Storage. Vérifie le bucket `site-assets`."
+            "Impossible d'envoyer le visuel dans Supabase Storage. Verifiez le bucket `site-assets`."
         );
       }
 
@@ -86,16 +96,20 @@ async function attachUploadedSiteAssets({ settings, formData }) {
 }
 
 export async function PATCH(request) {
-  const session = await getClientSession();
+  const rateLimitResponse = enforceRateLimit(request, {
+    key: "admin-site-content",
+    limit: 10,
+    windowMs: 60 * 1000
+  });
 
-  if (!session?.user || !(await isAdminUser(session.user))) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Accès administrateur requis."
-      },
-      { status: 403 }
-    );
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
+  const guard = await requireAdminApiSession();
+
+  if (!guard.ok) {
+    return guard.response;
   }
 
   try {
@@ -107,7 +121,7 @@ export async function PATCH(request) {
     const adminClient = createSupabaseAdminClient();
     const result = await adminClient.globalSiteSettings.upsert({
       settings,
-      updated_by: session.user.id
+      updated_by: guard.session.user.id
     });
 
     if (!result.ok) {
@@ -127,14 +141,16 @@ export async function PATCH(request) {
 
     return NextResponse.json({
       success: true,
-      message: "Le contenu public a bien été enregistré.",
+      message: "Le contenu public a bien ete enregistre.",
       settings
     });
   } catch (error) {
+    console.error("[admin-site-content] failed", error instanceof Error ? error.message : "unknown");
+
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Impossible d'enregistrer le contenu public."
+        error: "Impossible d'enregistrer le contenu public."
       },
       { status: 500 }
     );

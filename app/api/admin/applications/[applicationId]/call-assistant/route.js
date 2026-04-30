@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { isAdminUser } from "@/lib/auth/admin-access";
-import { getClientSession } from "@/lib/auth/client-auth";
+import {
+  buildUuidParamError,
+  isUuidLike,
+  requireAdminApiSession
+} from "@/lib/auth/api-guards";
 import {
   buildManualClientEmail,
   sendZeroLimitEmail
@@ -89,29 +92,21 @@ function mergeTimelineEvents(existingEvents, suggestedEvents) {
   }));
 }
 
-async function requireAdminSession() {
-  const session = await getClientSession();
-
-  if (!session?.user || !(await isAdminUser(session.user))) {
-    return null;
-  }
-
-  return session;
-}
-
 export async function PATCH(request, { params }) {
   try {
-    const session = await requireAdminSession();
+    const guard = await requireAdminApiSession();
 
-    if (!session) {
-      return NextResponse.json(
-        { success: false, error: "Acces administrateur requis." },
-        { status: 403 }
-      );
+    if (!guard.ok) {
+      return guard.response;
+    }
+
+    const applicationId = String(params?.applicationId || "").trim();
+
+    if (!isUuidLike(applicationId)) {
+      return buildUuidParamError("Identifiant de dossier invalide.");
     }
 
     const body = await request.json();
-    const applicationId = params.applicationId;
     const adminClient = createSupabaseAdminClient();
 
     const reportRecord = {
@@ -143,15 +138,12 @@ export async function PATCH(request, { params }) {
       message: "Le brouillon d'assistant d'appel a bien ete enregistre."
     });
   } catch (error) {
-    console.error("[call-assistant] save failed", error);
+    console.error("[call-assistant] save failed", error instanceof Error ? error.message : "unknown");
 
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Une erreur est survenue lors de l'enregistrement du brouillon."
+        error: "Une erreur est survenue lors de l'enregistrement du brouillon."
       },
       { status: 500 }
     );
@@ -160,18 +152,20 @@ export async function PATCH(request, { params }) {
 
 export async function POST(request, { params }) {
   try {
-    const session = await requireAdminSession();
+    const guard = await requireAdminApiSession();
 
-    if (!session) {
-      return NextResponse.json(
-        { success: false, error: "Acces administrateur requis." },
-        { status: 403 }
-      );
+    if (!guard.ok) {
+      return guard.response;
+    }
+
+    const applicationId = String(params?.applicationId || "").trim();
+
+    if (!isUuidLike(applicationId)) {
+      return buildUuidParamError("Identifiant de dossier invalide.");
     }
 
     const body = await request.json();
     const action = normalizeText(body?.action);
-    const applicationId = params.applicationId;
     const adminClient = createSupabaseAdminClient();
 
     const [applicationResult, profileResult, reportResult] = await Promise.all([
@@ -221,7 +215,8 @@ export async function POST(request, { params }) {
       }
 
       await adminClient.applications.update(applicationId, {
-        message_rewritten: normalizeText(report.client_summary) || application.message_rewritten || application.message_raw
+        message_rewritten:
+          normalizeText(report.client_summary) || application.message_rewritten || application.message_raw
       });
 
       await adminClient.clientCallReports.updateByApplication(applicationId, {
@@ -276,15 +271,12 @@ export async function POST(request, { params }) {
       { status: 400 }
     );
   } catch (error) {
-    console.error("[call-assistant] action failed", error);
+    console.error("[call-assistant] action failed", error instanceof Error ? error.message : "unknown");
 
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Une erreur est survenue lors du traitement de l'assistant d'appel."
+        error: "Une erreur est survenue lors du traitement de l'assistant d'appel."
       },
       { status: 500 }
     );

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { isValidEmailAddress, normalizeEmailAddress } from "@/lib/security/uploads";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -11,12 +13,29 @@ function buildPasswordResetRedirectUrl() {
 
 export async function POST(request) {
   try {
+    const rateLimitResponse = enforceRateLimit(request, {
+      key: "auth-forgot-password",
+      limit: 3,
+      windowMs: 60 * 1000
+    });
+
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
     const body = await request.json().catch(() => ({}));
-    const email = String(body?.email || "").trim().toLowerCase();
+    const email = normalizeEmailAddress(body?.email || "");
 
     if (!email) {
       return NextResponse.json(
         { success: false, error: "Renseignez votre adresse email pour recevoir un nouveau lien." },
+        { status: 400 }
+      );
+    }
+
+    if (!isValidEmailAddress(email)) {
+      return NextResponse.json(
+        { success: false, error: "L'adresse email saisie n'est pas valide." },
         { status: 400 }
       );
     }
@@ -27,18 +46,15 @@ export async function POST(request) {
     return NextResponse.json({
       success: true,
       message:
-        "Si un compte existe avec cette adresse, un email de réinitialisation vient d'être envoyé."
+        "Si un compte existe avec cette adresse, un email de reinitialisation vient d'etre envoye."
     });
   } catch (error) {
-    console.error("[auth-forgot-password] failed", error);
+    console.error("[auth-forgot-password] failed", error instanceof Error ? error.message : "unknown");
 
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Impossible d'envoyer le lien de réinitialisation pour le moment."
+        error: "Impossible d'envoyer le lien de reinitialisation pour le moment."
       },
       { status: 500 }
     );

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { requireAdminApiSession } from "@/lib/auth/api-guards";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { getSupabaseServerConfig } from "@/lib/supabase/server";
 
@@ -30,6 +31,16 @@ function getEnvPresence() {
 }
 
 export async function GET() {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ success: false, error: "Introuvable." }, { status: 404 });
+  }
+
+  const adminAccess = await requireAdminApiSession();
+
+  if (!adminAccess.ok) {
+    return adminAccess.response;
+  }
+
   const env = getEnvPresence();
 
   try {
@@ -61,12 +72,12 @@ export async function GET() {
         }
       }
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
         success: false,
         env,
-        error: error.message || "Impossible de vérifier la connexion Supabase."
+        error: "Impossible de vérifier la connexion Supabase."
       },
       { status: 500 }
     );

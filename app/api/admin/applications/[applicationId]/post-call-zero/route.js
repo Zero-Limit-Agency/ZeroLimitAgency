@@ -1,8 +1,12 @@
 import { Buffer } from "node:buffer";
 import { NextResponse } from "next/server";
 
-import { isAdminUser } from "@/lib/auth/admin-access";
-import { getClientSession } from "@/lib/auth/client-auth";
+import {
+  buildUuidParamError,
+  isUuidLike,
+  requireAdminApiSession
+} from "@/lib/auth/api-guards";
+import { assertSafeUpload } from "@/lib/security/uploads";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
   buildPostCallZeroStoragePath,
@@ -10,6 +14,7 @@ import {
   removeStorageObject,
   uploadStorageObject
 } from "@/lib/supabase/storage";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -45,21 +50,10 @@ const DOCUMENTS = [
     allowedMimeTypes: ["application/pdf"]
   }
 ];
+const MAX_DOCUMENT_SIZE = 12 * 1024 * 1024;
 
 function normalizeText(value) {
   return String(value || "").trim();
-}
-
-function hasValidExtension(fileName, allowedExtensions) {
-  const lower = String(fileName || "").toLowerCase();
-  return allowedExtensions.some((extension) => lower.endsWith(extension));
-}
-
-function isAllowedFile(file, document) {
-  return (
-    hasValidExtension(file?.name, document.allowedExtensions) ||
-    document.allowedMimeTypes.includes(String(file?.type || "").toLowerCase())
-  );
 }
 
 async function uploadPacketDocument(applicationId, document, file, existingPacket) {
@@ -71,9 +65,18 @@ async function uploadPacketDocument(applicationId, document, file, existingPacke
     };
   }
 
-  if (!isAllowedFile(file, document)) {
-    throw new Error(`Le fichier ${document.label} doit etre au format autorise.`);
-  }
+  await assertSafeUpload(file, {
+    label: document.label,
+    maxSizeBytes: MAX_DOCUMENT_SIZE,
+    allowedExtensions: document.allowedExtensions,
+    allowedMimeTypes: document.allowedMimeTypes,
+    allowedSignatures:
+      document.allowedExtensions.includes(".pdf") && document.allowedExtensions.includes(".zip")
+        ? ["pdf", "zip"]
+        : document.allowedExtensions.includes(".pdf")
+          ? ["pdf"]
+          : ["zip"]
+  });
 
   const arrayBuffer = await file.arrayBuffer();
   const storagePath = buildPostCallZeroStoragePath(applicationId, document.type, file.name);
@@ -106,17 +109,29 @@ async function uploadPacketDocument(applicationId, document, file, existingPacke
 
 export async function PATCH(request, { params }) {
   try {
-    const session = await getClientSession();
+    const rateLimitResponse = enforceRateLimit(request, {
+      key: "admin-post-call-zero-save",
+      limit: 10,
+      windowMs: 60 * 1000
+    });
 
-    if (!session?.user || !(await isAdminUser(session.user))) {
-      return NextResponse.json(
-        { success: false, error: "Acces administrateur requis." },
-        { status: 403 }
-      );
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
+    const guard = await requireAdminApiSession();
+
+    if (!guard.ok) {
+      return guard.response;
     }
 
     const formData = await request.formData();
-    const applicationId = params.applicationId;
+    const applicationId = String(params?.applicationId || "").trim();
+
+    if (!isUuidLike(applicationId)) {
+      return buildUuidParamError("Identifiant de dossier invalide.");
+    }
+
     const adminClient = createSupabaseAdminClient();
     const packetLookup = await adminClient.postCallZeroPackets.getByApplicationId(applicationId);
     const existingPacket =
@@ -159,15 +174,12 @@ export async function PATCH(request, { params }) {
       message: "Le pack de demarrage client a bien ete enregistre."
     });
   } catch (error) {
-    console.error("[admin-post-call-zero] save failed", error);
+    console.error("[admin-post-call-zero] save failed", error instanceof Error ? error.message : "unknown");
 
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Une erreur est survenue lors de l'enregistrement du pack de demarrage client."
+        error: "Une erreur est survenue lors de l'enregistrement du pack de demarrage client."
       },
       { status: 500 }
     );

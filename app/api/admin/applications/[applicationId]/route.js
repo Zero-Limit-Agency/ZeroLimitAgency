@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 
-import { isAdminUser } from "@/lib/auth/admin-access";
-import { getClientSession } from "@/lib/auth/client-auth";
+import {
+  buildUuidParamError,
+  isUuidLike,
+  requireAdminApiSession
+} from "@/lib/auth/api-guards";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { POST_CALL_ZERO_BUCKET, removeStorageObject } from "@/lib/supabase/storage";
 
@@ -50,29 +54,31 @@ function normalizeTimelineEvents(items) {
     }));
 }
 
-async function requireAdminSession() {
-  const session = await getClientSession();
-
-  if (!session?.user || !(await isAdminUser(session.user))) {
-    return null;
-  }
-
-  return session;
-}
-
 export async function PATCH(request, { params }) {
   try {
-    const session = await requireAdminSession();
+    const rateLimitResponse = enforceRateLimit(request, {
+      key: "admin-application-patch",
+      limit: 20,
+      windowMs: 60 * 1000
+    });
 
-    if (!session) {
-      return NextResponse.json(
-        { success: false, error: "Acces administrateur requis." },
-        { status: 403 }
-      );
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
+    const guard = await requireAdminApiSession();
+
+    if (!guard.ok) {
+      return guard.response;
+    }
+
+    const applicationId = String(params?.applicationId || "").trim();
+
+    if (!isUuidLike(applicationId)) {
+      return buildUuidParamError("Identifiant de dossier invalide.");
     }
 
     const body = await request.json();
-    const applicationId = params.applicationId;
     const adminClient = createSupabaseAdminClient();
 
     const applicationRecord = {
@@ -152,15 +158,12 @@ export async function PATCH(request, { params }) {
       message: "Le dossier client et le profil enrichi ont bien ete mis a jour."
     });
   } catch (error) {
-    console.error("[admin-application] update failed", error);
+    console.error("[admin-application] update failed", error instanceof Error ? error.message : "unknown");
 
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Une erreur est survenue lors de la mise a jour du dossier."
+        error: "Une erreur est survenue lors de la mise a jour du dossier."
       },
       { status: 500 }
     );
@@ -169,16 +172,28 @@ export async function PATCH(request, { params }) {
 
 export async function DELETE(_request, { params }) {
   try {
-    const session = await requireAdminSession();
+    const rateLimitResponse = enforceRateLimit(_request, {
+      key: "admin-application-delete",
+      limit: 3,
+      windowMs: 60 * 1000
+    });
 
-    if (!session) {
-      return NextResponse.json(
-        { success: false, error: "Acces administrateur requis." },
-        { status: 403 }
-      );
+    if (rateLimitResponse) {
+      return rateLimitResponse;
     }
 
-    const applicationId = params.applicationId;
+    const guard = await requireAdminApiSession();
+
+    if (!guard.ok) {
+      return guard.response;
+    }
+
+    const applicationId = String(params?.applicationId || "").trim();
+
+    if (!isUuidLike(applicationId)) {
+      return buildUuidParamError("Identifiant de dossier invalide.");
+    }
+
     const adminClient = createSupabaseAdminClient();
 
     const applicationLookup = await adminClient.applications.getById(applicationId);
@@ -264,15 +279,12 @@ export async function DELETE(_request, { params }) {
         "La demande, le profil client, l'acces client et le compte de connexion associe ont bien ete supprimes."
     });
   } catch (error) {
-    console.error("[admin-application] delete failed", error);
+    console.error("[admin-application] delete failed", error instanceof Error ? error.message : "unknown");
 
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Une erreur est survenue lors de la suppression definitive du dossier."
+        error: "Une erreur est survenue lors de la suppression definitive du dossier."
       },
       { status: 500 }
     );

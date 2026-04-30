@@ -1,29 +1,45 @@
 import { NextResponse } from "next/server";
 
-import { isAdminUser } from "@/lib/auth/admin-access";
-import { getClientSession } from "@/lib/auth/client-auth";
+import {
+  buildUuidParamError,
+  isUuidLike,
+  requireAdminApiSession
+} from "@/lib/auth/api-guards";
 import {
   buildApprovalEmail,
   buildRejectionEmail,
   sendZeroLimitEmail
 } from "@/lib/emails/zero-limit";
+import { enforceRateLimit } from "@/lib/security/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 
 export async function POST(request, { params }) {
   try {
-    const session = await getClientSession();
+    const rateLimitResponse = enforceRateLimit(request, {
+      key: "admin-application-review",
+      limit: 10,
+      windowMs: 60 * 1000
+    });
 
-    if (!session?.user || !(await isAdminUser(session.user))) {
-      return NextResponse.json(
-        { success: false, error: "Accès administrateur requis." },
-        { status: 403 }
-      );
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
+    const guard = await requireAdminApiSession();
+
+    if (!guard.ok) {
+      return guard.response;
     }
 
     const body = await request.json().catch(() => ({}));
     const action = String(body?.action || "").trim();
+    const applicationId = String(params?.applicationId || "").trim();
+
+    if (!isUuidLike(applicationId)) {
+      return buildUuidParamError("Identifiant de dossier invalide.");
+    }
 
     if (!["approve", "reject"].includes(action)) {
       return NextResponse.json(
@@ -32,13 +48,12 @@ export async function POST(request, { params }) {
       );
     }
 
-    const applicationId = params.applicationId;
     const adminClient = createSupabaseAdminClient();
     const applicationResult = await adminClient.applications.getById(applicationId);
 
     if (!applicationResult.ok || !Array.isArray(applicationResult.data) || applicationResult.data.length === 0) {
       return NextResponse.json(
-        { success: false, error: "Requête introuvable." },
+        { success: false, error: "Requete introuvable." },
         { status: 404 }
       );
     }
@@ -52,7 +67,7 @@ export async function POST(request, { params }) {
 
       if (!statusUpdate.ok) {
         return NextResponse.json(
-          { success: false, error: "Impossible de valider cette requête." },
+          { success: false, error: "Impossible de valider cette requete." },
           { status: 500 }
         );
       }
@@ -112,13 +127,14 @@ export async function POST(request, { params }) {
         success: true,
         action,
         application: statusUpdate.data?.[0] || null,
-        message: !approvalEmailResult.ok && !approvalEmailResult.skipped
-          ? application.status === "approved"
-            ? "Le client était déjà validé. Le dossier reste disponible dans la section clients, mais l'email n'a pas pu être renvoyé automatiquement."
-            : "La demande a été acceptée. Le client peut maintenant se connecter, mais l'email d'acceptation n'a pas pu être envoyé automatiquement."
-          : application.status === "approved"
-            ? "Le client était déjà validé. Le dossier reste disponible dans la section clients."
-            : "La demande a été acceptée. Le client peut maintenant se connecter et verra un espace en préparation jusqu'au déblocage de l'accompagnement."
+        message:
+          !approvalEmailResult.ok && !approvalEmailResult.skipped
+            ? application.status === "approved"
+              ? "Le client etait deja valide. Le dossier reste disponible dans la section clients, mais l'email n'a pas pu etre renvoye automatiquement."
+              : "La demande a ete acceptee. Le client peut maintenant se connecter, mais l'email d'acceptation n'a pas pu etre envoye automatiquement."
+            : application.status === "approved"
+              ? "Le client etait deja valide. Le dossier reste disponible dans la section clients."
+              : "La demande a ete acceptee. Le client peut maintenant se connecter et verra un espace en preparation jusqu'au deblocage de l'accompagnement."
       });
     }
 
@@ -128,7 +144,7 @@ export async function POST(request, { params }) {
 
     if (!rejectionUpdate.ok) {
       return NextResponse.json(
-        { success: false, error: "Impossible de refuser cette requête." },
+        { success: false, error: "Impossible de refuser cette requete." },
         { status: 500 }
       );
     }
@@ -145,19 +161,16 @@ export async function POST(request, { params }) {
       action,
       application: rejectionUpdate.data?.[0] || null,
       message: emailResult.ok
-        ? "La demande a été refusée, retirée des dossiers en attente et l'email de refus a été envoyé."
-        : "La demande a été refusée et déplacée vers les refusés. L'email de refus n'a pas pu être envoyé automatiquement."
+        ? "La demande a ete refusee, retiree des dossiers en attente et l'email de refus a ete envoye."
+        : "La demande a ete refusee et deplacee vers les refuses. L'email de refus n'a pas pu etre envoye automatiquement."
     });
   } catch (error) {
-    console.error("[admin-review] failed", error);
+    console.error("[admin-review] failed", error instanceof Error ? error.message : "unknown");
 
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Une erreur est survenue pendant le traitement de la requête."
+        error: "Une erreur est survenue pendant le traitement de la requete."
       },
       { status: 500 }
     );
