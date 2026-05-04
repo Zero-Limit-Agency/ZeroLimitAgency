@@ -5529,7 +5529,7 @@ body {
 
 .admin-application-grid {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 1.45rem;
   align-items: start;
 }
@@ -5539,33 +5539,33 @@ body {
 }
 
 .admin-application-grid-summary > .admin-panel-summary-account {
-  grid-column: span 6;
+  grid-column: auto;
 }
 
 .admin-application-grid-summary > .admin-panel-summary-profile {
-  grid-column: span 6;
+  grid-column: auto;
 }
 
 .admin-application-grid-summary > .admin-panel-summary-case {
-  grid-column: span 7;
+  grid-column: auto;
 }
 
 .admin-application-grid-summary > .admin-panel-summary-resources {
-  grid-column: span 5;
+  grid-column: auto;
 }
 
 .admin-panel-assistant,
 .admin-panel-timeline,
 .admin-panel-delete {
-  grid-column: span 12;
+  grid-column: auto;
 }
 
 .admin-application-grid-workflow > .admin-panel-manual-email {
-  grid-column: span 12;
+  grid-column: auto;
 }
 
 .admin-application-grid-workflow > .admin-panel-pack {
-  grid-column: span 12;
+  grid-column: auto;
 }
 
 .admin-panel {
@@ -5611,15 +5611,6 @@ body {
 .collaboration-thread,
 .collaboration-composer {
   align-content: start;
-}
-
-@media (max-width: 1180px) {
-  .admin-application-grid-summary > .admin-panel-summary-account,
-  .admin-application-grid-summary > .admin-panel-summary-profile,
-  .admin-application-grid-summary > .admin-panel-summary-case,
-  .admin-application-grid-summary > .admin-panel-summary-resources {
-    grid-column: span 12;
-  }
 }
 
 @media (max-width: 900px) {
