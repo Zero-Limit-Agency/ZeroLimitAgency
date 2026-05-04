@@ -5539,18 +5539,21 @@ body {
 }
 
 .admin-application-grid-summary > .admin-panel-summary-account {
-  grid-column: span 4;
+  grid-column: span 6;
 }
 
 .admin-application-grid-summary > .admin-panel-summary-profile {
-  grid-column: span 3;
+  grid-column: span 6;
 }
 
 .admin-application-grid-summary > .admin-panel-summary-case {
+  grid-column: span 7;
+}
+
+.admin-application-grid-summary > .admin-panel-summary-resources {
   grid-column: span 5;
 }
 
-.admin-application-grid-summary > .admin-panel-summary-resources,
 .admin-panel-assistant,
 .admin-panel-timeline,
 .admin-panel-delete {
@@ -5558,11 +5561,11 @@ body {
 }
 
 .admin-application-grid-workflow > .admin-panel-manual-email {
-  grid-column: span 4;
+  grid-column: span 12;
 }
 
 .admin-application-grid-workflow > .admin-panel-pack {
-  grid-column: span 8;
+  grid-column: span 12;
 }
 
 .admin-panel {
@@ -5613,12 +5616,8 @@ body {
 @media (max-width: 1180px) {
   .admin-application-grid-summary > .admin-panel-summary-account,
   .admin-application-grid-summary > .admin-panel-summary-profile,
-  .admin-application-grid-summary > .admin-panel-summary-case {
-    grid-column: span 6;
-  }
-
-  .admin-application-grid-workflow > .admin-panel-manual-email,
-  .admin-application-grid-workflow > .admin-panel-pack {
+  .admin-application-grid-summary > .admin-panel-summary-case,
+  .admin-application-grid-summary > .admin-panel-summary-resources {
     grid-column: span 12;
   }
 }
