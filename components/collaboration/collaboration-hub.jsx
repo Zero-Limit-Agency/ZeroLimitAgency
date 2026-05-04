@@ -62,6 +62,9 @@ export function CollaborationHub({
   const endpoint = useMemo(() => buildEndpoint(mode, applicationId), [mode, applicationId]);
   const supportLinks = useMemo(() => buildSupportLinks(contactEmail, discordUrl), [contactEmail, discordUrl]);
   const isAdmin = mode === "admin";
+  const panelClassName = `${isAdmin ? "admin-panel" : "client-panel"} collaboration-panel collaboration-panel-${mode}`;
+  const headingClassName = `${isAdmin ? "admin-panel-heading" : "client-panel-heading"} collaboration-panel-heading`;
+  const noteClassName = isAdmin ? "admin-inline-note" : "client-panel-note";
 
   function focusComposer() {
     composerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -131,13 +134,13 @@ export function CollaborationHub({
   }
 
   return (
-    <section className={`${isAdmin ? "admin-panel" : "client-panel"} collaboration-panel collaboration-panel-${mode}`}>
-      <div className="client-panel-heading collaboration-panel-heading">
+    <section className={panelClassName}>
+      <div className={headingClassName}>
         <div>
           <p className="eyebrow">Collaboration</p>
           <h2>{isAdmin ? "Canaux de discussion du client" : "Choisissez votre canal de discussion"}</h2>
         </div>
-        <p className="client-panel-note">
+        <p className={noteClassName}>
           {isAdmin
             ? "Repondez au client ici, ou redirigez-le vers Discord et l'e-mail selon le contexte."
             : "Vous pouvez ecrire ici directement, ouvrir Discord pour un ticket ou passer par e-mail."}
