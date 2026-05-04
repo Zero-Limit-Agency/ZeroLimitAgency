@@ -882,7 +882,8 @@ export function ApplicationEditor({
         </section>
       ) : null}
 
-      <section className="admin-panel">
+      <div className="admin-application-grid admin-application-grid-summary">
+      <section className="admin-panel admin-panel-summary-account">
         <div className="admin-panel-heading">
           <div>
             <p className="eyebrow">Compte client</p>
@@ -936,7 +937,7 @@ export function ApplicationEditor({
 
       </section>
 
-      <section className="admin-panel">
+      <section className="admin-panel admin-panel-summary-profile">
         <div className="admin-panel-heading">
           <div>
             <p className="eyebrow">Identité</p>
@@ -964,7 +965,7 @@ export function ApplicationEditor({
         </div>
       </section>
 
-      <section className="admin-panel">
+      <section className="admin-panel admin-panel-summary-case">
         <div className="admin-panel-heading">
           <div>
             <p className="eyebrow">Dossier client</p>
@@ -1002,7 +1003,7 @@ export function ApplicationEditor({
         </label>
       </section>
 
-      <section className="admin-panel">
+      <section className="admin-panel admin-panel-summary-resources">
         <div className="admin-panel-heading">
           <div>
             <p className="eyebrow">Ressources</p>
@@ -1113,8 +1114,9 @@ export function ApplicationEditor({
           Ajouter un outil
         </button>
       </section>
+      </div>
 
-      <section className="admin-panel">
+      <section className="admin-panel admin-panel-assistant">
         <div className="admin-panel-heading">
           <div>
             <p className="eyebrow">Assistant d'appel</p>
@@ -1406,17 +1408,18 @@ export function ApplicationEditor({
         ) : null}
       </section>
 
-        {hasCollaborationSpace ? (
-          <CollaborationHub
-            applicationId={application.id}
-            mode="admin"
-            initialMessages={collaborationMessages}
-            contactEmail={supportEmail}
-            discordUrl={discordUrl}
-          />
-        ) : null}
+      {hasCollaborationSpace ? (
+        <CollaborationHub
+          applicationId={application.id}
+          mode="admin"
+          initialMessages={collaborationMessages}
+          contactEmail={supportEmail}
+          discordUrl={discordUrl}
+        />
+      ) : null}
 
-        <section className="admin-panel">
+      <div className="admin-application-grid admin-application-grid-workflow">
+        <section className="admin-panel admin-panel-manual-email">
           <div className="admin-panel-heading">
             <div>
               <p className="eyebrow">Email client</p>
@@ -1508,7 +1511,7 @@ export function ApplicationEditor({
         ) : null}
       </section>
 
-      <section className="admin-panel">
+      <section className="admin-panel admin-panel-pack">
         <div className="admin-panel-heading">
           <div>
             <p className="eyebrow">Pack de démarrage client</p>
@@ -1693,8 +1696,9 @@ export function ApplicationEditor({
           </p>
         ) : null}
       </section>
+      </div>
 
-      <section className="admin-panel">
+      <section className="admin-panel admin-panel-timeline">
         <div className="admin-panel-heading">
           <div>
             <p className="eyebrow">Suivi du projet</p>
@@ -1814,7 +1818,7 @@ export function ApplicationEditor({
         </p>
       ) : null}
 
-      <section className="admin-panel admin-panel-danger">
+      <section className="admin-panel admin-panel-danger admin-panel-delete">
         <div className="admin-panel-heading">
           <div>
             <p className="eyebrow">Zone sensible</p>

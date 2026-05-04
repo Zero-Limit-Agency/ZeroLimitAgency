@@ -5527,6 +5527,44 @@ body {
   min-width: 0;
 }
 
+.admin-application-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1.45rem;
+  align-items: start;
+}
+
+.admin-application-grid > * {
+  min-width: 0;
+}
+
+.admin-application-grid-summary > .admin-panel-summary-account {
+  grid-column: span 4;
+}
+
+.admin-application-grid-summary > .admin-panel-summary-profile {
+  grid-column: span 3;
+}
+
+.admin-application-grid-summary > .admin-panel-summary-case {
+  grid-column: span 5;
+}
+
+.admin-application-grid-summary > .admin-panel-summary-resources,
+.admin-panel-assistant,
+.admin-panel-timeline,
+.admin-panel-delete {
+  grid-column: span 12;
+}
+
+.admin-application-grid-workflow > .admin-panel-manual-email {
+  grid-column: span 4;
+}
+
+.admin-application-grid-workflow > .admin-panel-pack {
+  grid-column: span 8;
+}
+
 .admin-panel {
   width: 100%;
   min-width: 0;
@@ -5570,4 +5608,35 @@ body {
 .collaboration-thread,
 .collaboration-composer {
   align-content: start;
+}
+
+@media (max-width: 1180px) {
+  .admin-application-grid-summary > .admin-panel-summary-account,
+  .admin-application-grid-summary > .admin-panel-summary-profile,
+  .admin-application-grid-summary > .admin-panel-summary-case {
+    grid-column: span 6;
+  }
+
+  .admin-application-grid-workflow > .admin-panel-manual-email,
+  .admin-application-grid-workflow > .admin-panel-pack {
+    grid-column: span 12;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-application-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-application-grid-summary > .admin-panel-summary-account,
+  .admin-application-grid-summary > .admin-panel-summary-profile,
+  .admin-application-grid-summary > .admin-panel-summary-case,
+  .admin-application-grid-summary > .admin-panel-summary-resources,
+  .admin-panel-assistant,
+  .admin-panel-timeline,
+  .admin-panel-delete,
+  .admin-application-grid-workflow > .admin-panel-manual-email,
+  .admin-application-grid-workflow > .admin-panel-pack {
+    grid-column: auto;
+  }
 }
