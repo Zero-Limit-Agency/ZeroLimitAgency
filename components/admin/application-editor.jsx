@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { DeleteApplicationButton } from "@/components/admin/delete-application-button";
+import { CollaborationHub } from "@/components/collaboration/collaboration-hub";
+import { isCollaborationRequestType } from "@/lib/collaboration";
 
 function createResourceDraft(existing = {}) {
   return {
@@ -269,9 +271,13 @@ export function ApplicationEditor({
   postCallZeroPacket,
   callReport,
   clientSpaceUrl,
-  hasPostCallZeroPacket = false
+  hasPostCallZeroPacket = false,
+  collaborationMessages = [],
+  supportEmail = "contact@zerolimit.agency",
+  discordUrl = ""
 }) {
   const router = useRouter();
+  const hasCollaborationSpace = isCollaborationRequestType(application?.request_type);
   const [state, setState] = useState({
     status: "idle",
     message: ""
@@ -1400,10 +1406,20 @@ export function ApplicationEditor({
         ) : null}
       </section>
 
-      <section className="admin-panel">
-        <div className="admin-panel-heading">
-          <div>
-            <p className="eyebrow">Email client</p>
+        {hasCollaborationSpace ? (
+          <CollaborationHub
+            applicationId={application.id}
+            mode="admin"
+            initialMessages={collaborationMessages}
+            contactEmail={supportEmail}
+            discordUrl={discordUrl}
+          />
+        ) : null}
+
+        <section className="admin-panel">
+          <div className="admin-panel-heading">
+            <div>
+              <p className="eyebrow">Email client</p>
             <h2>Envoyer un email manuel</h2>
           </div>
         </div>

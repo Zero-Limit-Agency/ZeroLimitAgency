@@ -2,9 +2,11 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { AvatarUploader } from "@/components/client/avatar-uploader";
+import { CollaborationHub } from "@/components/collaboration/collaboration-hub";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { MaintenanceScreen } from "@/components/maintenance-screen";
 import { ZeroLimitMarket } from "@/components/client/zero-limit-market";
+import { isCollaborationRequestType, normalizeCollaborationMessage } from "@/lib/collaboration";
 import { getUserRole } from "@/lib/auth/admin-access";
 import {
   buildClientDetailItems,
@@ -30,9 +32,26 @@ export async function generateMetadata({ params }) {
   };
 }
 
+function formatRequestTypeLabel(value) {
+  switch (String(value || "").trim().toLowerCase()) {
+    case "contact":
+      return "Collaboration";
+    case "collaboration":
+      return "Collaboration";
+    case "inscription_devis":
+      return "Inscription avec devis";
+    case "partnership":
+      return "Partenariat";
+    case "other":
+      return "Autre demande";
+    default:
+      return value || "";
+  }
+}
+
 function buildContextLine(application) {
   const company = application?.company?.trim();
-  const requestType = application?.request_type?.trim();
+  const requestType = formatRequestTypeLabel(application?.request_type?.trim());
 
   if (company && requestType) {
     return `${requestType} pour ${company}`;
@@ -77,6 +96,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
   let application;
   let profile = null;
   let globalMarketSettings = null;
+  let collaborationMessages = [];
 
   if (isDemoSpace) {
     application = createDemoApplication();
@@ -96,6 +116,8 @@ export default async function ClientApplicationPage({ params, searchParams }) {
 
     const profileResult = await adminClient.clientProfiles.getByApplicationId(params.applicationId);
     const marketResult = await adminClient.globalMarketSettings.get();
+    const collaborationResult = await adminClient.clientCollaborationMessages.listByApplicationId(params.applicationId);
+
     profile =
       profileResult.ok && Array.isArray(profileResult.data) && profileResult.data.length > 0
         ? profileResult.data[0]
@@ -104,6 +126,10 @@ export default async function ClientApplicationPage({ params, searchParams }) {
       marketResult.ok && Array.isArray(marketResult.data) && marketResult.data.length > 0
         ? marketResult.data[0]?.settings || null
         : null;
+    collaborationMessages =
+      collaborationResult.ok && Array.isArray(collaborationResult.data)
+        ? collaborationResult.data.map(normalizeCollaborationMessage)
+        : [];
   }
 
   const displayName = buildLeadDisplayName(application);
@@ -116,7 +142,10 @@ export default async function ClientApplicationPage({ params, searchParams }) {
   const contextLine = buildContextLine(application);
   const marketData = profile?.market_access_enabled ? buildZeroLimitMarketData(globalMarketSettings) : null;
   const isWorkspaceReady = isDemoSpace || profile?.space_status === "active";
+  const hasCollaborationSpace = isCollaborationRequestType(application?.request_type);
   const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL || process.env.BOOKING_URL || "";
+  const supportEmail = process.env.CLIENT_SUPPORT_EMAIL || process.env.CLIENT_EMAIL || "contact@zerolimit.agency";
+  const discordUrl = process.env.CLIENT_DISCORD_URL || process.env.NEXT_PUBLIC_CLIENT_DISCORD_URL || "";
 
   return (
     <main className="client-dashboard-shell">
@@ -209,6 +238,17 @@ export default async function ClientApplicationPage({ params, searchParams }) {
         </header>
 
         <section className="client-dashboard-grid client-dashboard-grid-refined">
+          {hasCollaborationSpace ? (
+            <CollaborationHub
+              applicationId={params.applicationId}
+              mode="client"
+              initialMessages={collaborationMessages}
+              contactEmail={supportEmail}
+              discordUrl={discordUrl}
+              readOnly={isDemoSpace || isAdminPreview}
+            />
+          ) : null}
+
           {!isWorkspaceReady ? (
             <article className="client-panel client-panel-preparation">
               <div className="client-panel-heading">
@@ -231,7 +271,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
               ) : (
                 <div className="client-resource-placeholder">
                   <strong>Prise de rendez-vous à configurer</strong>
-                  <span>Lien Google Agenda / booking à ajouter dans la configuration du projet.</span>
+                  <span>Lien Google Agenda ou booking à ajouter dans la configuration du projet.</span>
                 </div>
               )}
             </article>
@@ -255,7 +295,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
 
           <article className="client-panel client-panel-resources">
             <div className="client-panel-heading">
-              <p className="eyebrow">Outils & ressources</p>
+              <p className="eyebrow">Outils et ressources</p>
               <h2>Accès utiles du dossier</h2>
             </div>
 
@@ -334,12 +374,9 @@ export default async function ClientApplicationPage({ params, searchParams }) {
             {isAdminPreview ? "Retour à la gestion client" : "Retour au site public"}
           </Link>
 
-          {!isDemoSpace && !isAdminPreview ? (
-            <LogoutButton />
-          ) : null}
+          {!isDemoSpace && !isAdminPreview ? <LogoutButton /> : null}
         </footer>
       </section>
     </main>
   );
 }
-

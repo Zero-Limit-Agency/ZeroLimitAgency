@@ -18,7 +18,7 @@ function buildStatusContent(application) {
     return {
       title: "Votre espace client n'est pas encore disponible",
       description:
-        "Votre dossier n'est pas encore relié à un espace client utilisable. Contactez Zero Limit Agency si besoin.",
+        "Votre dossier n'est pas encore relié à un espace client exploitable. Contactez Zero Limit Agency si besoin.",
       tone: "neutral"
     };
   }
@@ -27,7 +27,7 @@ function buildStatusContent(application) {
     return {
       title: "Votre inscription a été refusée par l'équipe",
       description:
-        "Pour toute question complémentaire, vous pouvez nous contacter par email afin d'échanger sur votre demande.",
+        "Pour toute question complémentaire, vous pouvez nous contacter par e-mail afin d'échanger sur votre demande.",
       tone: "rejected"
     };
   }
@@ -38,6 +38,23 @@ function buildStatusContent(application) {
       "Nous étudions actuellement votre inscription. Vous pourrez accéder à votre espace client complet dès validation par l'équipe.",
     tone: "pending"
   };
+}
+
+function formatRequestTypeLabel(value) {
+  switch (String(value || "").trim().toLowerCase()) {
+    case "contact":
+      return "Collaboration";
+    case "collaboration":
+      return "Collaboration";
+    case "inscription_devis":
+      return "Inscription avec devis";
+    case "partnership":
+      return "Partenariat";
+    case "other":
+      return "Autre demande";
+    default:
+      return value || "Demande";
+  }
 }
 
 export default async function ClientSpaceIndexPage() {
@@ -69,7 +86,7 @@ export default async function ClientSpaceIndexPage() {
           <div className="client-hub-grid">
             <article className="client-hub-card">
               <strong>Accès personnel</strong>
-              <p>Chaque client se connecte avec l'email et le mot de passe définis à l'inscription.</p>
+              <p>Chaque client se connecte avec l'e-mail et le mot de passe définis à l'inscription.</p>
             </article>
             <article className="client-hub-card">
               <strong>Validation humaine</strong>
@@ -116,7 +133,9 @@ export default async function ClientSpaceIndexPage() {
             <strong>Dossier</strong>
             <p>
               {application
-                ? `${application.request_type || "Demande"} · ${application.language || "Langue non renseignée"}`
+                ? `${formatRequestTypeLabel(application.request_type)} · ${
+                    application.language || "Langue non renseignée"
+                  }`
                 : "Aucune demande exploitable n'a encore été retrouvée pour ce compte."}
             </p>
           </article>

@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { ApplicationEditor } from "@/components/admin/application-editor";
 import { ApplicationReview } from "@/components/admin/application-review";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { normalizeCollaborationMessage } from "@/lib/collaboration";
 import { getUserRole, isAdminUser } from "@/lib/auth/admin-access";
 import { getClientSession } from "@/lib/auth/client-auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -72,6 +73,7 @@ export default async function AdminApplicationPage({ params }) {
   const accessResult = await adminClient.clientAccess.getByApplicationId(params.applicationId);
   const postCallZeroPacketResult = await adminClient.postCallZeroPackets.getByApplicationId(params.applicationId);
   const callReportResult = await adminClient.clientCallReports.getByApplicationId(params.applicationId);
+  const collaborationResult = await adminClient.clientCollaborationMessages.listByApplicationId(params.applicationId);
 
   const profile =
     profileResult.ok && Array.isArray(profileResult.data) && profileResult.data.length > 0
@@ -93,6 +95,12 @@ export default async function AdminApplicationPage({ params }) {
       ? callReportResult.data[0]
       : null;
   const safeCallReport = callReport || createEmptyCallReport();
+  const collaborationMessages =
+    collaborationResult.ok && Array.isArray(collaborationResult.data)
+      ? collaborationResult.data.map(normalizeCollaborationMessage)
+      : [];
+  const supportEmail = process.env.CLIENT_SUPPORT_EMAIL || process.env.CLIENT_EMAIL || "contact@zerolimit.agency";
+  const discordUrl = process.env.CLIENT_DISCORD_URL || process.env.NEXT_PUBLIC_CLIENT_DISCORD_URL || "";
 
   const isClientFolder = application.status === "approved";
 
@@ -131,6 +139,9 @@ export default async function AdminApplicationPage({ params }) {
             hasPostCallZeroPacket={Boolean(postCallZeroPacket)}
             callReport={safeCallReport}
             clientSpaceUrl={`/espace-client/${params.applicationId}`}
+            collaborationMessages={collaborationMessages}
+            supportEmail={supportEmail}
+            discordUrl={discordUrl}
           />
         ) : (
           <ApplicationReview application={application} />

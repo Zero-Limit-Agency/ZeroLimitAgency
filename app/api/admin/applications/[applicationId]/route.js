@@ -5,9 +5,14 @@ import {
   isUuidLike,
   requireAdminApiSession
 } from "@/lib/auth/api-guards";
+import { normalizeCollaborationAttachments } from "@/lib/collaboration";
 import { enforceRateLimit } from "@/lib/security/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { POST_CALL_ZERO_BUCKET, removeStorageObject } from "@/lib/supabase/storage";
+import {
+  CLIENT_COLLABORATION_BUCKET,
+  POST_CALL_ZERO_BUCKET,
+  removeStorageObject
+} from "@/lib/supabase/storage";
 
 export const runtime = "nodejs";
 
@@ -208,6 +213,7 @@ export async function DELETE(_request, { params }) {
     const accessLookup = await adminClient.clientAccess.getByApplicationId(applicationId);
     const profileLookup = await adminClient.clientProfiles.getByApplicationId(applicationId);
     const packetLookup = await adminClient.postCallZeroPackets.getByApplicationId(applicationId);
+    const collaborationLookup = await adminClient.clientCollaborationMessages.listByApplicationId(applicationId);
 
     const access =
       accessLookup.ok && Array.isArray(accessLookup.data) && accessLookup.data.length > 0
@@ -221,18 +227,34 @@ export async function DELETE(_request, { params }) {
       packetLookup.ok && Array.isArray(packetLookup.data) && packetLookup.data.length > 0
         ? packetLookup.data[0]
         : null;
+    const collaborationMessages =
+      collaborationLookup.ok && Array.isArray(collaborationLookup.data) ? collaborationLookup.data : [];
 
     const packetPaths = [
       packet?.welcome_storage_path,
       packet?.quote_storage_path,
       packet?.contract_storage_path
     ].filter(Boolean);
+    const collaborationAttachmentPaths = collaborationMessages.flatMap((messageRecord) =>
+      normalizeCollaborationAttachments(messageRecord?.attachments).map((attachment) => attachment.path).filter(Boolean)
+    );
 
     if (packetPaths.length > 0) {
       await Promise.all(
         packetPaths.map((path) =>
           removeStorageObject({
             bucket: POST_CALL_ZERO_BUCKET,
+            path
+          }).catch(() => null)
+        )
+      );
+    }
+
+    if (collaborationAttachmentPaths.length > 0) {
+      await Promise.all(
+        collaborationAttachmentPaths.map((path) =>
+          removeStorageObject({
+            bucket: CLIENT_COLLABORATION_BUCKET,
             path
           }).catch(() => null)
         )
