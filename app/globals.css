@@ -5992,3 +5992,99 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Dedicated hard reset for the admin client profile editor page. */
+.admin-application-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.admin-application-editor > * {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  flex: 0 0 auto;
+}
+
+.admin-application-editor > .admin-panel,
+.admin-application-editor > .collaboration-panel {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  align-content: start;
+}
+
+.admin-application-editor .admin-panel-heading,
+.admin-application-editor .client-panel-heading {
+  margin-bottom: 0.8rem;
+}
+
+.admin-application-editor .admin-meta-grid,
+.admin-application-editor .admin-subpanel-grid,
+.admin-application-editor .admin-packet-documents-grid,
+.admin-application-editor .admin-packet-links-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.admin-application-editor .admin-stack,
+.admin-application-editor .admin-stack-tight {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.admin-application-editor .admin-subpanel,
+.admin-application-editor .admin-file-card,
+.admin-application-editor .admin-link-card {
+  width: 100%;
+  min-width: 0;
+  align-content: start;
+}
+
+.admin-application-editor .admin-actions,
+.admin-application-editor .admin-actions-inline {
+  margin-top: 0.9rem;
+}
+
+.admin-application-editor .admin-actions-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.admin-application-editor .admin-panel-summary-account,
+.admin-application-editor .admin-panel-summary-profile,
+.admin-application-editor .admin-panel-summary-case,
+.admin-application-editor .admin-panel-summary-resources,
+.admin-application-editor .admin-panel-assistant,
+.admin-application-editor .admin-panel-manual-email,
+.admin-application-editor .admin-panel-pack,
+.admin-application-editor .admin-panel-timeline,
+.admin-application-editor .admin-panel-delete,
+.admin-application-editor .collaboration-panel {
+  grid-column: auto;
+}
+
+@media (max-width: 900px) {
+  .admin-application-editor .admin-meta-grid,
+  .admin-application-editor .admin-subpanel-grid,
+  .admin-application-editor .admin-packet-documents-grid,
+  .admin-application-editor .admin-packet-links-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-application-editor .admin-actions-inline {
+    flex-direction: column;
+  }
+
+  .admin-application-editor .admin-actions-inline .button,
+  .admin-application-editor .admin-actions-inline a,
+  .admin-application-editor .admin-actions .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
