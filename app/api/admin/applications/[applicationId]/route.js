@@ -6,6 +6,7 @@ import {
   requireAdminApiSession
 } from "@/lib/auth/api-guards";
 import { normalizeCollaborationAttachments } from "@/lib/collaboration";
+import { isClientViewPreferenceResource } from "@/lib/applications/client-space";
 import { enforceRateLimit } from "@/lib/security/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
@@ -34,7 +35,7 @@ function normalizeResourceLinks(items) {
       url: normalizeText(item?.url),
       logo_url: normalizeText(item?.logo_url)
     }))
-    .filter((item) => item.name || item.url || item.description);
+    .filter((item) => item.name || item.url || item.description || isClientViewPreferenceResource(item.key));
 }
 
 function normalizeTimelineEvents(items) {

@@ -7,6 +7,7 @@ import { LogoutButton } from "@/components/auth/logout-button";
 import { normalizeCollaborationMessage } from "@/lib/collaboration";
 import { getUserRole, isAdminUser } from "@/lib/auth/admin-access";
 import { getClientSession } from "@/lib/auth/client-auth";
+import { normalizeSiteContent } from "@/lib/site-content";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
@@ -74,6 +75,7 @@ export default async function AdminApplicationPage({ params }) {
   const postCallZeroPacketResult = await adminClient.postCallZeroPackets.getByApplicationId(params.applicationId);
   const callReportResult = await adminClient.clientCallReports.getByApplicationId(params.applicationId);
   const collaborationResult = await adminClient.clientCollaborationMessages.listByApplicationId(params.applicationId);
+  const siteContentResult = await adminClient.globalSiteSettings.get();
 
   const profile =
     profileResult.ok && Array.isArray(profileResult.data) && profileResult.data.length > 0
@@ -99,8 +101,20 @@ export default async function AdminApplicationPage({ params }) {
     collaborationResult.ok && Array.isArray(collaborationResult.data)
       ? collaborationResult.data.map(normalizeCollaborationMessage)
       : [];
-  const supportEmail = process.env.CLIENT_SUPPORT_EMAIL || process.env.CLIENT_EMAIL || "contact@zerolimit.agency";
-  const discordUrl = process.env.CLIENT_DISCORD_URL || process.env.NEXT_PUBLIC_CLIENT_DISCORD_URL || "";
+  const siteContentSettings =
+    siteContentResult.ok && Array.isArray(siteContentResult.data) && siteContentResult.data.length > 0
+      ? normalizeSiteContent(siteContentResult.data[0]?.settings || {})
+      : null;
+  const supportEmail =
+    siteContentSettings?.support?.contactEmail ||
+    process.env.CLIENT_SUPPORT_EMAIL ||
+    process.env.CLIENT_EMAIL ||
+    "contact@zerolimit.agency";
+  const discordUrl =
+    siteContentSettings?.support?.discordUrl ||
+    process.env.CLIENT_DISCORD_URL ||
+    process.env.NEXT_PUBLIC_CLIENT_DISCORD_URL ||
+    "";
 
   const isClientFolder = application.status === "approved";
 

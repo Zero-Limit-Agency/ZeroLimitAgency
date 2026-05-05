@@ -14,8 +14,13 @@ import {
   requireAuthenticatedApiSession
 } from "@/lib/auth/api-guards";
 import { getAuthorizedClientAccess } from "@/lib/auth/client-access";
+import {
+  buildCollaborationAdminNotificationEmail,
+  sendZeroLimitEmail
+} from "@/lib/emails/zero-limit";
 import { assertSafeUploadBatch, clampText } from "@/lib/security/uploads";
 import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { normalizeSiteContent } from "@/lib/site-content";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
   buildClientCollaborationStoragePath,
@@ -222,6 +227,35 @@ export async function POST(request, { params }) {
         { success: false, error: "Impossible d'envoyer le message." },
         { status: 500 }
       );
+    }
+
+    const siteContentResult = await access.adminClient.globalSiteSettings.get();
+    const siteContentSettings =
+      siteContentResult.ok && Array.isArray(siteContentResult.data) && siteContentResult.data.length > 0
+        ? normalizeSiteContent(siteContentResult.data[0]?.settings || {})
+        : null;
+    const supportEmail =
+      siteContentSettings?.support?.contactEmail ||
+      process.env.CLIENT_SUPPORT_EMAIL ||
+      process.env.CLIENT_EMAIL ||
+      "contact@zerolimit.agency";
+
+    if (supportEmail) {
+      const emailPayload = buildCollaborationAdminNotificationEmail({
+        application: access.application,
+        authorName,
+        message,
+        attachmentCount: uploadedAttachments.length
+      });
+
+      await sendZeroLimitEmail({
+        to: supportEmail,
+        from: process.env.CLIENT_EMAIL,
+        replyTo: access.application?.email || undefined,
+        subject: emailPayload.subject,
+        html: emailPayload.html,
+        text: emailPayload.text
+      });
     }
 
     return NextResponse.json({

@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 
 import { DeleteApplicationButton } from "@/components/admin/delete-application-button";
 import { CollaborationHub } from "@/components/collaboration/collaboration-hub";
+import {
+  buildClientWorkspaceFlags,
+  CLIENT_VIEW_PREFERENCE_KEYS,
+  stripClientViewPreferenceResources
+} from "@/lib/applications/client-space";
 import { isCollaborationRequestType } from "@/lib/collaboration";
 
 function createResourceDraft(existing = {}) {
@@ -237,6 +242,10 @@ function buildDefaultTimeline(application, profile) {
     return profile.timeline_events.map(createTimelineDraft);
   }
 
+  if (isCollaborationRequestType(application?.request_type)) {
+    return [];
+  }
+
   const acceptedDate = formatProjectDate(application?.updated_at || application?.created_at);
 
   return [
@@ -278,6 +287,7 @@ export function ApplicationEditor({
 }) {
   const router = useRouter();
   const hasCollaborationSpace = isCollaborationRequestType(application?.request_type);
+  const workspaceFlags = buildClientWorkspaceFlags(application, profile);
   const [state, setState] = useState({
     status: "idle",
     message: ""
@@ -320,9 +330,11 @@ export function ApplicationEditor({
     notion_url: profile?.notion_url || "",
     space_status: profile?.space_status || "preparing",
     market_access_enabled: Boolean(profile?.market_access_enabled),
+    show_preparation: workspaceFlags.showPreparation,
+    show_timeline: workspaceFlags.showTimeline,
     resource_links:
       Array.isArray(profile?.resource_links) && profile.resource_links.length > 0
-        ? profile.resource_links.map(createResourceDraft)
+        ? stripClientViewPreferenceResources(profile.resource_links).map(createResourceDraft)
         : [createResourceDraft()],
     timeline_events: normalizeTimelineCollection(buildDefaultTimeline(application, profile))
   });
@@ -682,6 +694,30 @@ export function ApplicationEditor({
     });
 
     try {
+      const resourceLinks = [...form.resource_links];
+
+      if (hasCollaborationSpace) {
+        if (form.show_preparation) {
+          resourceLinks.push(
+            createResourceDraft({
+              key: CLIENT_VIEW_PREFERENCE_KEYS.showPreparation,
+              name: "system",
+              kind: "system"
+            })
+          );
+        }
+
+        if (form.show_timeline) {
+          resourceLinks.push(
+            createResourceDraft({
+              key: CLIENT_VIEW_PREFERENCE_KEYS.showTimeline,
+              name: "system",
+              kind: "system"
+            })
+          );
+        }
+      }
+
       const response = await fetch(`/api/admin/applications/${application.id}`, {
         method: "PATCH",
         headers: {
@@ -704,7 +740,7 @@ export function ApplicationEditor({
             notion_url: form.notion_url,
             space_status: form.space_status,
             market_access_enabled: form.market_access_enabled,
-            resource_links: form.resource_links,
+            resource_links: resourceLinks,
             timeline_events: form.timeline_events
           }
         })
@@ -933,6 +969,36 @@ export function ApplicationEditor({
             onChange={(event) => updateField("space_status", event.target.checked ? "active" : "preparing")}
           />
         </label>
+
+        {hasCollaborationSpace ? (
+          <>
+            <label className="admin-toggle-row" htmlFor="show-preparation-section">
+              <div>
+                <strong>Afficher la section preparation</strong>
+                <span>Par defaut, ce type de dossier reste centre sur les informations et la discussion.</span>
+              </div>
+              <input
+                id="show-preparation-section"
+                type="checkbox"
+                checked={form.show_preparation}
+                onChange={(event) => updateField("show_preparation", event.target.checked)}
+              />
+            </label>
+
+            <label className="admin-toggle-row" htmlFor="show-timeline-section">
+              <div>
+                <strong>Afficher le suivi du projet</strong>
+                <span>Activez cette frise seulement si vous voulez exposer les etapes au client.</span>
+              </div>
+              <input
+                id="show-timeline-section"
+                type="checkbox"
+                checked={form.show_timeline}
+                onChange={(event) => updateField("show_timeline", event.target.checked)}
+              />
+            </label>
+          </>
+        ) : null}
 
       </section>
 

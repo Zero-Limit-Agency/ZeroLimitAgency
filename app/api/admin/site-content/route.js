@@ -114,11 +114,19 @@ export async function PATCH(request) {
 
   try {
     const { payload, formData } = await parsePayload(request);
+    const adminClient = createSupabaseAdminClient();
+    const currentSettingsResult = await adminClient.globalSiteSettings.get();
+    const currentSettings =
+      currentSettingsResult.ok && Array.isArray(currentSettingsResult.data) && currentSettingsResult.data.length > 0
+        ? normalizeSiteContent(currentSettingsResult.data[0]?.settings || {})
+        : normalizeSiteContent({});
     const settings = await attachUploadedSiteAssets({
-      settings: normalizeSiteContent(payload),
+      settings: {
+        ...normalizeSiteContent(payload),
+        support: payload?.support ? normalizeSiteContent({ support: payload.support }).support : currentSettings.support
+      },
       formData
     });
-    const adminClient = createSupabaseAdminClient();
     const result = await adminClient.globalSiteSettings.upsert({
       settings,
       updated_by: guard.session.user.id

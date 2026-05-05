@@ -12,6 +12,7 @@ import {
   buildClientDetailItems,
   buildClientResourceItems,
   buildClientSummary,
+  buildClientWorkspaceFlags,
   buildDashboardTimeline,
   buildLeadDisplayName,
   buildLeadInitials,
@@ -22,6 +23,7 @@ import { createDemoApplication, createDemoProfile, DEMO_CLIENT_APPLICATION_ID } 
 import { getAuthorizedClientAccess } from "@/lib/auth/client-access";
 import { getClientSession } from "@/lib/auth/client-auth";
 import { getMaintenanceModeState } from "@/lib/maintenance";
+import { normalizeSiteContent } from "@/lib/site-content";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
@@ -97,6 +99,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
   let profile = null;
   let globalMarketSettings = null;
   let collaborationMessages = [];
+  let siteContentSettings = null;
 
   if (isDemoSpace) {
     application = createDemoApplication();
@@ -117,6 +120,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
     const profileResult = await adminClient.clientProfiles.getByApplicationId(params.applicationId);
     const marketResult = await adminClient.globalMarketSettings.get();
     const collaborationResult = await adminClient.clientCollaborationMessages.listByApplicationId(params.applicationId);
+    const siteContentResult = await adminClient.globalSiteSettings.get();
 
     profile =
       profileResult.ok && Array.isArray(profileResult.data) && profileResult.data.length > 0
@@ -130,6 +134,10 @@ export default async function ClientApplicationPage({ params, searchParams }) {
       collaborationResult.ok && Array.isArray(collaborationResult.data)
         ? collaborationResult.data.map(normalizeCollaborationMessage)
         : [];
+    siteContentSettings =
+      siteContentResult.ok && Array.isArray(siteContentResult.data) && siteContentResult.data.length > 0
+        ? normalizeSiteContent(siteContentResult.data[0]?.settings || {})
+        : null;
   }
 
   const displayName = buildLeadDisplayName(application);
@@ -139,13 +147,22 @@ export default async function ClientApplicationPage({ params, searchParams }) {
   const details = buildClientDetailItems(application);
   const resources = buildClientResourceItems(application, profile);
   const timeline = buildDashboardTimeline(application, profile);
+  const workspaceFlags = buildClientWorkspaceFlags(application, profile);
   const contextLine = buildContextLine(application);
   const marketData = profile?.market_access_enabled ? buildZeroLimitMarketData(globalMarketSettings) : null;
   const isWorkspaceReady = isDemoSpace || profile?.space_status === "active";
   const hasCollaborationSpace = isCollaborationRequestType(application?.request_type);
   const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL || process.env.BOOKING_URL || "";
-  const supportEmail = process.env.CLIENT_SUPPORT_EMAIL || process.env.CLIENT_EMAIL || "contact@zerolimit.agency";
-  const discordUrl = process.env.CLIENT_DISCORD_URL || process.env.NEXT_PUBLIC_CLIENT_DISCORD_URL || "";
+  const supportEmail =
+    siteContentSettings?.support?.contactEmail ||
+    process.env.CLIENT_SUPPORT_EMAIL ||
+    process.env.CLIENT_EMAIL ||
+    "contact@zerolimit.agency";
+  const discordUrl =
+    siteContentSettings?.support?.discordUrl ||
+    process.env.CLIENT_DISCORD_URL ||
+    process.env.NEXT_PUBLIC_CLIENT_DISCORD_URL ||
+    "";
 
   return (
     <main className="client-dashboard-shell">
@@ -249,7 +266,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
             />
           ) : null}
 
-          {!isWorkspaceReady ? (
+          {!isWorkspaceReady && workspaceFlags.showPreparation ? (
             <article className="client-panel client-panel-preparation">
               <div className="client-panel-heading">
                 <p className="eyebrow">Préparation</p>
@@ -337,6 +354,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
             </div>
           </article>
 
+          {workspaceFlags.showTimeline ? (
           <article className="client-panel client-panel-timeline">
             <div className="client-panel-heading client-panel-heading-split">
               <div>
@@ -365,6 +383,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
               ))}
             </div>
           </article>
+          ) : null}
 
           {marketData ? <ZeroLimitMarket market={marketData} /> : null}
         </section>
