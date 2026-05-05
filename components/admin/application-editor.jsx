@@ -868,7 +868,7 @@ export function ApplicationEditor({
   }
 
   return (
-    <form className="admin-editor" onSubmit={handleSubmit}>
+    <form className="admin-editor admin-application-editor" onSubmit={handleSubmit}>
       {application?.drive_transfer_error ? (
         <section className="admin-panel admin-panel-warning">
           <div className="admin-system-warning">
