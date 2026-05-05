@@ -44,7 +44,7 @@ function formatApplicationDate(value) {
 }
 
 function RequestCard({ application, tone }) {
-  const badgeLabel = tone === "rejected" ? "Refusee" : "En attente";
+  const badgeLabel = tone === "rejected" ? "Refusée" : "En attente";
 
   return (
     <article className="admin-list-card admin-request-card">
@@ -55,9 +55,9 @@ function RequestCard({ application, tone }) {
         </div>
         <h2>{buildDisplayName(application)}</h2>
         <p>
-          {application.email || "Email a preciser"} · {application.language || "Langue a preciser"}
+          {application.email || "Email à préciser"} · {application.language || "Langue à préciser"}
         </p>
-        <p className="admin-inline-note">Recue le {formatApplicationDate(application.created_at)}</p>
+        <p className="admin-inline-note">Reçue le {formatApplicationDate(application.created_at)}</p>
       </div>
 
       <div className="admin-list-actions">
@@ -79,16 +79,16 @@ function ClientCard({ application }) {
         </div>
         <h2>{buildDisplayName(application)}</h2>
         <p>
-          {application.company || "Structure a preciser"} · {application.language || "Langue a preciser"}
+          {application.company || "Structure à préciser"} · {application.language || "Langue à préciser"}
         </p>
         <p className="admin-inline-note">
-          {application.request_type || "Dossier client"} · Valide le {formatApplicationDate(application.updated_at)}
+          {application.request_type || "Dossier client"} · Validé le {formatApplicationDate(application.updated_at)}
         </p>
       </div>
 
       <div className="admin-list-actions">
         <Link className="button button-primary" href={`/admin/${application.id}`}>
-          Gerer le client
+          Gérer le client
         </Link>
         <Link className="button button-dark" href={`/espace-client/${application.id}?admin_preview=1`}>
           Voir l'espace client
@@ -130,11 +130,11 @@ function AdminSection({ eyebrow, title, note, items, kind }) {
         ) : kind === "pending_review" ? (
           <EmptyState
             title="Aucune demande en attente."
-            description="Les nouvelles inscriptions apparaitront ici tant qu'elles n'ont pas ete traitees."
+            description="Les nouvelles inscriptions apparaîtront ici tant qu'elles n'ont pas été traitées."
           />
         ) : kind === "rejected" ? (
           <EmptyState
-            title="Aucune demande refusee."
+            title="Aucune demande refusée."
             description="Les dossiers refuses sont conserves ici pour garder un historique propre."
           />
         ) : (
@@ -204,7 +204,7 @@ export default async function AdminPage({ searchParams }) {
             <Link className="button button-dark" href="/">
               Retour au site
             </Link>
-            <LogoutButton label="Se deconnecter" />
+            <LogoutButton label="Se déconnecter" />
           </div>
         </header>
 
@@ -212,7 +212,7 @@ export default async function AdminPage({ searchParams }) {
           <article className="admin-subpanel">
             <small>En attente</small>
             <strong>{pendingApplications.length}</strong>
-            <p className="admin-inline-note">Demandes a traiter avant toute decision.</p>
+            <p className="admin-inline-note">Demandes à traiter avant toute décision.</p>
           </article>
           <article className="admin-subpanel">
             <small>Refuses</small>
@@ -222,7 +222,7 @@ export default async function AdminPage({ searchParams }) {
           <article className="admin-subpanel">
             <small>Clients</small>
             <strong>{approvedApplications.length}</strong>
-            <p className="admin-inline-note">Dossiers valides et geres comme vrais clients.</p>
+            <p className="admin-inline-note">Dossiers validés et gérés comme vrais clients.</p>
           </article>
         </section>
 
@@ -259,7 +259,7 @@ export default async function AdminPage({ searchParams }) {
           {(activeFilter === "all" || activeFilter === "pending_review") && (
             <AdminSection
               eyebrow="En attente"
-              title="Demandes a traiter"
+              title="Demandes à traiter"
               note="Les demandes presentes ici sont les seules encore actives cote revue."
               items={pendingApplications}
               kind="pending_review"
@@ -269,8 +269,8 @@ export default async function AdminPage({ searchParams }) {
           {(activeFilter === "all" || activeFilter === "rejected") && (
             <AdminSection
               eyebrow="Refuses"
-              title="Demandes refusees"
-              note="Ces dossiers restent en base, mais ne doivent plus apparaitre comme des demandes a traiter."
+              title="Demandes refusées"
+              note="Ces dossiers restent en base, mais ne doivent plus apparaître comme des demandes à traiter."
               items={rejectedApplications}
               kind="rejected"
             />
@@ -279,7 +279,7 @@ export default async function AdminPage({ searchParams }) {
           {(activeFilter === "all" || activeFilter === "approved") && (
             <AdminSection
               eyebrow="Clients"
-              title="Clients valides"
+              title="Clients validés"
               note="Une demande acceptee quitte l'attente et rejoint cette section comme client."
               items={approvedApplications}
               kind="clients"

@@ -123,7 +123,7 @@ export function CollaborationHub({
 
       setState({
         status: "success",
-        message: isAdmin ? "La reponse a bien ete envoyee." : "Votre message a bien ete envoye."
+        message: isAdmin ? "La réponse a bien été envoyée." : "Votre message a bien été envoyé."
       });
     } catch (error) {
       setState({
@@ -158,7 +158,7 @@ export function CollaborationHub({
           <a className="collaboration-action-card" href={supportLinks.discordHref} target="_blank" rel="noreferrer">
             <small>Discord</small>
             <strong>Ouvrir un ticket</strong>
-            <span>Basculer vers Discord pour discuter en temps reel avec l'equipe.</span>
+            <span>Basculer vers Discord pour discuter en temps réel avec l'équipe.</span>
           </a>
         ) : (
           <div className="collaboration-action-card collaboration-action-card-disabled">
@@ -252,7 +252,7 @@ export function CollaborationHub({
             onChange={(event) => setMessage(event.target.value)}
             placeholder={
               isAdmin
-                ? "Ecrivez ici votre reponse pour le client."
+                ? "Écrivez ici votre réponse pour le client."
                 : "Expliquez votre besoin, envoyez vos retours ou joignez vos fichiers ici."
             }
             disabled={readOnly || state.status === "loading"}
