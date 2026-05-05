@@ -882,7 +882,6 @@ export function ApplicationEditor({
         </section>
       ) : null}
 
-      <div className="admin-application-grid admin-application-grid-summary">
       <section className="admin-panel admin-panel-summary-account">
         <div className="admin-panel-heading">
           <div>
@@ -1114,7 +1113,6 @@ export function ApplicationEditor({
           Ajouter un outil
         </button>
       </section>
-      </div>
 
       <section className="admin-panel admin-panel-assistant">
         <div className="admin-panel-heading">
@@ -1418,7 +1416,6 @@ export function ApplicationEditor({
         />
       ) : null}
 
-      <div className="admin-application-grid admin-application-grid-workflow">
         <section className="admin-panel admin-panel-manual-email">
           <div className="admin-panel-heading">
             <div>
@@ -1696,7 +1693,6 @@ export function ApplicationEditor({
           </p>
         ) : null}
       </section>
-      </div>
 
       <section className="admin-panel admin-panel-timeline">
         <div className="admin-panel-heading">

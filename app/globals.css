@@ -5630,3 +5630,365 @@ body {
     grid-column: auto;
   }
 }
+
+/* Global layout pass: consistent containers, card rhythm, grids, and responsive behavior. */
+.section,
+.hero.section {
+  padding-block: clamp(4rem, 7vw, 6rem);
+}
+
+.section-heading,
+.section-copy,
+.hero-copy,
+.auth-copy,
+.client-hub-copy,
+.client-profile-copy,
+.admin-list-copy {
+  max-width: 52rem;
+}
+
+.hero-grid {
+  grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+  gap: clamp(1.4rem, 3vw, 2.4rem);
+  align-items: stretch;
+}
+
+.contact-grid,
+.faq-grid,
+.portal-card {
+  gap: clamp(1.2rem, 2.6vw, 2rem);
+  align-items: start;
+}
+
+.reviews-grid,
+.projects-grid,
+.news-grid,
+.team-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(1rem, 2vw, 1.4rem);
+  align-items: stretch;
+}
+
+.review-card,
+.project-card,
+.news-card,
+.team-card,
+.portal-box,
+.faq-item,
+.media-shell,
+.hero-card,
+.contact-form,
+.auth-card,
+.auth-demo-panel,
+.auth-copy-note,
+.client-hub-card,
+.client-panel,
+.client-profile-card,
+.client-overview-card,
+.client-resource-card,
+.client-summary-box,
+.client-timeline-content,
+.admin-frame,
+.admin-list-card,
+.admin-panel,
+.admin-subpanel {
+  width: 100%;
+  min-width: 0;
+}
+
+.auth-card-wide {
+  grid-template-columns: minmax(0, 1.02fr) minmax(300px, 0.98fr);
+  gap: clamp(1.15rem, 2.4vw, 1.9rem);
+  align-items: stretch;
+}
+
+.auth-panel,
+.auth-copy,
+.client-profile-main,
+.client-profile-copy,
+.admin-list-copy {
+  min-width: 0;
+}
+
+.client-hub-frame,
+.client-dashboard-frame,
+.admin-frame,
+.auth-card {
+  width: min(1200px, calc(100% - 1rem));
+}
+
+.client-hub-frame,
+.client-dashboard-frame,
+.admin-frame {
+  padding: clamp(1.2rem, 2.5vw, 2rem);
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.client-dashboard-grid,
+.client-dashboard-grid-refined,
+.client-hub-grid,
+.client-roadmap-grid,
+.admin-list,
+.admin-editor,
+.admin-stack,
+.admin-overview-grid,
+.admin-meta-grid,
+.admin-subpanel-grid,
+.admin-packet-documents-grid,
+.admin-packet-links-grid {
+  gap: clamp(0.9rem, 1.8vw, 1.35rem);
+}
+
+.client-dashboard-grid,
+.client-dashboard-grid-refined {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.client-panel,
+.client-resource-card,
+.client-summary-box,
+.client-overview-card,
+.client-timeline-content,
+.admin-panel,
+.admin-subpanel,
+.admin-list-card {
+  padding: clamp(1rem, 2.2vw, 1.45rem);
+}
+
+.client-profile-card {
+  padding: clamp(1.1rem, 2.4vw, 1.55rem);
+}
+
+.client-profile-header {
+  align-items: start;
+}
+
+.client-overview-card {
+  max-width: 24rem;
+}
+
+.client-panel-heading,
+.admin-panel-heading,
+.client-dashboard-header,
+.admin-header,
+.admin-list-card,
+.client-panel-heading-split {
+  gap: 1rem;
+}
+
+.client-panel-note,
+.admin-inline-note,
+.hero-lead,
+.section-copy p,
+.section-heading p,
+.auth-copy > p:not(.eyebrow),
+.auth-demo-panel p,
+.auth-copy-note p {
+  max-width: 58rem;
+}
+
+.admin-list-card {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+}
+
+.admin-list-actions,
+.admin-header-actions,
+.admin-actions,
+.client-dashboard-footer,
+.hero-actions,
+.auth-actions {
+  gap: 0.8rem;
+}
+
+.admin-list-actions,
+.admin-header-actions,
+.client-dashboard-footer,
+.hero-actions,
+.auth-actions {
+  flex-wrap: wrap;
+}
+
+.admin-list-actions .button,
+.admin-header-actions .button,
+.hero-actions .button,
+.client-dashboard-footer .button,
+.auth-actions .button {
+  min-width: 0;
+}
+
+.admin-meta-grid,
+.admin-subpanel-grid,
+.client-info-grid,
+.client-info-grid-refined,
+.client-profile-meta {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-packet-documents-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.admin-packet-links-grid,
+.admin-overview-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.client-panel-details,
+.client-panel-resources,
+.client-panel-preparation,
+.client-panel-timeline,
+.client-panel-market,
+.collaboration-panel {
+  grid-column: span 12;
+}
+
+.client-resource-list,
+.client-timeline,
+.admin-stack-tight {
+  gap: 0.9rem;
+}
+
+.admin-toggle-row,
+.admin-file-card,
+.admin-link-card,
+.client-resource-card,
+.client-info-card,
+.client-metric-card {
+  align-content: start;
+}
+
+@media (max-width: 1180px) {
+  .hero-grid,
+  .contact-grid,
+  .faq-grid,
+  .portal-card,
+  .auth-card-wide,
+  .client-profile-header {
+    grid-template-columns: 1fr;
+  }
+
+  .client-overview-card {
+    max-width: none;
+  }
+
+  .admin-list-card {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-overview-grid,
+  .admin-packet-links-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .section,
+  .hero.section {
+    padding-block: 3.25rem;
+  }
+
+  .client-hub-frame,
+  .client-dashboard-frame,
+  .admin-frame,
+  .auth-card {
+    width: min(100%, calc(100% - 0.6rem));
+  }
+
+  .client-hub-frame,
+  .client-dashboard-frame,
+  .admin-frame {
+    padding: 0.95rem;
+  }
+
+  .reviews-grid,
+  .projects-grid,
+  .news-grid,
+  .team-grid,
+  .admin-overview-grid,
+  .admin-meta-grid,
+  .admin-subpanel-grid,
+  .admin-packet-documents-grid,
+  .admin-packet-links-grid,
+  .client-info-grid,
+  .client-info-grid-refined,
+  .client-profile-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .client-profile-card,
+  .client-panel,
+  .client-resource-card,
+  .client-summary-box,
+  .client-overview-card,
+  .client-timeline-content,
+  .admin-panel,
+  .admin-subpanel,
+  .admin-list-card,
+  .auth-card,
+  .auth-demo-panel,
+  .auth-copy-note {
+    padding: 0.95rem;
+    border-radius: 22px;
+  }
+
+  .client-dashboard-grid,
+  .client-dashboard-grid-refined {
+    gap: 0.9rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-copy h1,
+  .section h2,
+  .auth-card h1,
+  .client-dashboard-frame h1,
+  .admin-frame h1,
+  .client-panel-heading h2,
+  .admin-panel-heading h2 {
+    font-size: clamp(1.25rem, 8vw, 1.85rem);
+    line-height: 1.06;
+  }
+
+  .hero-actions,
+  .client-dashboard-footer,
+  .admin-header-actions,
+  .admin-list-actions,
+  .auth-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-actions .button,
+  .client-dashboard-footer .button,
+  .admin-header-actions .button,
+  .admin-list-actions .button,
+  .auth-actions .button,
+  .admin-list-actions a {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .client-hub-frame,
+  .client-dashboard-frame,
+  .admin-frame {
+    padding: 0.75rem;
+  }
+
+  .client-profile-card,
+  .client-panel,
+  .client-resource-card,
+  .client-summary-box,
+  .client-overview-card,
+  .client-timeline-content,
+  .admin-panel,
+  .admin-subpanel,
+  .admin-list-card {
+    padding: 0.85rem;
+    border-radius: 18px;
+  }
+
+  .collaboration-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
