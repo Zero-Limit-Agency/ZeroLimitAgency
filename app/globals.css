@@ -304,6 +304,157 @@ h3 {
   margin: 2rem 0 2.2rem;
 }
 
+.hero-dream-board {
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.hero-dream-frame {
+  position: relative;
+  width: 100%;
+  min-height: 44rem;
+  padding: 1.5rem;
+  border-radius: 36px;
+  border: 1px solid rgba(255, 236, 236, 0.1);
+  background:
+    radial-gradient(circle at 14% 18%, rgba(240, 138, 184, 0.18), transparent 28%),
+    radial-gradient(circle at 82% 12%, rgba(212, 170, 106, 0.16), transparent 22%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(18, 9, 11, 0.2)),
+    rgba(20, 11, 15, 0.6);
+  box-shadow: 0 30px 80px rgba(4, 1, 2, 0.28);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero-dream-frame::before {
+  content: "";
+  position: absolute;
+  inset: 1rem;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 245, 243, 0.06);
+  pointer-events: none;
+}
+
+.hero-dream-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 22rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.hero-dream-kicker {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 245, 243, 0.66);
+}
+
+.hero-dream-copy h2 {
+  font-size: clamp(2rem, 3vw, 3.4rem);
+  line-height: 0.94;
+}
+
+.hero-dream-copy p {
+  margin: 0;
+  color: rgba(255, 245, 243, 0.78);
+  line-height: 1.68;
+}
+
+.hero-dream-stack {
+  position: relative;
+  margin-top: 2rem;
+  min-height: 28rem;
+}
+
+.hero-dream-layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 1rem 1.1rem 1.2rem;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 245, 243, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.03) 16%, rgba(18, 9, 11, 0.5) 100%),
+    linear-gradient(135deg, rgba(212, 170, 106, 0.16), rgba(177, 95, 115, 0.14) 45%, rgba(18, 9, 11, 0.7));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 18px 40px rgba(8, 2, 4, 0.24);
+  backdrop-filter: blur(18px) saturate(120%);
+  transform-origin: center top;
+}
+
+.hero-dream-layer::before {
+  content: "";
+  position: absolute;
+  inset: 0.85rem 1rem auto;
+  height: 34%;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0));
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.hero-dream-layer small,
+.hero-dream-layer strong,
+.hero-dream-layer span {
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+
+.hero-dream-layer small {
+  margin-bottom: 0.45rem;
+  color: rgba(255, 245, 243, 0.56);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.73rem;
+}
+
+.hero-dream-layer strong {
+  font-size: 1.14rem;
+  color: var(--white);
+}
+
+.hero-dream-layer span {
+  margin-top: 0.55rem;
+  max-width: 20rem;
+  color: rgba(255, 245, 243, 0.8);
+  line-height: 1.55;
+  font-size: 0.94rem;
+}
+
+.hero-dream-layer-1 {
+  top: 0;
+  transform: perspective(1200px) rotateX(60deg) translateX(4rem);
+  opacity: 0.56;
+}
+
+.hero-dream-layer-2 {
+  top: 5.2rem;
+  transform: perspective(1200px) rotateX(50deg) translateX(2.6rem);
+  opacity: 0.7;
+}
+
+.hero-dream-layer-3 {
+  top: 10.8rem;
+  transform: perspective(1200px) rotateX(36deg) translateX(1.4rem);
+  opacity: 0.84;
+}
+
+.hero-dream-layer-4 {
+  top: 17.1rem;
+  transform: perspective(1200px) rotateX(22deg) translateX(0.55rem);
+  opacity: 0.94;
+}
+
+.hero-dream-layer-5 {
+  top: 23.9rem;
+  transform: perspective(1200px) rotateX(10deg);
+}
+
 .button {
   display: inline-flex;
   align-items: center;
@@ -6009,6 +6160,77 @@ body {
 .client-info-card,
 .client-metric-card {
   align-content: start;
+}
+
+@media (max-width: 1180px) {
+  .hero-dream-frame {
+    min-height: 40rem;
+  }
+
+  .hero-dream-copy {
+    max-width: none;
+  }
+
+  .hero-dream-layer-1 {
+    transform: perspective(1200px) rotateX(56deg) translateX(2.4rem);
+  }
+
+  .hero-dream-layer-2 {
+    transform: perspective(1200px) rotateX(46deg) translateX(1.8rem);
+  }
+
+  .hero-dream-layer-3 {
+    transform: perspective(1200px) rotateX(32deg) translateX(1rem);
+  }
+
+  .hero-dream-layer-4 {
+    transform: perspective(1200px) rotateX(18deg) translateX(0.35rem);
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-dream-frame {
+    min-height: auto;
+    padding: 1.2rem;
+  }
+
+  .hero-dream-stack {
+    min-height: auto;
+    display: grid;
+    gap: 0.9rem;
+    margin-top: 1.25rem;
+  }
+
+  .hero-dream-layer {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    transform: none;
+    opacity: 1;
+  }
+
+  .hero-dream-layer::before {
+    inset: 0.7rem 0.8rem auto;
+    height: 2.8rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .hero-dream-copy h2 {
+    font-size: clamp(1.8rem, 8vw, 2.45rem);
+  }
+
+  .hero-dream-layer {
+    border-radius: 22px;
+    padding: 0.95rem 1rem 1.05rem;
+  }
+
+  .hero-dream-layer span {
+    max-width: none;
+    font-size: 0.92rem;
+    line-height: 1.52;
+  }
 }
 
 @media (max-width: 1180px) {

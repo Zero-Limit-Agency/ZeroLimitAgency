@@ -25,6 +25,39 @@ const frenchMonthMap = {
   décembre: 12
 };
 
+const HERO_DREAM_LAYERS = [
+  {
+    id: "layer-1",
+    step: "Étape 1",
+    title: "Brouillon",
+    text: "Une idée forte, mais encore floue, dispersée ou remise à plus tard."
+  },
+  {
+    id: "layer-2",
+    step: "Étape 2",
+    title: "Vision",
+    text: "On clarifie le cap, l'identité, les objectifs et ce que tu veux vraiment construire."
+  },
+  {
+    id: "layer-3",
+    step: "Étape 3",
+    title: "Structure",
+    text: "Positionnement, organisation, image, outils et méthode pour arrêter l'improvisation."
+  },
+  {
+    id: "layer-4",
+    step: "Étape 4",
+    title: "Gestion de carrière",
+    text: "On transforme l'ambition en trajectoire sérieuse avec un accompagnement réellement exploitable."
+  },
+  {
+    id: "layer-5",
+    step: "Étape 5",
+    title: "Objectifs",
+    text: "Mieux vaut avancer bien entouré, même avec des essais, que regretter de ne jamais s'être lancé."
+  }
+];
+
 function normalizeBirthDateInput(value) {
   return String(value || "")
     .replace(/[^\dA-Za-zÀ-ÿ./\-\s]/g, "")
@@ -370,6 +403,31 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
                 ))}
               </div>
             </div>
+            <aside className="hero-dream-board reveal is-visible" aria-label="Parcours d'accompagnement Zero Limit">
+              <div className="hero-dream-frame">
+                <div className="hero-dream-copy">
+                  <p className="hero-dream-kicker">Build your dream without limit.</p>
+                  <h2>De l'idée brute à une trajectoire solide.</h2>
+                  <p>
+                    On t'aide à éviter le regret de ne pas essayer, en transformant une envie
+                    confuse en projet cadré, accompagné et prêt à grandir.
+                  </p>
+                </div>
+
+                <div className="hero-dream-stack" aria-hidden="true">
+                  {HERO_DREAM_LAYERS.map((layer, index) => (
+                    <article
+                      key={layer.id}
+                      className={`hero-dream-layer hero-dream-layer-${index + 1}`}
+                    >
+                      <small>{layer.step}</small>
+                      <strong>{layer.title}</strong>
+                      <span>{layer.text}</span>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </aside>
           </div>
         </section>
 
