@@ -314,7 +314,7 @@ h3 {
   position: relative;
   width: 100%;
   min-height: 44rem;
-  padding: 1.6rem;
+  padding: 1.9rem;
   border-radius: 36px;
   border: 1px solid rgba(255, 236, 236, 0.1);
   background:
@@ -341,7 +341,7 @@ h3 {
   z-index: 2;
   max-width: 23rem;
   display: grid;
-  gap: 0.85rem;
+  gap: 0.95rem;
 }
 
 .hero-dream-kicker {
@@ -365,15 +365,15 @@ h3 {
 
 .hero-dream-scene {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(240px, 0.85fr);
-  gap: 1.35rem;
+  grid-template-columns: minmax(0, 1.08fr) minmax(260px, 0.92fr);
+  gap: 1.85rem;
   align-items: center;
-  margin-top: 1.9rem;
+  margin-top: 2.3rem;
 }
 
 .hero-dream-rig {
   position: relative;
-  min-height: 29rem;
+  min-height: 32rem;
   transform-style: preserve-3d;
   transition: transform 180ms ease-out;
   cursor: grab;
@@ -400,28 +400,28 @@ h3 {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 30px;
+  border-radius: 999px;
   pointer-events: none;
 }
 
 .hero-dream-slab::before {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.16) 28%, rgba(255, 255, 255, 0.05) 55%, rgba(177, 95, 115, 0.18) 100%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(255, 182, 203, 0.22) 40%, rgba(255, 109, 109, 0.28) 100%);
-  border: 1px solid rgba(255, 248, 245, 0.24);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.14) 25%, rgba(255, 255, 255, 0.04) 52%, rgba(177, 95, 115, 0.14) 100%),
+    linear-gradient(115deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.08) 28%, rgba(255, 146, 146, 0.18) 65%, rgba(116, 26, 37, 0.24) 100%);
+  border: 1px solid rgba(255, 248, 245, 0.22);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.38),
-    inset 0 -12px 26px rgba(164, 35, 52, 0.22),
-    0 28px 40px rgba(12, 2, 4, 0.2);
-  backdrop-filter: blur(14px) saturate(135%);
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -10px 24px rgba(164, 35, 52, 0.18),
+    0 26px 36px rgba(12, 2, 4, 0.18);
+  backdrop-filter: blur(16px) saturate(140%);
 }
 
 .hero-dream-slab::after {
-  inset: auto 8% -1.15rem;
-  height: 1.15rem;
-  border-radius: 0 0 24px 24px;
-  background: linear-gradient(180deg, rgba(255, 67, 67, 0.62), rgba(115, 16, 22, 0.86));
-  filter: blur(0.2px);
+  inset: auto 9% -1.2rem;
+  height: 1.2rem;
+  border-radius: 0 0 999px 999px;
+  background: linear-gradient(180deg, rgba(255, 82, 82, 0.5), rgba(93, 16, 25, 0.78));
+  filter: blur(0.35px);
 }
 
 .hero-dream-slab:hover,
@@ -435,38 +435,44 @@ h3 {
 .hero-dream-slab:focus-visible::before,
 .hero-dream-slab.is-active::before {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.24) 28%, rgba(255, 255, 255, 0.08) 55%, rgba(240, 138, 184, 0.22) 100%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.38), rgba(255, 207, 207, 0.3) 40%, rgba(255, 109, 109, 0.34) 100%);
-  border-color: rgba(255, 248, 245, 0.34);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.24) 25%, rgba(255, 255, 255, 0.08) 52%, rgba(240, 138, 184, 0.18) 100%),
+    linear-gradient(115deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.12) 28%, rgba(255, 191, 191, 0.22) 65%, rgba(143, 31, 45, 0.28) 100%);
+  border-color: rgba(255, 248, 245, 0.32);
 }
 
 .hero-dream-slab-top {
-  top: 0.3rem;
-  height: 7rem;
-  transform: translateZ(1.6rem);
+  top: 0.2rem;
+  height: 5.9rem;
+  transform: translateZ(1.8rem);
 }
 
-.hero-dream-slab-middle {
-  top: 8.9rem;
-  height: 7rem;
-  transform: translateZ(0.6rem);
+.hero-dream-slab-second {
+  top: 7.6rem;
+  height: 5.9rem;
+  transform: translateZ(1rem);
+}
+
+.hero-dream-slab-third {
+  top: 15rem;
+  height: 5.9rem;
+  transform: translateZ(0.1rem);
 }
 
 .hero-dream-slab-bottom {
-  top: 17.5rem;
-  height: 7rem;
-  transform: translateZ(-0.5rem);
+  top: 22.4rem;
+  height: 5.9rem;
+  transform: translateZ(-0.8rem);
 }
 
 .hero-dream-legend {
   display: grid;
-  gap: 1rem;
+  gap: 1.1rem;
 }
 
 .hero-dream-highlight {
   display: grid;
   gap: 0.55rem;
-  padding: 1.1rem 1.15rem;
+  padding: 1.2rem 1.2rem;
   border-radius: 24px;
   border: 1px solid rgba(255, 245, 243, 0.1);
   background:
@@ -6240,7 +6246,7 @@ body {
 
 @media (max-width: 1180px) {
   .hero-dream-frame {
-    min-height: 40rem;
+    min-height: 42rem;
   }
 
   .hero-dream-scene {
@@ -6257,7 +6263,7 @@ body {
   }
 
   .hero-dream-rig {
-    min-height: 26rem;
+    min-height: 30rem;
   }
 }
 
@@ -6273,7 +6279,7 @@ body {
   }
 
   .hero-dream-rig {
-    min-height: 23rem;
+    min-height: 28rem;
   }
 
   .hero-dream-legend {
@@ -6287,7 +6293,7 @@ body {
   }
 
   .hero-dream-rig {
-    min-height: 18.5rem;
+    min-height: 22.5rem;
     transform: none !important;
   }
 
@@ -6297,21 +6303,26 @@ body {
   }
 
   .hero-dream-slab-top,
-  .hero-dream-slab-middle,
+  .hero-dream-slab-second,
+  .hero-dream-slab-third,
   .hero-dream-slab-bottom {
-    height: 5.3rem;
+    height: 4.4rem;
   }
 
   .hero-dream-slab-top {
     top: 0.2rem;
   }
 
-  .hero-dream-slab-middle {
-    top: 6.4rem;
+  .hero-dream-slab-second {
+    top: 5.6rem;
+  }
+
+  .hero-dream-slab-third {
+    top: 10.9rem;
   }
 
   .hero-dream-slab-bottom {
-    top: 12.6rem;
+    top: 16.2rem;
   }
 
   .hero-dream-highlight,

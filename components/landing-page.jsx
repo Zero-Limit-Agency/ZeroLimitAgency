@@ -30,25 +30,25 @@ const HERO_DREAM_STEPS = [
     id: "dream-step-1",
     step: "Étape 1",
     title: "Réflexion",
-    text: "Une ambition existe déjà, mais elle reste floue, isolée ou repoussée trop longtemps."
+    text: "Une envie existe déjà, mais elle reste floue, repoussée ou trop seule pour vraiment avancer."
   },
   {
     id: "dream-step-2",
     step: "Étape 2",
-    title: "Création de carrière",
-    text: "On pose un vrai cap, une identité et un positionnement pour construire quelque chose de durable."
+    title: "Positionnement",
+    text: "On transforme une intuition en direction lisible, avec une identité, un cap et une trajectoire claire."
   },
   {
     id: "dream-step-3",
     step: "Étape 3",
     title: "Accompagnement",
-    text: "Tu avances avec une structure, des retours clairs et un cadre pour éviter de te disperser."
+    text: "Tu avances avec une structure, des retours précis et un cadre qui t'évite de te disperser."
   },
   {
     id: "dream-step-4",
     step: "Étape 4",
-    title: "Succès",
-    text: "Mieux vaut essayer, apprendre et progresser bien entouré que regretter de ne pas t'être lancé."
+    title: "Déploiement",
+    text: "Le but n'est pas de promettre le succès. Le but, c'est de te donner une vraie chance d'aller au bout."
   }
 ];
 
@@ -422,10 +422,11 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
               <div className="hero-dream-frame">
                 <div className="hero-dream-copy">
                   <p className="hero-dream-kicker">Build your dream without limit.</p>
-                  <h2>De l'idée brute à une trajectoire solide.</h2>
+                  <h2>De l'idée brute à un projet enfin lancé sérieusement.</h2>
                   <p>
-                    Mieux vaut construire, tester et avancer avec un vrai cadre que laisser une
-                    ambition dormir jusqu'au regret.
+                    Le vrai risque, ce n'est pas d'essayer avec un bon cadre. Le vrai risque,
+                    c'est d'attendre trop longtemps et de regretter de n'avoir jamais donné sa
+                    chance à son projet.
                   </p>
                 </div>
 
@@ -449,12 +450,21 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
                     />
                     <button
                       type="button"
-                      className={`hero-dream-slab hero-dream-slab-middle${
-                        activeDreamStep === 1 || activeDreamStep === 2 ? " is-active" : ""
+                      className={`hero-dream-slab hero-dream-slab-second${
+                        activeDreamStep === 1 ? " is-active" : ""
                       }`}
                       onMouseEnter={() => setActiveDreamStep(1)}
                       onFocus={() => setActiveDreamStep(1)}
-                      aria-label="Étapes 2 et 3 construction et accompagnement"
+                      aria-label="Étape 2 positionnement"
+                    />
+                    <button
+                      type="button"
+                      className={`hero-dream-slab hero-dream-slab-third${
+                        activeDreamStep === 2 ? " is-active" : ""
+                      }`}
+                      onMouseEnter={() => setActiveDreamStep(2)}
+                      onFocus={() => setActiveDreamStep(2)}
+                      aria-label="Étape 3 accompagnement"
                     />
                     <button
                       type="button"
@@ -463,7 +473,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
                       }`}
                       onMouseEnter={() => setActiveDreamStep(3)}
                       onFocus={() => setActiveDreamStep(3)}
-                      aria-label="Étape 4 succès"
+                      aria-label="Étape 4 déploiement"
                     />
                   </div>
 
