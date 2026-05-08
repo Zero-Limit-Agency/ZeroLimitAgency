@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-import PremiumLiquidStackSection from "@/components/premium-liquid-stack-section";
 import { DEFAULT_SITE_CONTENT, normalizeSiteContent } from "@/lib/site-content";
 
 const languageOptions = ["Français", "Anglais", "Espagnol", "Allemand", "Italien", "Autre"];
@@ -371,44 +370,6 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
                 ))}
               </div>
             </div>
-            <aside className="hero-dream-board reveal is-visible" aria-label="Parcours d'accompagnement Zero Limit">
-              <div className="hero-dream-frame">
-                <PremiumLiquidStackSection
-                  heading="Donner une vraie forme à un projet encore flou."
-                  intro="Le plus dur n'est pas toujours d'avoir une idée. Le plus dur, c'est de lui donner un cadre assez solide pour qu'elle ne reste pas à l'état de brouillon."
-                  items={[
-                    {
-                      label: "01",
-                      title: "Réflexion",
-                      subtitle: "Point de départ",
-                      description:
-                        "Une envie existe déjà, mais elle reste encore dispersée, repoussée ou insuffisamment structurée."
-                    },
-                    {
-                      label: "02",
-                      title: "Positionnement",
-                      subtitle: "Cap lisible",
-                      description:
-                        "Le projet gagne une direction plus claire, une cohérence et une trajectoire plus compréhensible."
-                    },
-                    {
-                      label: "03",
-                      title: "Accompagnement",
-                      subtitle: "Cadre actif",
-                      description:
-                        "L'avancement devient plus sérieux grâce à un suivi, des retours précis et un cadre stable."
-                    },
-                    {
-                      label: "04",
-                      title: "Déploiement",
-                      subtitle: "Passage à l'action",
-                      description:
-                        "L'objectif est de faire exister le projet concrètement, sans promettre plus que ce qu'un vrai travail permet."
-                    }
-                  ]}
-                />
-              </div>
-            </aside>
           </div>
         </section>
 
