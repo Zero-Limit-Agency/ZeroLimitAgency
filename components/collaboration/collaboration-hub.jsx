@@ -9,13 +9,13 @@ import {
 
 function formatDateTime(value) {
   if (!value) {
-    return "A l'instant";
+    return "À l'instant";
   }
 
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
-    return "A l'instant";
+    return "À l'instant";
   }
 
   return new Intl.DateTimeFormat("fr-FR", {
@@ -142,8 +142,8 @@ export function CollaborationHub({
         </div>
         <p className={noteClassName}>
           {isAdmin
-            ? "Repondez au client ici, ou redirigez-le vers Discord et l'e-mail selon le contexte."
-            : "Vous pouvez ecrire ici directement, ouvrir Discord pour un ticket ou passer par e-mail."}
+            ? "Répondez au client ici, ou redirigez-le vers Discord et l'e-mail selon le contexte."
+            : "Vous pouvez écrire ici directement, ouvrir Discord pour un ticket ou passer par e-mail."}
         </p>
       </div>
 
@@ -172,7 +172,7 @@ export function CollaborationHub({
           <a className="collaboration-action-card" href={supportLinks.emailHref}>
             <small>E-mail</small>
             <strong>Contacter par mail</strong>
-            <span>Ouvrir votre application e-mail avec l'adresse de contact pre-remplie.</span>
+            <span>Ouvrir votre application e-mail avec l'adresse de contact pré-remplie.</span>
           </a>
         ) : (
           <div className="collaboration-action-card collaboration-action-card-disabled">
@@ -190,7 +190,7 @@ export function CollaborationHub({
             <span>{messages.length > 0 ? `${messages.length} message${messages.length > 1 ? "s" : ""}` : "Aucun message pour le moment"}</span>
           </div>
           <button type="button" className="button button-dark" onClick={focusComposer}>
-            {isAdmin ? "Repondre ici" : "Ecrire un message"}
+            {isAdmin ? "Répondre ici" : "Écrire un message"}
           </button>
         </div>
 
@@ -235,8 +235,8 @@ export function CollaborationHub({
               <strong>Aucune discussion ouverte pour le moment.</strong>
               <span>
                 {isAdmin
-                  ? "Le client pourra ecrire ici, et vous pourrez lui repondre directement depuis cette fiche."
-                  : "Commencez la discussion ici si vous prefere la centraliser dans votre espace client."}
+                  ? "Le client pourra écrire ici, et vous pourrez lui répondre directement depuis cette fiche."
+                  : "Commencez la discussion ici si vous préférez la centraliser dans votre espace client."}
               </span>
             </div>
           )}
@@ -253,7 +253,7 @@ export function CollaborationHub({
             placeholder={
               isAdmin
                 ? "Écrivez ici votre réponse pour le client."
-                : "Expliquez votre besoin, envoyéz vos retours ou joignez vos fichiers ici."
+                : "Expliquez votre besoin, envoyez vos retours ou joignez vos fichiers ici."
             }
             disabled={readOnly || state.status === "loading"}
           />

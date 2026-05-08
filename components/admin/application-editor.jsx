@@ -660,7 +660,7 @@ export function ApplicationEditor({
       const result = await response.json().catch(() => null);
 
       if (!response.ok || !result?.success) {
-        throw new Error(result?.error || "Impossible d'envoyer l'email propose au client.");
+        throw new Error(result?.error || "Impossible d'envoyer l'email proposé au client.");
       }
 
       setCallAssistantForm((current) => ({
@@ -675,7 +675,7 @@ export function ApplicationEditor({
       setCallAssistantState({
         status: "error",
         message:
-          error instanceof Error ? error.message : "Impossible d'envoyer l'email propose au client."
+          error instanceof Error ? error.message : "Impossible d'envoyer l'email proposé au client."
       });
     }
   }

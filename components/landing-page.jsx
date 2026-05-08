@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import PremiumLiquidStackSection from "@/components/premium-liquid-stack-section";
 import { DEFAULT_SITE_CONTENT, normalizeSiteContent } from "@/lib/site-content";
 
 const languageOptions = ["Français", "Anglais", "Espagnol", "Allemand", "Italien", "Autre"];
@@ -24,33 +25,6 @@ const frenchMonthMap = {
   decembre: 12,
   décembre: 12
 };
-
-const HERO_DREAM_STEPS = [
-  {
-    id: "dream-step-1",
-    step: "Étape 1",
-    title: "Réflexion",
-    text: "Une envie existe déjà, mais elle reste floue, repoussée ou trop seule pour vraiment avancer."
-  },
-  {
-    id: "dream-step-2",
-    step: "Étape 2",
-    title: "Positionnement",
-    text: "On transforme une intuition en direction lisible, avec une identité, un cap et une trajectoire claire."
-  },
-  {
-    id: "dream-step-3",
-    step: "Étape 3",
-    title: "Accompagnement",
-    text: "Tu avances avec une structure, des retours précis et un cadre qui t'évite de te disperser."
-  },
-  {
-    id: "dream-step-4",
-    step: "Étape 4",
-    title: "Déploiement",
-    text: "Le but n'est pas de promettre le succès. Le but, c'est de te donner une vraie chance d'aller au bout."
-  }
-];
 
 function normalizeBirthDateInput(value) {
   return String(value || "")
@@ -219,8 +193,6 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
   const siteContent = useMemo(() => normalizeSiteContent(content), [content]);
   const [navOpen, setNavOpen] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
-  const [activeDreamStep, setActiveDreamStep] = useState(0);
-  const [dreamTilt, setDreamTilt] = useState({ rotateX: -10, rotateY: -14 });
   const [birthDateDisplay, setBirthDateDisplay] = useState("");
   const [birthDateError, setBirthDateError] = useState("");
   const [formState, setFormState] = useState({
@@ -242,25 +214,6 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
       />
     </article>
   );
-
-  const highlightedDreamStep = HERO_DREAM_STEPS[activeDreamStep] || HERO_DREAM_STEPS[0];
-
-  function handleDreamPointerMove(event) {
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const offsetX = (event.clientX - bounds.left) / bounds.width;
-    const offsetY = (event.clientY - bounds.top) / bounds.height;
-    const rotateY = -20 + offsetX * 16;
-    const rotateX = -16 + offsetY * 10;
-
-    setDreamTilt({
-      rotateX,
-      rotateY
-    });
-  }
-
-  function resetDreamPointer() {
-    setDreamTilt({ rotateX: -10, rotateY: -14 });
-  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -420,88 +373,40 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
             </div>
             <aside className="hero-dream-board reveal is-visible" aria-label="Parcours d'accompagnement Zero Limit">
               <div className="hero-dream-frame">
-                <div className="hero-dream-copy">
-                  <p className="hero-dream-kicker">Build your dream without limit.</p>
-                  <h2>De l'idée brute à un projet enfin lancé sérieusement.</h2>
-                  <p>
-                    Le vrai risque, ce n'est pas d'essayer avec un bon cadre. Le vrai risque,
-                    c'est d'attendre trop longtemps et de regretter de n'avoir jamais donné sa
-                    chance à son projet.
-                  </p>
-                </div>
-
-                <div className="hero-dream-scene">
-                  <div
-                    className="hero-dream-rig"
-                    onMouseMove={handleDreamPointerMove}
-                    onMouseLeave={resetDreamPointer}
-                    style={{
-                      transform: `rotateX(${dreamTilt.rotateX}deg) rotateY(${dreamTilt.rotateY}deg)`
-                    }}
-                  >
-                    <button
-                      type="button"
-                      className={`hero-dream-slab hero-dream-slab-top${
-                        activeDreamStep === 0 ? " is-active" : ""
-                      }`}
-                      onMouseEnter={() => setActiveDreamStep(0)}
-                      onFocus={() => setActiveDreamStep(0)}
-                      aria-label="Étape 1 réflexion"
-                    />
-                    <button
-                      type="button"
-                      className={`hero-dream-slab hero-dream-slab-second${
-                        activeDreamStep === 1 ? " is-active" : ""
-                      }`}
-                      onMouseEnter={() => setActiveDreamStep(1)}
-                      onFocus={() => setActiveDreamStep(1)}
-                      aria-label="Étape 2 positionnement"
-                    />
-                    <button
-                      type="button"
-                      className={`hero-dream-slab hero-dream-slab-third${
-                        activeDreamStep === 2 ? " is-active" : ""
-                      }`}
-                      onMouseEnter={() => setActiveDreamStep(2)}
-                      onFocus={() => setActiveDreamStep(2)}
-                      aria-label="Étape 3 accompagnement"
-                    />
-                    <button
-                      type="button"
-                      className={`hero-dream-slab hero-dream-slab-bottom${
-                        activeDreamStep === 3 ? " is-active" : ""
-                      }`}
-                      onMouseEnter={() => setActiveDreamStep(3)}
-                      onFocus={() => setActiveDreamStep(3)}
-                      aria-label="Étape 4 déploiement"
-                    />
-                  </div>
-
-                  <div className="hero-dream-legend">
-                    <div className="hero-dream-highlight">
-                      <small>{highlightedDreamStep.step}</small>
-                      <strong>{highlightedDreamStep.title}</strong>
-                      <p>{highlightedDreamStep.text}</p>
-                    </div>
-
-                    <div className="hero-dream-step-list">
-                      {HERO_DREAM_STEPS.map((step, index) => (
-                        <button
-                          key={step.id}
-                          type="button"
-                          className={`hero-dream-step-chip${
-                            activeDreamStep === index ? " is-active" : ""
-                          }`}
-                          onMouseEnter={() => setActiveDreamStep(index)}
-                          onFocus={() => setActiveDreamStep(index)}
-                        >
-                          <span>{step.step}</span>
-                          <strong>{step.title}</strong>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                <PremiumLiquidStackSection
+                  heading="Donner une vraie forme à un projet encore flou."
+                  intro="Le plus dur n'est pas toujours d'avoir une idée. Le plus dur, c'est de lui donner un cadre assez solide pour qu'elle ne reste pas à l'état de brouillon."
+                  items={[
+                    {
+                      label: "01",
+                      title: "Réflexion",
+                      subtitle: "Point de départ",
+                      description:
+                        "Une envie existe déjà, mais elle reste encore dispersée, repoussée ou insuffisamment structurée."
+                    },
+                    {
+                      label: "02",
+                      title: "Positionnement",
+                      subtitle: "Cap lisible",
+                      description:
+                        "Le projet gagne une direction plus claire, une cohérence et une trajectoire plus compréhensible."
+                    },
+                    {
+                      label: "03",
+                      title: "Accompagnement",
+                      subtitle: "Cadre actif",
+                      description:
+                        "L'avancement devient plus sérieux grâce à un suivi, des retours précis et un cadre stable."
+                    },
+                    {
+                      label: "04",
+                      title: "Déploiement",
+                      subtitle: "Passage à l'action",
+                      description:
+                        "L'objectif est de faire exister le projet concrètement, sans promettre plus que ce qu'un vrai travail permet."
+                    }
+                  ]}
+                />
               </div>
             </aside>
           </div>

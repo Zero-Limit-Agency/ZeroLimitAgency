@@ -9,7 +9,7 @@ function loadImage(src) {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error("Impossible de charger l'image selectionnee."));
+    image.onerror = () => reject(new Error("Impossible de charger l'image sélectionnée."));
     image.src = src;
   });
 }
@@ -117,7 +117,7 @@ export function AvatarUploader({ initialAvatar, initials, disabled = false }) {
     setPreview(localPreview);
     setState({
       status: "loading",
-      message: "Mise a jour de la photo en cours..."
+      message: "Mise à jour de la photo en cours..."
     });
 
     try {
@@ -133,7 +133,7 @@ export function AvatarUploader({ initialAvatar, initials, disabled = false }) {
       const result = contentType.includes("application/json") ? await response.json() : null;
 
       if (!response.ok || !result?.success) {
-        throw new Error(result?.error || "Impossible de mettre a jour la photo de profil.");
+        throw new Error(result?.error || "Impossible de mettre à jour la photo de profil.");
       }
 
       if (result.avatar_data_url) {
@@ -143,7 +143,7 @@ export function AvatarUploader({ initialAvatar, initials, disabled = false }) {
 
       setState({
         status: "success",
-        message: "Photo de profil mise a jour."
+        message: "Photo de profil mise à jour."
       });
 
       router.refresh();
@@ -153,7 +153,7 @@ export function AvatarUploader({ initialAvatar, initials, disabled = false }) {
       setState({
         status: "error",
         message:
-          error instanceof Error ? error.message : "Impossible de mettre a jour la photo de profil."
+          error instanceof Error ? error.message : "Impossible de mettre à jour la photo de profil."
       });
     }
   }
@@ -168,7 +168,7 @@ export function AvatarUploader({ initialAvatar, initials, disabled = false }) {
     if (!file.type.startsWith("image/")) {
       setState({
         status: "error",
-        message: "Veuillez selectionner une image valide."
+        message: "Veuillez sélectionner une image valide."
       });
       return;
     }
