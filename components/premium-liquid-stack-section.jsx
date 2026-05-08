@@ -137,10 +137,12 @@ export default function PremiumLiquidStackSection({
           display: grid;
           gap: 0.95rem;
           padding: 0.35rem 0.25rem 0;
+          width: 100%;
         }
 
         .premium-stack-layer {
           position: relative;
+          display: block;
           width: 100%;
           height: 4.3rem;
           border: 0;
@@ -211,6 +213,7 @@ export default function PremiumLiquidStackSection({
         .premium-stack-panel {
           display: grid;
           gap: 0.45rem;
+          width: 100%;
           padding: 1.15rem 1.2rem;
           border-radius: 1.6rem;
           border: 1px solid rgba(255, 245, 243, 0.08);
@@ -222,6 +225,7 @@ export default function PremiumLiquidStackSection({
         }
 
         .premium-stack-panel-label {
+          display: block;
           color: rgba(255, 245, 243, 0.52);
           font-size: 0.76rem;
           letter-spacing: 0.12em;
@@ -229,6 +233,7 @@ export default function PremiumLiquidStackSection({
         }
 
         .premium-stack-panel small {
+          display: block;
           color: rgba(255, 214, 214, 0.78);
           font-size: 0.85rem;
           font-weight: 700;
@@ -237,6 +242,7 @@ export default function PremiumLiquidStackSection({
         }
 
         .premium-stack-panel strong {
+          display: block;
           color: #fff8f4;
           font-size: 1.3rem;
         }
