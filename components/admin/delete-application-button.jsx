@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const CONFIRMATION_MESSAGE =
-  "Cette action supprimera la demande, le profil client, l'acces client et le compte de connexion associe. Action irreversible.";
+  "Cette action supprimera la demande, le profil client, l'accès client et le compte de connexion associé. Action irréversible.";
 
 export function DeleteApplicationButton({ applicationId, variant = "default" }) {
   const router = useRouter();
@@ -22,7 +22,7 @@ export function DeleteApplicationButton({ applicationId, variant = "default" }) 
 
     setState({
       status: "loading",
-      message: "Suppression definitive du dossier en cours..."
+      message: "Suppression définitive du dossier en cours..."
     });
 
     try {
@@ -32,12 +32,12 @@ export function DeleteApplicationButton({ applicationId, variant = "default" }) 
       const result = await response.json().catch(() => null);
 
       if (!response.ok || !result?.success) {
-        throw new Error(result?.error || "Impossible de supprimer definitivement ce dossier.");
+        throw new Error(result?.error || "Impossible de supprimer définitivement ce dossier.");
       }
 
       setState({
         status: "success",
-        message: result.message || "Le dossier a bien ete supprime definitivement."
+        message: result.message || "Le dossier a bien été supprimé définitivement."
       });
 
       window.setTimeout(() => {
@@ -50,7 +50,7 @@ export function DeleteApplicationButton({ applicationId, variant = "default" }) 
         message:
           error instanceof Error
             ? error.message
-            : "Impossible de supprimer definitivement ce dossier."
+            : "Impossible de supprimer définitivement ce dossier."
       });
     }
   }
@@ -58,11 +58,11 @@ export function DeleteApplicationButton({ applicationId, variant = "default" }) 
   return (
     <div className={`admin-danger-zone${variant === "rejected" ? " admin-danger-zone-highlight" : ""}`}>
       <div className="admin-danger-copy">
-        <small>Suppression definitive</small>
-        <strong>Supprimer definitivement</strong>
+        <small>Suppression définitive</small>
+        <strong>Supprimer définitivement</strong>
         <p>
-          Cette action supprimera la demande, le profil client, l'acces client et le compte de connexion associe.
-          Action irreversible.
+          Cette action supprimera la demande, le profil client, l'accès client et le compte de connexion associé.
+          Action irréversible.
         </p>
       </div>
 
@@ -73,7 +73,7 @@ export function DeleteApplicationButton({ applicationId, variant = "default" }) 
           onClick={handleDelete}
           disabled={state.status === "loading"}
         >
-          {state.status === "loading" ? "Suppression..." : "Supprimer definitivement"}
+          {state.status === "loading" ? "Suppression..." : "Supprimer définitivement"}
         </button>
 
         {state.message ? (
@@ -93,3 +93,4 @@ export function DeleteApplicationButton({ applicationId, variant = "default" }) 
     </div>
   );
 }
+

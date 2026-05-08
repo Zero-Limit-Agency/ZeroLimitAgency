@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -7,7 +7,7 @@ import { DeleteApplicationButton } from "@/components/admin/delete-application-b
 
 function formatAdminDate(value) {
   if (!value) {
-    return "Non renseigne";
+    return "Non renseigné";
   }
 
   const date = new Date(value);
@@ -27,7 +27,7 @@ function formatAdminDate(value) {
 
 function buildStatusLabel(status) {
   if (status === "rejected") {
-    return "Refusee";
+    return "Refusée";
   }
 
   return "En attente";
@@ -45,8 +45,8 @@ export function ApplicationReview({ application }) {
       status: "loading",
       message:
         action === "approve"
-          ? "Acceptation de la requete en cours..."
-          : "Refus de la requete en cours..."
+          ? "Acceptation de la requête en cours..."
+          : "Refus de la requête en cours..."
     });
 
     try {
@@ -64,14 +64,14 @@ export function ApplicationReview({ application }) {
         throw new Error(
           result?.error ||
             (action === "approve"
-              ? "Impossible d'accepter cette requete."
-              : "Impossible de refuser cette requete.")
+              ? "Impossible d'accepter cette requête."
+              : "Impossible de refuser cette requête.")
         );
       }
 
       setState({
         status: "success",
-        message: result.message || "Action enregistree."
+        message: result.message || "Action enregistrée."
       });
 
       router.refresh();
@@ -96,10 +96,10 @@ export function ApplicationReview({ application }) {
         <section className="admin-panel admin-panel-warning">
           <div className="admin-system-warning">
             <small>Alerte Google Drive</small>
-            <strong>Fichiers non transferes vers Google Drive</strong>
+            <strong>Fichiers non transférés vers Google Drive</strong>
             <p>
-              {application.drive_transfer_error}. La demande est bien enregistree, mais les fichiers n'ont pas pu
-              etre envoyes dans Drive.
+              {application.drive_transfer_error}. La demande est bien enregistrée, mais les fichiers n'ont pas pu
+              être envoyés dans Drive.
             </p>
           </div>
         </section>
@@ -108,8 +108,8 @@ export function ApplicationReview({ application }) {
       <section className="admin-panel">
         <div className="admin-panel-heading">
           <div>
-            <p className="eyebrow">Lecture de la requete</p>
-            <h2>Informations recues</h2>
+            <p className="eyebrow">Lecture de la requête</p>
+            <h2>Informations reçues</h2>
           </div>
           <span className={`admin-status-badge admin-status-${application.status || "pending_review"}`}>
             {buildStatusLabel(application.status)}
@@ -120,24 +120,24 @@ export function ApplicationReview({ application }) {
           <div className="admin-subpanel">
             <small>Nom</small>
             <strong>
-              {[application.first_name, application.last_name].filter(Boolean).join(" ") || "Non renseigne"}
+              {[application.first_name, application.last_name].filter(Boolean).join(" ") || "Non renseigné"}
             </strong>
           </div>
           <div className="admin-subpanel">
             <small>Email</small>
-            <strong>{application.email || "Non renseigne"}</strong>
+            <strong>{application.email || "Non renseigné"}</strong>
           </div>
           <div className="admin-subpanel">
             <small>Pays</small>
-            <strong>{application.country || "Non renseigne"}</strong>
+            <strong>{application.country || "Non renseigné"}</strong>
           </div>
           <div className="admin-subpanel">
             <small>Langue</small>
-            <strong>{application.language || "Non renseignee"}</strong>
+            <strong>{application.language || "Non renseignée"}</strong>
           </div>
           <div className="admin-subpanel">
             <small>Type de demande</small>
-            <strong>{application.request_type || "Non renseigne"}</strong>
+            <strong>{application.request_type || "Non renseigné"}</strong>
           </div>
           <div className="admin-subpanel">
             <small>Date</small>
@@ -164,8 +164,8 @@ export function ApplicationReview({ application }) {
             <small>Accepter</small>
             <strong>Convertir en client</strong>
             <p className="admin-inline-note">
-              La requete passe en <em>approved</em>. Le client se connectera ensuite avec l'email et le mot
-              de passe deja choisis lors de l'inscription.
+              La requête passe en <em>approved</em>. Le client se connectera ensuite avec l'email et le mot
+              de passe déjà choisis lors de l'inscription.
             </p>
             <button
               className="button button-primary"
@@ -173,7 +173,7 @@ export function ApplicationReview({ application }) {
               onClick={() => submitDecision("approve")}
               disabled={state.status === "loading"}
             >
-              Accepter la requete
+              Accepter la requête
             </button>
           </article>
 
@@ -182,7 +182,7 @@ export function ApplicationReview({ application }) {
             <strong>Conserver l'historique</strong>
             <p className="admin-inline-note">
               La ligne reste en base avec le statut <em>rejected</em> et un email de refus simple
-              est envoye au demandeur.
+              est envoyé au demandeur.
             </p>
             <button
               className="button button-dark"
@@ -190,7 +190,7 @@ export function ApplicationReview({ application }) {
               onClick={() => submitDecision("reject")}
               disabled={state.status === "loading"}
             >
-              Refuser la requete
+              Refuser la requête
             </button>
           </article>
         </div>
@@ -215,7 +215,7 @@ export function ApplicationReview({ application }) {
           <div className="admin-panel-heading">
             <div>
               <p className="eyebrow">Zone sensible</p>
-              <h2>Suppression definitive</h2>
+              <h2>Suppression définitive</h2>
             </div>
           </div>
 
@@ -225,3 +225,4 @@ export function ApplicationReview({ application }) {
     </div>
   );
 }
+

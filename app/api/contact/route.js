@@ -345,6 +345,35 @@ export async function POST(request) {
       }
     }
 
+    if (payload.newsletter) {
+      const newsletterResult = await supabase
+        .from("newsletter_subscriptions")
+        .upsert(
+          {
+            email: payload.email,
+            application_id: finalApplication.id,
+            status: "subscribed",
+            source: "contact_form",
+            language: payload.language,
+            country: payload.country,
+            subscribed_at: new Date().toISOString(),
+            unsubscribed_at: null
+          },
+          {
+            onConflict: "email"
+          }
+        )
+        .select()
+        .single();
+
+      if (newsletterResult.error) {
+        console.error(
+          "[contact] newsletter sync failed",
+          newsletterResult.error instanceof Error ? newsletterResult.error.message : "unknown"
+        );
+      }
+    }
+
     const internalEmail = buildInternalNewApplicationEmail({ application: finalApplication });
     const confirmationEmail = buildSignupConfirmationEmail({ application: finalApplication });
 

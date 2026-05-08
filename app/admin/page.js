@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { GlobalMarketEditor } from "@/components/admin/global-market-editor";
@@ -135,12 +135,12 @@ function AdminSection({ eyebrow, title, note, items, kind }) {
         ) : kind === "rejected" ? (
           <EmptyState
             title="Aucune demande refusée."
-            description="Les dossiers refuses sont conserves ici pour garder un historique propre."
+            description="Les dossiers refusés sont conservés ici pour garder un historique propre."
           />
         ) : (
           <EmptyState
             title="Aucun client actif."
-            description="Une demande acceptee quitte immediatement l'attente pour rejoindre cette section."
+            description="Une demande acceptée quitte immédiatement l'attente pour rejoindre cette section."
           />
         )}
       </div>
@@ -195,7 +195,7 @@ export default async function AdminPage({ searchParams }) {
             <p className="eyebrow">Administration</p>
             <h1>Demandes, clients et contenus</h1>
             <p className="admin-lead">
-              Gerez les inscriptions, les clients actifs, le site public et le Zero Limit Market depuis
+              Gérez les inscriptions, les clients actifs, le site public et le Zero Limit Market depuis
               un seul espace.
             </p>
           </div>
@@ -215,9 +215,9 @@ export default async function AdminPage({ searchParams }) {
             <p className="admin-inline-note">Demandes à traiter avant toute décision.</p>
           </article>
           <article className="admin-subpanel">
-            <small>Refuses</small>
+            <small>Refusés</small>
             <strong>{rejectedApplications.length}</strong>
-            <p className="admin-inline-note">Dossiers refuses, sortis du traitement actif.</p>
+            <p className="admin-inline-note">Dossiers refusés, sortis du traitement actif.</p>
           </article>
           <article className="admin-subpanel">
             <small>Clients</small>
@@ -240,7 +240,7 @@ export default async function AdminPage({ searchParams }) {
             className={`admin-filter-chip${activeFilter === "rejected" ? " is-active" : ""}`}
             href="/admin?status=rejected"
           >
-            Refuses
+            Refusés
           </Link>
           <Link
             className={`admin-filter-chip${activeFilter === "approved" ? " is-active" : ""}`}
@@ -260,7 +260,7 @@ export default async function AdminPage({ searchParams }) {
             <AdminSection
               eyebrow="En attente"
               title="Demandes à traiter"
-              note="Les demandes presentes ici sont les seules encore actives cote revue."
+              note="Les demandes présentes ici sont les seules encore actives côté revue."
               items={pendingApplications}
               kind="pending_review"
             />
@@ -268,7 +268,7 @@ export default async function AdminPage({ searchParams }) {
 
           {(activeFilter === "all" || activeFilter === "rejected") && (
             <AdminSection
-              eyebrow="Refuses"
+              eyebrow="Refusés"
               title="Demandes refusées"
               note="Ces dossiers restent en base, mais ne doivent plus apparaître comme des demandes à traiter."
               items={rejectedApplications}
@@ -280,7 +280,7 @@ export default async function AdminPage({ searchParams }) {
             <AdminSection
               eyebrow="Clients"
               title="Clients validés"
-              note="Une demande acceptee quitte l'attente et rejoint cette section comme client."
+              note="Une demande acceptée quitte l'attente et rejoint cette section comme client."
               items={approvedApplications}
               kind="clients"
             />
@@ -290,3 +290,5 @@ export default async function AdminPage({ searchParams }) {
     </main>
   );
 }
+
+

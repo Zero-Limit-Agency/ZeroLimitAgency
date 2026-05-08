@@ -5898,6 +5898,7 @@ body {
 
 .client-panel-details,
 .client-panel-resources,
+.client-panel-newsletter,
 .client-panel-preparation,
 .client-panel-timeline,
 .client-panel-market,
@@ -5909,6 +5910,51 @@ body {
 .client-timeline,
 .admin-stack-tight {
   gap: 0.9rem;
+}
+
+.client-panel-newsletter {
+  display: grid;
+  gap: 1rem;
+}
+
+.client-newsletter-status {
+  display: grid;
+  gap: 0.45rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.client-newsletter-status strong {
+  font-size: 1rem;
+  color: #f6efe8;
+}
+
+.client-newsletter-status span {
+  color: rgba(246, 239, 232, 0.75);
+  line-height: 1.6;
+}
+
+.client-newsletter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.client-inline-feedback,
+.client-inline-error {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.client-inline-feedback {
+  color: #d8f1d7;
+}
+
+.client-inline-error {
+  color: #f3b8b8;
 }
 
 .admin-toggle-row,

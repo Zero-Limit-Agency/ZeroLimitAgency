@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -91,12 +91,12 @@ function buildCallTypeMeta(type) {
     case "other":
       return {
         label: "echange",
-        nextStep: "une suite adaptee a votre dossier"
+        nextStep: "une suite adaptée à votre dossier"
       };
     default:
       return {
         label: "appel d'introduction",
-        nextStep: "un cadrage du projet et des prochaines etapes"
+        nextStep: "un cadrage du projet et des prochaines étapes"
       };
   }
 }
@@ -119,7 +119,7 @@ function buildCallAssistantDraft(notes, callType) {
     .split(/\n+/)
     .map((line) => line.trim())
     .filter(Boolean);
-  const fallbackLine = rawLines[0] || "Un echange client a eu lieu.";
+  const fallbackLine = rawLines[0] || "Un échange client a eu lieu.";
   const summaryLines = rawLines.slice(0, 3);
   const actionLines = rawLines.slice(0, 3).map((line, index) => ({
     key: `internal-task-${index + 1}`,
@@ -136,9 +136,9 @@ function buildCallAssistantDraft(notes, callType) {
     },
     {
       key: "call-report-next-step",
-      label: "Prochaine etape definie",
+      label: "Prochaine etape définie",
       date: detectedDates[0]?.value || "A planifier",
-      description: `Suite prevue apres ${meta.label} : ${meta.nextStep}.`,
+      description: `Suite prévue après ${meta.label} : ${meta.nextStep}.`,
       tone: "current"
     }
   ]);
@@ -147,7 +147,7 @@ function buildCallAssistantDraft(notes, callType) {
     client_summary:
       summaryLines.length > 0
         ? summaryLines.join("\n")
-        : "Resume client a completer apres l'appel.",
+        : "Résumé client à compléter après l'appel.",
     suggested_email: [
       "Bonjour,",
       "",
@@ -165,7 +165,7 @@ function buildCallAssistantDraft(notes, callType) {
         : [
             {
               key: "internal-task-1",
-              label: "Completer les actions internes a partir du compte rendu."
+              label: "Compléter les actions internes à partir du compte rendu."
             }
           ],
     important_dates:
@@ -174,7 +174,7 @@ function buildCallAssistantDraft(notes, callType) {
         : [
             {
               key: "important-date-1",
-              label: "Date a confirmer",
+              label: "Date à confirmer",
               value: ""
             }
           ]
@@ -199,7 +199,7 @@ function createPacketForm(existing = {}) {
 
 function formatAdminDate(value) {
   if (!value) {
-    return "Non renseigne";
+    return "Non renseigné";
   }
 
   const date = new Date(value);
@@ -219,7 +219,7 @@ function formatAdminDate(value) {
 
 function formatProjectDate(value) {
   if (!value) {
-    return "A definir";
+    return "A définir";
   }
 
   const date = new Date(value);
@@ -251,23 +251,23 @@ function buildDefaultTimeline(application, profile) {
   return [
     createTimelineDraft({
       key: "accepted",
-      label: "Dossier accepte",
+      label: "Dossier accepté",
       date: acceptedDate,
-      description: "Le dossier a ete valide et prepare pour l'accompagnement client.",
+      description: "Le dossier a été validé et préparé pour l'accompagnement client.",
       tone: "done"
     }),
     createTimelineDraft({
       key: "call",
       label: "Prise de rendez-vous",
       date: "A planifier",
-      description: "Etape prevue pour cadrer le plan, les priorites et les ressources a activer.",
+      description: "Étape prévue pour cadrer le plan, les priorités et les ressources à activer.",
       tone: "current"
     }),
     createTimelineDraft({
       key: "support",
-      label: "Accompagnement reel",
-      date: "Apres validation du plan",
-      description: "Le dossier sera enrichi une fois l'espace client debloque.",
+      label: "Accompagnement réel",
+      date: "Après validation du plan",
+      description: "Le dossier sera enrichi une fois l'espace client débloqué.",
       tone: "upcoming"
     })
   ];
@@ -276,7 +276,7 @@ function buildDefaultTimeline(application, profile) {
 export function ApplicationEditor({
   application,
   profile,
-  access,
+  accèss,
   postCallZeroPacket,
   callReport,
   clientSpaceUrl,
@@ -329,7 +329,7 @@ export function ApplicationEditor({
     drive_folder_url: application?.drive_folder_url || "",
     notion_url: profile?.notion_url || "",
     space_status: profile?.space_status || "preparing",
-    market_access_enabled: Boolean(profile?.market_access_enabled),
+    market_accèss_enabled: Boolean(profile?.market_accèss_enabled),
     show_preparation: workspaceFlags.showPreparation,
     show_timeline: workspaceFlags.showTimeline,
     resource_links:
@@ -588,7 +588,7 @@ export function ApplicationEditor({
       setCallAssistantForm(createCallReportDraft(result.report));
       setCallAssistantState({
         status: "success",
-        message: result.message || "Le brouillon d'assistant d'appel a bien ete genere."
+        message: result.message || "Le brouillon d'assistant d'appel a bien été généré."
       });
     } catch (error) {
       setCallAssistantState({
@@ -602,7 +602,7 @@ export function ApplicationEditor({
   async function handleApplyCallAssistant() {
     setCallAssistantState({
       status: "loading",
-      message: "Application du brouillon a l'espace client en cours..."
+      message: "Application du brouillon à l'espace client en cours..."
     });
 
     try {
@@ -619,7 +619,7 @@ export function ApplicationEditor({
       const result = await response.json().catch(() => null);
 
       if (!response.ok || !result?.success) {
-        throw new Error(result?.error || "Impossible d'appliquer le brouillon a l'espace client.");
+        throw new Error(result?.error || "Impossible d'appliquer le brouillon à l'espace client.");
       }
 
       setCallAssistantForm((current) => ({
@@ -628,14 +628,14 @@ export function ApplicationEditor({
       }));
       setCallAssistantState({
         status: "success",
-        message: result.message || "Le brouillon a bien ete applique a l'espace client."
+        message: result.message || "Le brouillon a bien été appliqué à l'espace client."
       });
       router.refresh();
     } catch (error) {
       setCallAssistantState({
         status: "error",
         message:
-          error instanceof Error ? error.message : "Impossible d'appliquer le brouillon a l'espace client."
+          error instanceof Error ? error.message : "Impossible d'appliquer le brouillon à l'espace client."
       });
     }
   }
@@ -669,7 +669,7 @@ export function ApplicationEditor({
       }));
       setCallAssistantState({
         status: "success",
-        message: result.message || "L'email propose a bien ete envoye au client."
+        message: result.message || "L'email propose a bien été envoyé au client."
       });
     } catch (error) {
       setCallAssistantState({
@@ -690,7 +690,7 @@ export function ApplicationEditor({
 
     setState({
       status: "loading",
-      message: "Mise a jour du dossier en cours..."
+      message: "Mise à jour du dossier en cours..."
     });
 
     try {
@@ -739,7 +739,7 @@ export function ApplicationEditor({
           profile: {
             notion_url: form.notion_url,
             space_status: form.space_status,
-            market_access_enabled: form.market_access_enabled,
+            market_accèss_enabled: form.market_accèss_enabled,
             resource_links: resourceLinks,
             timeline_events: form.timeline_events
           }
@@ -749,19 +749,19 @@ export function ApplicationEditor({
       const result = await response.json().catch(() => null);
 
       if (!response.ok || !result?.success) {
-        throw new Error(result?.error || "Impossible de mettre a jour ce dossier.");
+        throw new Error(result?.error || "Impossible de mettre à jour ce dossier.");
       }
 
       setState({
         status: "success",
-        message: result?.message || "Dossier client mis a jour."
+        message: result?.message || "Dossier client mis à jour."
       });
 
       router.refresh();
     } catch (error) {
       setState({
         status: "error",
-        message: error instanceof Error ? error.message : "Impossible de mettre a jour ce dossier."
+        message: error instanceof Error ? error.message : "Impossible de mettre à jour ce dossier."
       });
     }
   }
@@ -773,7 +773,7 @@ export function ApplicationEditor({
     });
     setPostCallZeroState({
       status: "loading",
-      message: "Enregistrement du pack de demarrage client en cours..."
+      message: "Enregistrement du pack de démarrage client en cours..."
     });
 
     try {
@@ -784,12 +784,12 @@ export function ApplicationEditor({
       const result = await response.json().catch(() => null);
 
       if (!response.ok || !result?.success) {
-        throw new Error(result?.error || "Impossible d'enregistrer le pack de demarrage client.");
+        throw new Error(result?.error || "Impossible d'enregistrer le pack de démarrage client.");
       }
 
       setPostCallZeroState({
         status: "success",
-        message: result.message || "Le pack de demarrage client a bien ete enregistre."
+        message: result.message || "Le pack de démarrage client a bien été enregistré."
       });
       applyPacket(result.packet);
       router.refresh();
@@ -799,7 +799,7 @@ export function ApplicationEditor({
         message:
           error instanceof Error
             ? error.message
-            : "Impossible d'enregistrer le pack de demarrage client."
+            : "Impossible d'enregistrer le pack de démarrage client."
       });
     }
   }
@@ -811,7 +811,7 @@ export function ApplicationEditor({
     });
     setPostCallZeroState({
       status: "loading",
-      message: "Envoi du pack de demarrage client en cours..."
+      message: "Envoi du pack de démarrage client en cours..."
     });
 
     try {
@@ -831,7 +831,7 @@ export function ApplicationEditor({
       const result = await response.json().catch(() => null);
 
       if (!response.ok || !result?.success) {
-        throw new Error(result?.error || "Impossible d'envoyer le pack de demarrage client.");
+        throw new Error(result?.error || "Impossible d'envoyer le pack de démarrage client.");
       }
 
       applyPacket({
@@ -840,7 +840,7 @@ export function ApplicationEditor({
       });
       setPostCallZeroState({
         status: "success",
-        message: result.message || "Le pack de demarrage client a bien ete envoye."
+        message: result.message || "Le pack de démarrage client a bien été envoyé."
       });
       router.refresh();
     } catch (error) {
@@ -849,7 +849,7 @@ export function ApplicationEditor({
         message:
           error instanceof Error
             ? error.message
-            : "Impossible d'envoyer le pack de demarrage client."
+            : "Impossible d'envoyer le pack de démarrage client."
       });
     }
   }
@@ -888,7 +888,7 @@ export function ApplicationEditor({
 
       setManualEmailState({
         status: "success",
-        message: result.message || "L'email a bien ete envoye au client."
+        message: result.message || "L'email a bien été envoyé au client."
       });
       setManualEmailForm({
         subject: "",
@@ -909,10 +909,10 @@ export function ApplicationEditor({
         <section className="admin-panel admin-panel-warning">
           <div className="admin-system-warning">
             <small>Alerte Google Drive</small>
-            <strong>Fichiers non transferes vers Google Drive</strong>
+            <strong>Fichiers non transférés vers Google Drive</strong>
             <p>
-              {application.drive_transfer_error}. L'inscription a bien ete enregistree, mais les fichiers n'ont pas
-              ete envoyes dans Drive.
+              {application.drive_transfer_error}. L'inscription a bien été enregistrée, mais les fichiers n'ont pas
+              été envoyés dans Drive.
             </p>
           </div>
         </section>
@@ -931,17 +931,17 @@ export function ApplicationEditor({
 
         <div className="admin-meta-grid">
           <div className="admin-subpanel">
-            <small>Etat de l'acces</small>
-            <strong>{access ? "Compte lié" : "Compte non lié"}</strong>
+            <small>État de l'accès</small>
+            <strong>{accèss ? "Compte lié" : "Compte non lié"}</strong>
             <p className="admin-inline-note">
-              {access
+              {accèss
                 ? "Le compte client est bien lié à ce dossier."
                 : "Aucun lien compte/dossier n'a encore été retrouvé pour ce client."}
             </p>
           </div>
 
           <div className="admin-subpanel">
-            <small>Deblocage de l'accompagnement</small>
+            <small>Déblocage de l'accompagnement</small>
             <strong>{buildSpaceStatusLabel(form.space_status)}</strong>
             <p className="admin-inline-note">
               {form.space_status === "active"
@@ -972,13 +972,13 @@ export function ApplicationEditor({
 
         {hasCollaborationSpace ? (
           <>
-            <label className="admin-toggle-row" htmlFor="show-preparation-section">
+            <label className="admin-toggle-row" htmlFor="show-préparation-section">
               <div>
-                <strong>Afficher la section preparation</strong>
+                <strong>Afficher la section préparation</strong>
                 <span>Par defaut, ce type de dossier reste centre sur les informations et la discussion.</span>
               </div>
               <input
-                id="show-preparation-section"
+                id="show-préparation-section"
                 type="checkbox"
                 checked={form.show_preparation}
                 onChange={(event) => updateField("show_preparation", event.target.checked)}
@@ -988,7 +988,7 @@ export function ApplicationEditor({
             <label className="admin-toggle-row" htmlFor="show-timeline-section">
               <div>
                 <strong>Afficher le suivi du projet</strong>
-                <span>Activez cette frise seulement si vous voulez exposer les etapes au client.</span>
+                <span>Activez cette frise seulement si vous voulez exposer les étapes au client.</span>
               </div>
               <input
                 id="show-timeline-section"
@@ -1090,16 +1090,16 @@ export function ApplicationEditor({
           </label>
         </div>
 
-        <label className="admin-toggle-row" htmlFor="market-access-enabled">
+        <label className="admin-toggle-row" htmlFor="market-accèss-enabled">
           <div>
             <strong>Zero Limit Market</strong>
             <span>Afficher ou masquer le module market dans l'espace client.</span>
           </div>
           <input
-            id="market-access-enabled"
+            id="market-accèss-enabled"
             type="checkbox"
-            checked={form.market_access_enabled}
-            onChange={(event) => updateField("market_access_enabled", event.target.checked)}
+            checked={form.market_accèss_enabled}
+            onChange={(event) => updateField("market_accèss_enabled", event.target.checked)}
           />
         </label>
 
@@ -1189,7 +1189,7 @@ export function ApplicationEditor({
         </div>
 
         <p className="admin-inline-note">
-          Cette zone reste interne a l'administration. Rien n'est applique ni envoye sans validation manuelle.
+          Cette zone reste interne à l'administration. Rien n'est appliqué ni envoyé sans validation manuelle.
         </p>
 
         <div className="admin-stack admin-stack-tight">
@@ -1209,12 +1209,12 @@ export function ApplicationEditor({
                 </select>
               </label>
               <div className="admin-link-card">
-                <small>Etat du brouillon</small>
+                <small>État du brouillon</small>
                 <strong>
                   {callAssistantForm.status === "sent"
-                    ? "Email envoye"
+                    ? "Email envoyé"
                     : callAssistantForm.status === "applied"
-                      ? "Applique a l'espace client"
+                      ? "Appliqué à l'espace client"
                       : "Brouillon"}
                 </strong>
               </div>
@@ -1491,8 +1491,8 @@ export function ApplicationEditor({
         </div>
 
         <p className="admin-inline-note">
-          L'email sera envoye automatiquement a <strong>{form.email || "aucune adresse renseignee"}</strong> depuis
-          l'adresse configuree dans <code>CLIENT_EMAIL</code>.
+          L'email sera envoyé automatiquement à <strong>{form.email || "aucune adresse renseignée"}</strong> depuis
+          l'adresse configurée dans <code>CLIENT_EMAIL</code>.
         </p>
 
         <div className="admin-stack admin-stack-tight">
@@ -1527,7 +1527,7 @@ export function ApplicationEditor({
           <div className="admin-subpanel">
             <div className="admin-panel-heading admin-panel-heading-tight">
               <div>
-                <small>Pieces jointes</small>
+                <small>Pièces jointes</small>
                 <h3>Fichiers optionnels</h3>
               </div>
             </div>
@@ -1542,7 +1542,7 @@ export function ApplicationEditor({
               <small>
                 {manualEmailFiles.length > 0
                   ? manualEmailFiles.map((file) => file.name).join(" - ")
-                  : "Aucune piece jointe ajoutee"}
+                  : "Aucune pièce jointe ajoutee"}
               </small>
             </label>
           </div>
@@ -1893,3 +1893,5 @@ export function ApplicationEditor({
     </form>
   );
 }
+
+

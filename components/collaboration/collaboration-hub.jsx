@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useRef, useState } from "react";
 
@@ -151,7 +151,7 @@ export function CollaborationHub({
         <button type="button" className="collaboration-action-card" onClick={focusComposer}>
           <small>Sur le site</small>
           <strong>Discussion directe</strong>
-          <span>Envoyer un message, joindre des fichiers et suivre les reponses dans votre dossier.</span>
+          <span>Envoyer un message, joindre des fichiers et suivre les réponses dans votre dossier.</span>
         </button>
 
         {supportLinks.discordHref ? (
@@ -245,7 +245,7 @@ export function CollaborationHub({
 
       <div ref={composerRef} className="collaboration-composer">
         <label className="auth-field">
-          <span>{isAdmin ? "Votre reponse" : "Votre message"}</span>
+          <span>{isAdmin ? "Votre réponse" : "Votre message"}</span>
           <textarea
             rows={6}
             value={message}
@@ -253,7 +253,7 @@ export function CollaborationHub({
             placeholder={
               isAdmin
                 ? "Écrivez ici votre réponse pour le client."
-                : "Expliquez votre besoin, envoyez vos retours ou joignez vos fichiers ici."
+                : "Expliquez votre besoin, envoyéz vos retours ou joignez vos fichiers ici."
             }
             disabled={readOnly || state.status === "loading"}
           />
@@ -294,7 +294,7 @@ export function CollaborationHub({
         {!readOnly ? (
           <div className="admin-actions">
             <button type="button" className="button button-primary" disabled={state.status === "loading"} onClick={handleSubmit}>
-              {state.status === "loading" ? "Envoi..." : isAdmin ? "Envoyer la reponse" : "Envoyer le message"}
+              {state.status === "loading" ? "Envoi..." : isAdmin ? "Envoyer la réponse" : "Envoyer le message"}
             </button>
           </div>
         ) : null}
@@ -302,3 +302,5 @@ export function CollaborationHub({
     </section>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import { LandingPage } from "@/components/landing-page";
+﻿import { LandingPage } from "@/components/landing-page";
 import { MaintenanceScreen } from "@/components/maintenance-screen";
 import { getUserRole } from "@/lib/auth/admin-access";
 import { getAuthorizedClientAccess } from "@/lib/auth/client-access";
@@ -100,3 +100,4 @@ export default async function HomePage() {
     />
   );
 }
+

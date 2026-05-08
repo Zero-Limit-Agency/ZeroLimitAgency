@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { AvatarUploader } from "@/components/client/avatar-uploader";
+import { NewsletterPreferences } from "@/components/client/newsletter-preferences";
 import { CollaborationHub } from "@/components/collaboration/collaboration-hub";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { MaintenanceScreen } from "@/components/maintenance-screen";
@@ -309,6 +310,13 @@ export default async function ClientApplicationPage({ params, searchParams }) {
               ))}
             </div>
           </article>
+
+          {!isDemoSpace && !isAdminPreview ? (
+            <NewsletterPreferences
+              applicationId={params.applicationId}
+              initialSubscribed={Boolean(application?.newsletter_opt_in)}
+            />
+          ) : null}
 
           <article className="client-panel client-panel-resources">
             <div className="client-panel-heading">
