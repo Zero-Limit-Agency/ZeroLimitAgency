@@ -1,36 +1,34 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion } from "framer-motion";
 
 const defaultLayers = [
   {
     label: "01",
     title: "Titre modifiable",
-    subtitle: "Label modifiable",
+    subtitle: "Étape 1",
     description: "Description courte modifiable."
   },
   {
     label: "02",
     title: "Titre modifiable",
-    subtitle: "Label modifiable",
+    subtitle: "Étape 2",
     description: "Description courte modifiable."
   },
   {
     label: "03",
     title: "Titre modifiable",
-    subtitle: "Label modifiable",
+    subtitle: "Étape 3",
     description: "Description courte modifiable."
   },
   {
     label: "04",
     title: "Titre modifiable",
-    subtitle: "Label modifiable",
+    subtitle: "Étape 4",
     description: "Description courte modifiable."
   }
 ];
-
-const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
 export default function PremiumLiquidStackSection({
   items = defaultLayers,
@@ -38,44 +36,12 @@ export default function PremiumLiquidStackSection({
   intro = "Description modifiable."
 }) {
   const safeItems = useMemo(
-    () => (Array.isArray(items) && items.length ? items : defaultLayers).slice(0, 6),
+    () => (Array.isArray(items) && items.length ? items : defaultLayers).slice(0, 4),
     [items]
   );
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const rotateX = useMotionValue(-8);
-  const rotateY = useMotionValue(-10);
-  const springRotateX = useSpring(rotateX, { stiffness: 90, damping: 18, mass: 0.85 });
-  const springRotateY = useSpring(rotateY, { stiffness: 90, damping: 18, mass: 0.85 });
-
   const activeItem = safeItems[activeIndex] || safeItems[0];
-
-  function handlePointerMove(event) {
-    if (typeof window !== "undefined" && window.innerWidth <= 920) {
-      return;
-    }
-
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const ratioX = (event.clientX - bounds.left) / bounds.width;
-    const ratioY = (event.clientY - bounds.top) / bounds.height;
-
-    rotateY.set(clamp(-12 + ratioX * 24, -14, 14));
-    rotateX.set(clamp(-10 + ratioY * 12, -12, 10));
-  }
-
-  function resetTilt() {
-    rotateX.set(-8);
-    rotateY.set(-10);
-  }
-
-  function handleDrag(_, info) {
-    if (typeof window !== "undefined" && window.innerWidth <= 920) {
-      return;
-    }
-
-    rotateY.set(clamp(rotateY.get() + info.delta.x * 0.08, -14, 14));
-    rotateX.set(clamp(rotateX.get() - info.delta.y * 0.06, -12, 10));
-  }
 
   return (
     <div className="premium-stack">
@@ -85,58 +51,29 @@ export default function PremiumLiquidStackSection({
         <p>{intro}</p>
       </div>
 
-      <div className="premium-stack-layout">
-        <div
-          className="premium-stack-viewport"
-          onMouseMove={handlePointerMove}
-          onMouseLeave={resetTilt}
-        >
-          <motion.div
-            className="premium-stack-rig"
-            drag
-            dragElastic={0.08}
-            dragMomentum={false}
-            onDrag={handleDrag}
-            onDragEnd={resetTilt}
-            style={{
-              rotateX: springRotateX,
-              rotateY: springRotateY,
-              transformStyle: "preserve-3d"
-            }}
-          >
-            <div className="premium-stack-aura" aria-hidden="true" />
+      <div className="premium-stack-shell">
+        <div className="premium-stack-layers" aria-label="Évolution du projet">
+          {safeItems.map((item, index) => {
+            const isActive = index === activeIndex;
 
-            {safeItems.map((item, index) => {
-              const gap = 4.3;
-              const top = index * gap;
-              const z = -index * 16;
-              const isActive = activeIndex === index;
-
-              return (
-                <motion.button
-                  key={`${item.label}-${index}`}
-                  type="button"
-                  className={`premium-stack-layer${isActive ? " is-active" : ""}`}
-                  style={{
-                    top: `${top}rem`,
-                    transform: `translateZ(${z}px)`
-                  }}
-                  whileHover={{
-                    y: -4,
-                    z: z + 24
-                  }}
-                  transition={{ type: "spring", stiffness: 180, damping: 18 }}
-                  onMouseEnter={() => setActiveIndex(index)}
-                  onFocus={() => setActiveIndex(index)}
-                  aria-label={`${item.label} ${item.title}`}
-                >
-                  <span className="premium-stack-layer-fill" aria-hidden="true" />
-                  <span className="premium-stack-layer-gloss" aria-hidden="true" />
-                  <span className="premium-stack-layer-outline" aria-hidden="true" />
-                </motion.button>
-              );
-            })}
-          </motion.div>
+            return (
+              <motion.button
+                key={`${item.label}-${index}`}
+                type="button"
+                className={`premium-stack-layer${isActive ? " is-active" : ""}`}
+                onMouseEnter={() => setActiveIndex(index)}
+                onFocus={() => setActiveIndex(index)}
+                whileHover={{ scale: 1.045 }}
+                whileTap={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 240, damping: 18 }}
+                aria-label={`${item.subtitle || `Étape ${index + 1}`} ${item.title}`}
+              >
+                <span className="premium-stack-layer-fill" aria-hidden="true" />
+                <span className="premium-stack-layer-gloss" aria-hidden="true" />
+                <span className="premium-stack-layer-outline" aria-hidden="true" />
+              </motion.button>
+            );
+          })}
         </div>
 
         <motion.div
@@ -144,11 +81,11 @@ export default function PremiumLiquidStackSection({
           className="premium-stack-panel"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.28, ease: "easeOut" }}
+          transition={{ duration: 0.24, ease: "easeOut" }}
         >
-          <small>{activeItem?.label || "01"}</small>
+          <span className="premium-stack-panel-label">L'évolution de votre projet</span>
+          <small>{activeItem?.subtitle || `Étape ${activeIndex + 1}`}</small>
           <strong>{activeItem?.title || "Titre modifiable"}</strong>
-          <span>{activeItem?.subtitle || "Label modifiable"}</span>
           <p>{activeItem?.description || "Description courte modifiable."}</p>
         </motion.div>
       </div>
@@ -190,60 +127,28 @@ export default function PremiumLiquidStackSection({
           max-width: 35rem;
         }
 
-        .premium-stack-layout {
+        .premium-stack-shell {
           display: grid;
-          grid-template-columns: minmax(300px, 0.95fr) minmax(240px, 0.72fr);
-          gap: 2rem;
-          align-items: center;
+          gap: 1.2rem;
           min-width: 0;
         }
 
-        .premium-stack-viewport {
-          position: relative;
-          min-height: 22.5rem;
-          perspective: 2000px;
-        }
-
-        .premium-stack-rig {
-          position: relative;
-          width: 100%;
-          height: 22.5rem;
-          cursor: grab;
-          user-select: none;
-        }
-
-        .premium-stack-rig:active {
-          cursor: grabbing;
-        }
-
-        .premium-stack-aura {
-          position: absolute;
-          inset: 0;
-          background:
-            radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.16), transparent 22%),
-            radial-gradient(circle at 50% 92%, rgba(212, 170, 106, 0.12), transparent 28%);
-          filter: blur(24px);
-          opacity: 0.85;
-          pointer-events: none;
+        .premium-stack-layers {
+          display: grid;
+          gap: 0.95rem;
+          padding: 0.35rem 0.25rem 0;
         }
 
         .premium-stack-layer {
-          position: absolute;
-          left: 10%;
-          width: 78%;
-          height: 3.35rem;
+          position: relative;
+          width: 100%;
+          height: 4.3rem;
           border: 0;
           padding: 0;
           border-radius: 999px;
           background: transparent;
           outline: none;
-          transition: filter 220ms ease;
-        }
-
-        .premium-stack-layer.is-active,
-        .premium-stack-layer:hover,
-        .premium-stack-layer:focus-visible {
-          filter: brightness(1.12);
+          cursor: pointer;
         }
 
         .premium-stack-layer-fill,
@@ -257,91 +162,89 @@ export default function PremiumLiquidStackSection({
 
         .premium-stack-layer-fill {
           background:
-            linear-gradient(100deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.05) 34%, rgba(255, 255, 255, 0.01) 68%, rgba(255, 255, 255, 0.08) 100%),
-            linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(19, 17, 20, 0.46) 44%, rgba(5, 5, 7, 0.74) 100%);
-          backdrop-filter: blur(20px) saturate(120%);
+            linear-gradient(90deg, rgba(255, 244, 244, 0.92) 0%, rgba(255, 126, 102, 0.7) 18%, rgba(179, 15, 24, 0.88) 44%, rgba(35, 16, 25, 0.94) 82%, rgba(9, 8, 13, 0.98) 100%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(0, 0, 0, 0.18));
           box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.24),
-            inset 0 -10px 24px rgba(0, 0, 0, 0.22),
-            0 18px 32px rgba(0, 0, 0, 0.18);
-          opacity: 0.92;
+            inset 0 1px 0 rgba(255, 255, 255, 0.28),
+            inset 0 -12px 22px rgba(0, 0, 0, 0.22),
+            0 18px 34px rgba(0, 0, 0, 0.24),
+            0 0 28px rgba(255, 54, 54, 0.12);
+          opacity: 0.94;
         }
 
         .premium-stack-layer-gloss {
           background:
-            linear-gradient(90deg, rgba(255, 255, 255, 0.58) 0%, rgba(255, 255, 255, 0.16) 18%, rgba(255, 255, 255, 0.02) 44%, rgba(255, 255, 255, 0.02) 100%),
+            linear-gradient(98deg, rgba(255, 255, 255, 0.84) 0%, rgba(255, 255, 255, 0.2) 16%, rgba(255, 255, 255, 0.03) 42%, rgba(255, 255, 255, 0) 100%),
             linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 34%);
           mix-blend-mode: screen;
-          opacity: 0.82;
+          opacity: 0.95;
         }
 
         .premium-stack-layer-outline {
           inset: 1px;
-          border: 1px solid rgba(255, 255, 255, 0.18);
-          box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 249, 246, 0.56);
+          box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.08),
+            0 0 14px rgba(255, 232, 232, 0.16);
         }
 
         .premium-stack-layer.is-active .premium-stack-layer-fill,
         .premium-stack-layer:hover .premium-stack-layer-fill,
         .premium-stack-layer:focus-visible .premium-stack-layer-fill {
-          background:
-            linear-gradient(100deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.08) 34%, rgba(255, 255, 255, 0.02) 68%, rgba(255, 255, 255, 0.12) 100%),
-            linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(19, 17, 20, 0.44) 44%, rgba(6, 6, 8, 0.7) 100%);
+          box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.34),
+            inset 0 -12px 22px rgba(0, 0, 0, 0.16),
+            0 24px 44px rgba(0, 0, 0, 0.28),
+            0 0 34px rgba(255, 70, 70, 0.18);
+          opacity: 1;
         }
 
         .premium-stack-layer.is-active .premium-stack-layer-outline,
         .premium-stack-layer:hover .premium-stack-layer-outline,
         .premium-stack-layer:focus-visible .premium-stack-layer-outline {
-          border-color: rgba(255, 255, 255, 0.28);
+          border-color: rgba(255, 252, 250, 0.72);
+          box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.12),
+            0 0 18px rgba(255, 236, 236, 0.2);
         }
 
         .premium-stack-panel {
           display: grid;
-          gap: 0.48rem;
-          padding: 1.2rem 1.25rem;
-          border-radius: 1.7rem;
+          gap: 0.45rem;
+          padding: 1.15rem 1.2rem;
+          border-radius: 1.6rem;
           border: 1px solid rgba(255, 245, 243, 0.08);
           background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
-            rgba(19, 12, 15, 0.7);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+            linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025)),
+            rgba(18, 10, 13, 0.7);
+          box-shadow: 0 18px 34px rgba(0, 0, 0, 0.16);
           backdrop-filter: blur(14px);
         }
 
-        .premium-stack-panel small {
+        .premium-stack-panel-label {
           color: rgba(255, 245, 243, 0.52);
-          font-size: 0.74rem;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-        }
-
-        .premium-stack-panel strong {
-          font-size: 1.3rem;
-          color: #fff7f2;
-        }
-
-        .premium-stack-panel span {
-          color: rgba(255, 245, 243, 0.5);
           font-size: 0.76rem;
           letter-spacing: 0.12em;
           text-transform: uppercase;
         }
 
-        .premium-stack-panel p {
-          margin: 0.2rem 0 0;
-          color: rgba(255, 245, 243, 0.78);
-          line-height: 1.7;
+        .premium-stack-panel small {
+          color: rgba(255, 214, 214, 0.78);
+          font-size: 0.85rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
         }
 
-        @media (max-width: 1180px) {
-          .premium-stack-layout {
-            grid-template-columns: 1fr;
-            gap: 1.35rem;
-          }
+        .premium-stack-panel strong {
+          color: #fff8f4;
+          font-size: 1.3rem;
+        }
 
-          .premium-stack-panel {
-            max-width: 30rem;
-          }
+        .premium-stack-panel p {
+          margin: 0.15rem 0 0;
+          color: rgba(255, 245, 243, 0.78);
+          line-height: 1.68;
         }
 
         @media (max-width: 920px) {
@@ -352,43 +255,19 @@ export default function PremiumLiquidStackSection({
           .premium-stack-copy :global(h2) {
             max-width: none;
           }
-
-          .premium-stack-viewport {
-            min-height: 20.5rem;
-          }
-
-          .premium-stack-rig {
-            height: 20.5rem;
-            transform: none !important;
-          }
-
-          .premium-stack-layer {
-            left: 8%;
-            width: 84%;
-          }
         }
 
         @media (max-width: 640px) {
           .premium-stack {
-            gap: 1.15rem;
+            gap: 1.1rem;
           }
 
           .premium-stack-copy :global(h2) {
             font-size: 1.85rem;
           }
 
-          .premium-stack-viewport {
-            min-height: 18.5rem;
-          }
-
-          .premium-stack-rig {
-            height: 18.5rem;
-          }
-
           .premium-stack-layer {
-            left: 4%;
-            width: 92%;
-            height: 3rem;
+            height: 3.8rem;
           }
 
           .premium-stack-panel {
