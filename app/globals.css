@@ -314,7 +314,7 @@ h3 {
   position: relative;
   width: 100%;
   min-height: 44rem;
-  padding: 1.5rem;
+  padding: 1.6rem;
   border-radius: 36px;
   border: 1px solid rgba(255, 236, 236, 0.1);
   background:
@@ -339,7 +339,7 @@ h3 {
 .hero-dream-copy {
   position: relative;
   z-index: 2;
-  max-width: 22rem;
+  max-width: 23rem;
   display: grid;
   gap: 0.85rem;
 }
@@ -363,96 +363,172 @@ h3 {
   line-height: 1.68;
 }
 
-.hero-dream-stack {
-  position: relative;
-  margin-top: 2rem;
-  min-height: 28rem;
+.hero-dream-scene {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(240px, 0.85fr);
+  gap: 1.35rem;
+  align-items: center;
+  margin-top: 1.9rem;
 }
 
-.hero-dream-layer {
+.hero-dream-rig {
+  position: relative;
+  min-height: 29rem;
+  transform-style: preserve-3d;
+  transition: transform 180ms ease-out;
+  cursor: grab;
+}
+
+.hero-dream-rig:active {
+  cursor: grabbing;
+}
+
+.hero-dream-slab {
   position: absolute;
   left: 0;
-  right: 0;
-  padding: 1rem 1.1rem 1.2rem;
-  border-radius: 26px;
-  border: 1px solid rgba(255, 245, 243, 0.12);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.03) 16%, rgba(18, 9, 11, 0.5) 100%),
-    linear-gradient(135deg, rgba(212, 170, 106, 0.16), rgba(177, 95, 115, 0.14) 45%, rgba(18, 9, 11, 0.7));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.16),
-    0 18px 40px rgba(8, 2, 4, 0.24);
-  backdrop-filter: blur(18px) saturate(120%);
-  transform-origin: center top;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  appearance: none;
+  background: transparent;
+  transition: transform 180ms ease, filter 180ms ease;
 }
 
-.hero-dream-layer::before {
+.hero-dream-slab::before,
+.hero-dream-slab::after {
   content: "";
   position: absolute;
-  inset: 0.85rem 1rem auto;
-  height: 34%;
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0));
-  opacity: 0.72;
+  inset: 0;
+  border-radius: 30px;
   pointer-events: none;
 }
 
-.hero-dream-layer small,
-.hero-dream-layer strong,
-.hero-dream-layer span {
-  position: relative;
-  z-index: 1;
-  display: block;
+.hero-dream-slab::before {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.16) 28%, rgba(255, 255, 255, 0.05) 55%, rgba(177, 95, 115, 0.18) 100%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(255, 182, 203, 0.22) 40%, rgba(255, 109, 109, 0.28) 100%);
+  border: 1px solid rgba(255, 248, 245, 0.24);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -12px 26px rgba(164, 35, 52, 0.22),
+    0 28px 40px rgba(12, 2, 4, 0.2);
+  backdrop-filter: blur(14px) saturate(135%);
 }
 
-.hero-dream-layer small {
-  margin-bottom: 0.45rem;
+.hero-dream-slab::after {
+  inset: auto 8% -1.15rem;
+  height: 1.15rem;
+  border-radius: 0 0 24px 24px;
+  background: linear-gradient(180deg, rgba(255, 67, 67, 0.62), rgba(115, 16, 22, 0.86));
+  filter: blur(0.2px);
+}
+
+.hero-dream-slab:hover,
+.hero-dream-slab:focus-visible,
+.hero-dream-slab.is-active {
+  transform: translateY(-0.22rem) scale(1.015);
+  filter: brightness(1.08);
+}
+
+.hero-dream-slab:hover::before,
+.hero-dream-slab:focus-visible::before,
+.hero-dream-slab.is-active::before {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.24) 28%, rgba(255, 255, 255, 0.08) 55%, rgba(240, 138, 184, 0.22) 100%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.38), rgba(255, 207, 207, 0.3) 40%, rgba(255, 109, 109, 0.34) 100%);
+  border-color: rgba(255, 248, 245, 0.34);
+}
+
+.hero-dream-slab-top {
+  top: 0.3rem;
+  height: 7rem;
+  transform: translateZ(1.6rem);
+}
+
+.hero-dream-slab-middle {
+  top: 8.9rem;
+  height: 7rem;
+  transform: translateZ(0.6rem);
+}
+
+.hero-dream-slab-bottom {
+  top: 17.5rem;
+  height: 7rem;
+  transform: translateZ(-0.5rem);
+}
+
+.hero-dream-legend {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero-dream-highlight {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1.1rem 1.15rem;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 245, 243, 0.1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    rgba(19, 11, 15, 0.76);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.hero-dream-highlight small {
   color: rgba(255, 245, 243, 0.56);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  font-size: 0.73rem;
+  font-size: 0.74rem;
 }
 
-.hero-dream-layer strong {
-  font-size: 1.14rem;
+.hero-dream-highlight strong {
+  font-size: 1.1rem;
   color: var(--white);
 }
 
-.hero-dream-layer span {
-  margin-top: 0.55rem;
-  max-width: 20rem;
-  color: rgba(255, 245, 243, 0.8);
-  line-height: 1.55;
-  font-size: 0.94rem;
+.hero-dream-highlight p {
+  margin: 0;
+  color: rgba(255, 245, 243, 0.78);
+  line-height: 1.6;
 }
 
-.hero-dream-layer-1 {
-  top: 0;
-  transform: perspective(1200px) rotateX(60deg) translateX(4rem);
-  opacity: 0.56;
+.hero-dream-step-list {
+  display: grid;
+  gap: 0.7rem;
 }
 
-.hero-dream-layer-2 {
-  top: 5.2rem;
-  transform: perspective(1200px) rotateX(50deg) translateX(2.6rem);
-  opacity: 0.7;
+.hero-dream-step-chip {
+  border: 1px solid rgba(255, 245, 243, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: inherit;
+  border-radius: 20px;
+  padding: 0.9rem 1rem;
+  display: grid;
+  gap: 0.2rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
 }
 
-.hero-dream-layer-3 {
-  top: 10.8rem;
-  transform: perspective(1200px) rotateX(36deg) translateX(1.4rem);
-  opacity: 0.84;
+.hero-dream-step-chip span {
+  color: rgba(255, 245, 243, 0.56);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.hero-dream-layer-4 {
-  top: 17.1rem;
-  transform: perspective(1200px) rotateX(22deg) translateX(0.55rem);
-  opacity: 0.94;
+.hero-dream-step-chip strong {
+  color: rgba(255, 248, 245, 0.94);
+  font-size: 0.98rem;
 }
 
-.hero-dream-layer-5 {
-  top: 23.9rem;
-  transform: perspective(1200px) rotateX(10deg);
+.hero-dream-step-chip:hover,
+.hero-dream-step-chip:focus-visible,
+.hero-dream-step-chip.is-active {
+  border-color: rgba(255, 245, 243, 0.18);
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateX(0.12rem);
 }
 
 .button {
@@ -6167,24 +6243,21 @@ body {
     min-height: 40rem;
   }
 
+  .hero-dream-scene {
+    grid-template-columns: 1fr;
+  }
+
   .hero-dream-copy {
     max-width: none;
   }
 
-  .hero-dream-layer-1 {
-    transform: perspective(1200px) rotateX(56deg) translateX(2.4rem);
+  .hero-dream-legend {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
   }
 
-  .hero-dream-layer-2 {
-    transform: perspective(1200px) rotateX(46deg) translateX(1.8rem);
-  }
-
-  .hero-dream-layer-3 {
-    transform: perspective(1200px) rotateX(32deg) translateX(1rem);
-  }
-
-  .hero-dream-layer-4 {
-    transform: perspective(1200px) rotateX(18deg) translateX(0.35rem);
+  .hero-dream-rig {
+    min-height: 26rem;
   }
 }
 
@@ -6194,25 +6267,17 @@ body {
     padding: 1.2rem;
   }
 
-  .hero-dream-stack {
-    min-height: auto;
-    display: grid;
-    gap: 0.9rem;
-    margin-top: 1.25rem;
+  .hero-dream-scene {
+    gap: 1rem;
+    margin-top: 1.3rem;
   }
 
-  .hero-dream-layer {
-    position: relative;
-    top: auto;
-    left: auto;
-    right: auto;
-    transform: none;
-    opacity: 1;
+  .hero-dream-rig {
+    min-height: 23rem;
   }
 
-  .hero-dream-layer::before {
-    inset: 0.7rem 0.8rem auto;
-    height: 2.8rem;
+  .hero-dream-legend {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -6221,15 +6286,37 @@ body {
     font-size: clamp(1.8rem, 8vw, 2.45rem);
   }
 
-  .hero-dream-layer {
-    border-radius: 22px;
-    padding: 0.95rem 1rem 1.05rem;
+  .hero-dream-rig {
+    min-height: 18.5rem;
+    transform: none !important;
   }
 
-  .hero-dream-layer span {
-    max-width: none;
-    font-size: 0.92rem;
-    line-height: 1.52;
+  .hero-dream-slab {
+    left: 0.25rem;
+    width: calc(100% - 0.5rem);
+  }
+
+  .hero-dream-slab-top,
+  .hero-dream-slab-middle,
+  .hero-dream-slab-bottom {
+    height: 5.3rem;
+  }
+
+  .hero-dream-slab-top {
+    top: 0.2rem;
+  }
+
+  .hero-dream-slab-middle {
+    top: 6.4rem;
+  }
+
+  .hero-dream-slab-bottom {
+    top: 12.6rem;
+  }
+
+  .hero-dream-highlight,
+  .hero-dream-step-chip {
+    border-radius: 18px;
   }
 }
 

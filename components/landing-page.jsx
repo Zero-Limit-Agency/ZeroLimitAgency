@@ -25,36 +25,30 @@ const frenchMonthMap = {
   décembre: 12
 };
 
-const HERO_DREAM_LAYERS = [
+const HERO_DREAM_STEPS = [
   {
-    id: "layer-1",
+    id: "dream-step-1",
     step: "Étape 1",
-    title: "Brouillon",
-    text: "Une idée forte, mais encore floue, dispersée ou remise à plus tard."
+    title: "Réflexion",
+    text: "Une ambition existe déjà, mais elle reste floue, isolée ou repoussée trop longtemps."
   },
   {
-    id: "layer-2",
+    id: "dream-step-2",
     step: "Étape 2",
-    title: "Vision",
-    text: "On clarifie le cap, l'identité, les objectifs et ce que tu veux vraiment construire."
+    title: "Création de carrière",
+    text: "On pose un vrai cap, une identité et un positionnement pour construire quelque chose de durable."
   },
   {
-    id: "layer-3",
+    id: "dream-step-3",
     step: "Étape 3",
-    title: "Structure",
-    text: "Positionnement, organisation, image, outils et méthode pour arrêter l'improvisation."
+    title: "Accompagnement",
+    text: "Tu avances avec une structure, des retours clairs et un cadre pour éviter de te disperser."
   },
   {
-    id: "layer-4",
+    id: "dream-step-4",
     step: "Étape 4",
-    title: "Gestion de carrière",
-    text: "On transforme l'ambition en trajectoire sérieuse avec un accompagnement réellement exploitable."
-  },
-  {
-    id: "layer-5",
-    step: "Étape 5",
-    title: "Objectifs",
-    text: "Mieux vaut avancer bien entouré, même avec des essais, que regretter de ne jamais s'être lancé."
+    title: "Succès",
+    text: "Mieux vaut essayer, apprendre et progresser bien entouré que regretter de ne pas t'être lancé."
   }
 ];
 
@@ -225,6 +219,8 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
   const siteContent = useMemo(() => normalizeSiteContent(content), [content]);
   const [navOpen, setNavOpen] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
+  const [activeDreamStep, setActiveDreamStep] = useState(0);
+  const [dreamTilt, setDreamTilt] = useState({ rotateX: -10, rotateY: -14 });
   const [birthDateDisplay, setBirthDateDisplay] = useState("");
   const [birthDateError, setBirthDateError] = useState("");
   const [formState, setFormState] = useState({
@@ -246,6 +242,25 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
       />
     </article>
   );
+
+  const highlightedDreamStep = HERO_DREAM_STEPS[activeDreamStep] || HERO_DREAM_STEPS[0];
+
+  function handleDreamPointerMove(event) {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const offsetX = (event.clientX - bounds.left) / bounds.width;
+    const offsetY = (event.clientY - bounds.top) / bounds.height;
+    const rotateY = -20 + offsetX * 16;
+    const rotateX = -16 + offsetY * 10;
+
+    setDreamTilt({
+      rotateX,
+      rotateY
+    });
+  }
+
+  function resetDreamPointer() {
+    setDreamTilt({ rotateX: -10, rotateY: -14 });
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -409,22 +424,73 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
                   <p className="hero-dream-kicker">Build your dream without limit.</p>
                   <h2>De l'idée brute à une trajectoire solide.</h2>
                   <p>
-                    On t'aide à éviter le regret de ne pas essayer, en transformant une envie
-                    confuse en projet cadré, accompagné et prêt à grandir.
+                    Mieux vaut construire, tester et avancer avec un vrai cadre que laisser une
+                    ambition dormir jusqu'au regret.
                   </p>
                 </div>
 
-                <div className="hero-dream-stack" aria-hidden="true">
-                  {HERO_DREAM_LAYERS.map((layer, index) => (
-                    <article
-                      key={layer.id}
-                      className={`hero-dream-layer hero-dream-layer-${index + 1}`}
-                    >
-                      <small>{layer.step}</small>
-                      <strong>{layer.title}</strong>
-                      <span>{layer.text}</span>
-                    </article>
-                  ))}
+                <div className="hero-dream-scene">
+                  <div
+                    className="hero-dream-rig"
+                    onMouseMove={handleDreamPointerMove}
+                    onMouseLeave={resetDreamPointer}
+                    style={{
+                      transform: `rotateX(${dreamTilt.rotateX}deg) rotateY(${dreamTilt.rotateY}deg)`
+                    }}
+                  >
+                    <button
+                      type="button"
+                      className={`hero-dream-slab hero-dream-slab-top${
+                        activeDreamStep === 0 ? " is-active" : ""
+                      }`}
+                      onMouseEnter={() => setActiveDreamStep(0)}
+                      onFocus={() => setActiveDreamStep(0)}
+                      aria-label="Étape 1 réflexion"
+                    />
+                    <button
+                      type="button"
+                      className={`hero-dream-slab hero-dream-slab-middle${
+                        activeDreamStep === 1 || activeDreamStep === 2 ? " is-active" : ""
+                      }`}
+                      onMouseEnter={() => setActiveDreamStep(1)}
+                      onFocus={() => setActiveDreamStep(1)}
+                      aria-label="Étapes 2 et 3 construction et accompagnement"
+                    />
+                    <button
+                      type="button"
+                      className={`hero-dream-slab hero-dream-slab-bottom${
+                        activeDreamStep === 3 ? " is-active" : ""
+                      }`}
+                      onMouseEnter={() => setActiveDreamStep(3)}
+                      onFocus={() => setActiveDreamStep(3)}
+                      aria-label="Étape 4 succès"
+                    />
+                  </div>
+
+                  <div className="hero-dream-legend">
+                    <div className="hero-dream-highlight">
+                      <small>{highlightedDreamStep.step}</small>
+                      <strong>{highlightedDreamStep.title}</strong>
+                      <p>{highlightedDreamStep.text}</p>
+                    </div>
+
+                    <div className="hero-dream-step-list">
+                      {HERO_DREAM_STEPS.map((step, index) => (
+                        <button
+                          key={step.id}
+                          type="button"
+                          className={`hero-dream-step-chip${
+                            activeDreamStep === index ? " is-active" : ""
+                          }`}
+                          onMouseEnter={() => setActiveDreamStep(index)}
+                          onFocus={() => setActiveDreamStep(index)}
+                        >
+                          <span>{step.step}</span>
+                          <strong>{step.title}</strong>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </aside>
