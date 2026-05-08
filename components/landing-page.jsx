@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -157,7 +157,7 @@ function UserNavButton({ currentUser, closeNav, label }) {
       </span>
       <span className="nav-profile-copy">
         <strong>{currentUser.label || "Mon espace"}</strong>
-        <small>{currentUser.email || "Compte connecte"}</small>
+        <small>{currentUser.email || "Compte connecté"}</small>
       </span>
     </Link>
   );
@@ -171,6 +171,21 @@ function renderStars(stars) {
       ★
     </span>
   ));
+}
+
+function FooterSocialLink({ href, label, icon }) {
+  if (!href) {
+    return null;
+  }
+
+  return (
+    <a className="social-link" href={href} target="_blank" rel="noreferrer">
+      <span className="social-icon" aria-hidden="true">
+        {icon}
+      </span>
+      <span>{label}</span>
+    </a>
+  );
 }
 
 export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT }) {
@@ -660,7 +675,24 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
             </div>
             <div className="footer-column">
               <strong>Réseaux</strong>
-              <p>À compléter</p>
+              <div className="footer-social-list">
+                <FooterSocialLink href={siteContent.support.discordUrl} label="Discord" icon="D" />
+                <FooterSocialLink href={siteContent.support.tiktokUrl} label="TikTok" icon="T" />
+                <FooterSocialLink href={siteContent.support.xUrl} label="X" icon="X" />
+              </div>
+              {!siteContent.support.discordUrl &&
+              !siteContent.support.tiktokUrl &&
+              !siteContent.support.xUrl ? (
+                <p>À compléter</p>
+              ) : null}
+            </div>
+            <div className="footer-column">
+              <strong>Site</strong>
+              <Link href="/mentions-legales">Mentions légales</Link>
+              <Link href="/politique-de-confidentialite">Politique de confidentialité</Link>
+              <Link href="/conditions-generales-de-vente">Conditions générales de vente (CGV)</Link>
+              <Link href="/conditions-generales-d-utilisation">Conditions générales d&apos;utilisation (CGU)</Link>
+              <Link href="/politique-de-remboursement">Politique de remboursement</Link>
             </div>
           </div>
         </footer>
@@ -668,5 +700,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
     </>
   );
 }
+
+
 
 

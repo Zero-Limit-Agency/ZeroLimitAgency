@@ -38,7 +38,7 @@ export function SupportChannelsEditor({ initialSettings }) {
       setForm(normalizeSupportSettings(result.support || form));
       setState({
         status: "success",
-        message: result.message || "Les canaux de support ont bien ete enregistres."
+        message: result.message || "Les canaux de support ont bien été enregistrés."
       });
     } catch (error) {
       setState({
@@ -56,7 +56,7 @@ export function SupportChannelsEditor({ initialSettings }) {
           <p className="eyebrow">Support client</p>
           <h2>Canaux de contact</h2>
           <p className="admin-inline-note">
-            Ces liens sont utilises dans les espaces contact, collaboration et partenariat.
+            Ces liens sont utilisés dans les espaces contact, collaboration et partenariat, ainsi que dans le footer public.
           </p>
         </div>
       </div>
@@ -77,6 +77,24 @@ export function SupportChannelsEditor({ initialSettings }) {
             value={form.discordUrl}
             onChange={(event) => updateField("discordUrl", event.target.value)}
             placeholder="https://discord.gg/..."
+          />
+        </label>
+
+        <label className="auth-field">
+          <span>URL TikTok</span>
+          <input
+            value={form.tiktokUrl}
+            onChange={(event) => updateField("tiktokUrl", event.target.value)}
+            placeholder="https://www.tiktok.com/@..."
+          />
+        </label>
+
+        <label className="auth-field">
+          <span>URL X / Twitter</span>
+          <input
+            value={form.xUrl}
+            onChange={(event) => updateField("xUrl", event.target.value)}
+            placeholder="https://x.com/..."
           />
         </label>
       </div>

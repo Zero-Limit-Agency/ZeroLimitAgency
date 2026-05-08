@@ -52,7 +52,7 @@ export async function PATCH(request) {
 
     return NextResponse.json({
       success: true,
-      message: "Les canaux de support ont bien ete enregistres.",
+      message: "Les canaux de support ont bien été enregistrés.",
       support
     });
   } catch (error) {
