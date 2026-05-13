@@ -154,7 +154,7 @@ export async function POST(request) {
   try {
     const rateLimitResponse = enforceRateLimit(request, {
       key: "contact",
-      limit: 5,
+      limit: 15,
       windowMs: 60 * 1000
     });
 

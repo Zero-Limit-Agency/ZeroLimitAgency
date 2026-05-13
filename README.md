@@ -1,5 +1,17 @@
 # Zero Limit Agency - Next.js Base
 
+## Mode de travail cloud
+
+Le repo est maintenant préparé pour un flux GitHub -> Vercel :
+
+- GitHub devient la source de vérité du projet.
+- GitHub Actions vérifie le build avec `npm ci` puis `npm run build`.
+- Vercel peut déployer automatiquement depuis GitHub.
+- Les secrets et variables réelles doivent être configurés dans Vercel, pas dans le repo.
+- Le runtime Node cible est `20`, défini dans `.nvmrc`.
+
+Voir aussi : [`docs/cloud-deployment.md`](docs/cloud-deployment.md).
+
 Base Next.js propre et compatible Vercel pour faire évoluer le site public vers une vraie application.
 
 ## Stack actuelle

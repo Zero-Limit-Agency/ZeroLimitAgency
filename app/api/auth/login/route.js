@@ -15,7 +15,7 @@ export async function POST(request) {
   try {
     const rateLimitResponse = enforceRateLimit(request, {
       key: "auth-login",
-      limit: 10,
+      limit: 20,
       windowMs: 60 * 1000
     });
 
