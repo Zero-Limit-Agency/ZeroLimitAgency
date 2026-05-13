@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Next.js
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_APP_URL: https://zerolimit.agency
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder
+      SUPABASE_SERVICE_ROLE_KEY: ci-placeholder
+      RESEND_API_KEY: ci-placeholder
+      PUBLIC_CONTACT_EMAIL: contact@zerolimit.agency
+      INSCRIPTIONS_EMAIL: inscription@zerolimit.agency
+      CLIENT_EMAIL: client@zerolimit.agency
+      CLIENT_SUPPORT_EMAIL: contact@zerolimit.agency
+      CLIENT_DISCORD_URL: https://discord.com
+      GOOGLE_OAUTH_CLIENT_ID: ci-placeholder
+      GOOGLE_OAUTH_CLIENT_SECRET: ci-placeholder
+      GOOGLE_OAUTH_REDIRECT_URI: https://zerolimit.agency/api/google/oauth/callback
+      GOOGLE_DRIVE_LEADS_ROOT_FOLDER_ID: ci-placeholder
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
