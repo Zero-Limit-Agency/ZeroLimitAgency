@@ -7,7 +7,7 @@ import {
 } from "@/lib/auth/client-auth";
 import { getClientWorkspaceContext } from "@/lib/auth/client-access";
 import { getUserRole } from "@/lib/auth/admin-access";
-import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { enforceRateLimit, permanentlyBlockRequestIp } from "@/lib/security/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -29,6 +29,7 @@ export async function POST(request) {
     const website = String(body?.website || "").trim();
 
     if (website) {
+      permanentlyBlockRequestIp(request, "auth-login-honeypot");
       return NextResponse.json({ success: true, redirectTo: "/espace-client" });
     }
 
