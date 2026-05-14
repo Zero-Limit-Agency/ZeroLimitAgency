@@ -60,7 +60,8 @@ export function ClientLoginForm() {
     const data = new FormData(form);
     const payload = {
       email: String(data.get("email") || "").trim().toLowerCase(),
-      password: String(data.get("password") || "").trim()
+      password: String(data.get("password") || "").trim(),
+      website: String(data.get("website") || "").trim()
     };
 
     await submitLogin(payload, "Connexion en cours...");
@@ -129,6 +130,14 @@ export function ClientLoginForm() {
 
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
+      <input
+        name="website"
+        type="text"
+        tabIndex={-1}
+        autoComplete="off"
+        className="honeypot-field"
+        aria-hidden="true"
+      />
       <label className="auth-field">
         <span>Adresse email</span>
         <input name="email" type="email" autoComplete="email" required />

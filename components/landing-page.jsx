@@ -555,6 +555,14 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
               </p>
             </div>
             <form className="contact-form reveal is-visible" id="contact-form" onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                className="honeypot-field"
+                aria-hidden="true"
+              />
               <div className="form-row">
                 <label>
                   Nom et prénom
@@ -700,7 +708,6 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
     </>
   );
 }
-
 
 
 
