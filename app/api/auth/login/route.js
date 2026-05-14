@@ -26,6 +26,11 @@ export async function POST(request) {
     const body = await request.json();
     const email = String(body?.email || "").trim().toLowerCase();
     const password = String(body?.password || "").trim();
+    const website = String(body?.website || "").trim();
+
+    if (website) {
+      return NextResponse.json({ success: true, redirectTo: "/espace-client" });
+    }
 
     if (!email || !password) {
       return NextResponse.json(

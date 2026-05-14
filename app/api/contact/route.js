@@ -93,6 +93,7 @@ function normalizeBirthDate(value) {
 
 function normalizeSignupPayload(formData) {
   return {
+    website: clampText(formData.get("website")?.toString() || "", 200),
     fullName: clampText(formData.get("fullName")?.toString() || "", 120),
     birthDate: normalizeBirthDate(formData.get("birthDate")?.toString() || ""),
     username: clampText(formData.get("username")?.toString() || "", 80),
@@ -164,6 +165,10 @@ export async function POST(request) {
 
     const formData = await request.formData();
     const payload = normalizeSignupPayload(formData);
+
+    if (payload.website) {
+      return NextResponse.json({ success: true });
+    }
 
     if (
       !payload.fullName ||
