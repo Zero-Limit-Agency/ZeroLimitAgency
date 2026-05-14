@@ -13,7 +13,7 @@ import {
   isValidEmailAddress,
   normalizeEmailAddress
 } from "@/lib/security/uploads";
-import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { enforceRateLimit, permanentlyBlockRequestIp } from "@/lib/security/rate-limit";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -167,6 +167,7 @@ export async function POST(request) {
     const payload = normalizeSignupPayload(formData);
 
     if (payload.website) {
+      permanentlyBlockRequestIp(request, "contact-honeypot");
       return NextResponse.json({ success: true });
     }
 
