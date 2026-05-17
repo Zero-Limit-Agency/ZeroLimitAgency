@@ -15,10 +15,16 @@ import {
 } from "@/lib/security/uploads";
 import { enforceRateLimit, permanentlyBlockRequestIp } from "@/lib/security/rate-limit";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    return null;
+  }
+
+  return createClient(supabaseUrl, serviceRoleKey);
+}
 
 function parseBoolean(value) {
   if (typeof value !== "string") {
@@ -124,7 +130,7 @@ function buildCreateUserErrorMessage(error) {
   return "Impossible de creer le compte pour le moment.";
 }
 
-async function rollbackSignup(userId, applicationId) {
+async function rollbackSignup(supabase, userId, applicationId) {
   if (applicationId) {
     await supabase.from("applications").delete().eq("id", applicationId).catch(() => null);
   }
@@ -134,7 +140,7 @@ async function rollbackSignup(userId, applicationId) {
   }
 }
 
-async function persistDriveWarning(applicationId, message) {
+async function persistDriveWarning(supabase, applicationId, message) {
   const { data, error } = await supabase
     .from("applications")
     .update({
@@ -153,6 +159,18 @@ async function persistDriveWarning(applicationId, message) {
 
 export async function POST(request) {
   try {
+    const supabase = getSupabaseClient();
+
+    if (!supabase) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Configuration serveur incomplete."
+        },
+        { status: 500 }
+      );
+    }
+
     const rateLimitResponse = enforceRateLimit(request, {
       key: "contact",
       limit: 15,
@@ -287,7 +305,7 @@ export async function POST(request) {
       .single();
 
     if (insertError || !application?.id) {
-      await rollbackSignup(userId, null);
+      await rollbackSignup(supabase, userId, null);
 
       return NextResponse.json(
         {
@@ -344,7 +362,11 @@ export async function POST(request) {
           ? "Fichiers non transferes vers Google Drive"
           : "Dossier Google Drive non cree";
 
-      const updatedApplication = await persistDriveWarning(application.id, warningMessage);
+      const updatedApplication = await persistDriveWarning(
+        supabase,
+        application.id,
+        warningMessage
+      );
 
       if (updatedApplication) {
         finalApplication = updatedApplication;
