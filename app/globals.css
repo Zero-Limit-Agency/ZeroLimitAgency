@@ -6688,3 +6688,29 @@ body {
     justify-content: center;
   }
 }
+
+
+/* Extra breakpoint fixes: avoid narrow left column on medium mobile/tablet widths */
+@media (max-width: 1080px) {
+  .client-profile-header {
+    grid-template-columns: 1fr;
+  }
+
+  .client-overview-card {
+    width: 100%;
+    max-width: none;
+  }
+
+  .client-dashboard-frame {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  .client-profile-copy,
+  .client-profile-main,
+  .client-profile-card {
+    min-width: 0;
+    width: 100%;
+  }
+}

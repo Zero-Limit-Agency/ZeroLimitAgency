@@ -255,17 +255,19 @@ export async function POST(request) {
       maxFiles: 6,
       maxSizeBytes: 10 * 1024 * 1024,
       maxTotalBytes: 24 * 1024 * 1024,
-      allowedExtensions: [".pdf", ".png", ".jpg", ".jpeg", ".webp", ".zip"],
+      allowedExtensions: [".pdf", ".png", ".jpg", ".jpeg", ".webp", ".heic", ".heif", ".zip"],
       allowedMimeTypes: [
         "application/pdf",
         "image/png",
         "image/jpeg",
         "image/webp",
+        "image/heic",
+        "image/heif",
         "application/zip",
         "application/x-zip-compressed",
         "multipart/x-zip"
       ],
-      allowedSignatures: ["pdf", "png", "jpeg", "webp", "zip"]
+      allowedSignatures: ["pdf", "png", "jpeg", "webp", "heic", "zip"]
     });
 
     const { firstName, lastName } = splitFullName(payload.fullName);
@@ -370,10 +372,11 @@ export async function POST(request) {
         "[contact] drive upload failed",
         driveError instanceof Error ? driveError.message : "unknown"
       );
+      const driveErrorMessage = driveError instanceof Error ? driveError.message : "Erreur inconnue";
       const warningMessage =
         payload.files.length > 0
-          ? "Fichiers non transferes vers Google Drive"
-          : "Dossier Google Drive non cree";
+          ? `Fichiers non transferes vers Google Drive: ${driveErrorMessage}`
+          : `Dossier Google Drive non cree: ${driveErrorMessage}`;
 
       const updatedApplication = await persistDriveWarning(
         supabase,
