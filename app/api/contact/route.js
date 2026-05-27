@@ -26,6 +26,19 @@ function getSupabaseClient() {
   return createClient(supabaseUrl, serviceRoleKey);
 }
 
+function summarizeEmailFailure(result, label) {
+  if (!result || result.ok || result.skipped) {
+    return null;
+  }
+
+  return {
+    target: label,
+    provider: result.provider || "unknown",
+    transient: Boolean(result.transient),
+    reason: String(result.error || "Email delivery failed")
+  };
+}
+
 function parseBoolean(value) {
   if (typeof value !== "string") {
     return false;
@@ -408,7 +421,7 @@ export async function POST(request) {
     const internalEmail = buildInternalNewApplicationEmail({ application: finalApplication });
     const confirmationEmail = buildSignupConfirmationEmail({ application: finalApplication });
 
-    await Promise.all([
+    const emailResults = await Promise.all([
       sendZeroLimitEmail({
         to: process.env.INSCRIPTIONS_EMAIL,
         from: process.env.INSCRIPTIONS_EMAIL,
@@ -421,10 +434,29 @@ export async function POST(request) {
       })
     ]);
 
+    const emailFailures = [
+      summarizeEmailFailure(emailResults[0], "internal_notification"),
+      summarizeEmailFailure(emailResults[1], "signup_confirmation")
+    ].filter(Boolean);
+
+    if (emailFailures.length > 0) {
+      console.error("[contact] email delivery issue", {
+        applicationId: finalApplication.id,
+        failures: emailFailures
+      });
+    }
+
     return NextResponse.json({
       success: true,
-      message: "Inscription reussie",
-      applicationId: finalApplication.id
+      message:
+        emailFailures.length > 0
+          ? "Inscription enregistrée. Un incident de livraison email est en cours de résolution."
+          : "Inscription reussie",
+      applicationId: finalApplication.id,
+      emailDelivery: {
+        ok: emailFailures.length === 0,
+        failures: emailFailures
+      }
     });
   } catch (error) {
     console.error("[contact] fatal error", error instanceof Error ? error.message : "unknown");
