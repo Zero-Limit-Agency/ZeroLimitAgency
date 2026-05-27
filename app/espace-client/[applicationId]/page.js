@@ -288,8 +288,8 @@ export default async function ClientApplicationPage({ params, searchParams }) {
                 </a>
               ) : (
                 <div className="client-resource-placeholder">
-                  <strong>Prise de rendez-vous à configurer</strong>
-                  <span>Lien Google Agenda ou booking à ajouter dans la configuration du projet.</span>
+                  <strong>Prise de rendez-vous bientôt disponible</strong>
+                  <span>Notre équipe vous transmettra le lien de réservation dès qu'il sera actif.</span>
                 </div>
               )}
             </article>
@@ -352,7 +352,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
                       <strong>{isWorkspaceReady ? resource.cta : "Disponible après le rendez-vous"}</strong>
                       <span>
                         {isWorkspaceReady
-                          ? "Emplacement prêt pour ajouter un outil, son logo et son lien depuis l'administration."
+                          ? "Cet accès est en cours d'activation pour votre dossier."
                           : "Les accès réels seront activés une fois le plan validé avec l'équipe."}
                       </span>
                     </div>
