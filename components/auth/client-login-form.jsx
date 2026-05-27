@@ -67,20 +67,6 @@ export function ClientLoginForm() {
     await submitLogin(payload, "Connexion en cours...");
   }
 
-  function handleDemoAccess() {
-    setForgotState({
-      status: "idle",
-      message: ""
-    });
-    setState({
-      status: "success",
-      message: "Ouverture de la démonstration..."
-    });
-
-    router.push("/espace-client/demo");
-    router.refresh();
-  }
-
   async function handleForgotPassword(event) {
     event.preventDefault();
 
@@ -174,19 +160,6 @@ export function ClientLoginForm() {
           {forgotState.message}
         </p>
       ) : null}
-
-      <div className="auth-demo-panel">
-        <strong>Démonstration</strong>
-        <p>Ouvrez une version d'exemple pour découvrir l'espace client sans identifiants.</p>
-        <button
-          className="button button-dark"
-          type="button"
-          onClick={handleDemoAccess}
-          disabled={state.status === "loading" || forgotState.status === "loading"}
-        >
-          Accéder à la démonstration
-        </button>
-      </div>
 
       {state.message ? (
         <p

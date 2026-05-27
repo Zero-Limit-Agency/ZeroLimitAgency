@@ -6641,3 +6641,50 @@ body {
   pointer-events: none;
 }
 
+
+/* Mobile alignment and readability fixes for the client space public view */
+.client-dashboard-grid-refined {
+  align-items: stretch;
+}
+
+.client-panel,
+.client-resource-card,
+.client-info-card {
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .client-profile-header {
+    grid-template-columns: 1fr;
+  }
+
+  .client-profile-card {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .client-profile-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .client-dashboard-grid-refined,
+  .client-resource-list,
+  .client-info-grid-refined {
+    grid-template-columns: 1fr;
+  }
+
+  .client-panel,
+  .client-resource-card,
+  .collaboration-panel {
+    width: 100%;
+    min-width: 0;
+    margin-inline: 0;
+  }
+
+  .client-panel .button,
+  .client-resource-card .button,
+  .client-avatar-button {
+    width: 100%;
+    justify-content: center;
+  }
+}

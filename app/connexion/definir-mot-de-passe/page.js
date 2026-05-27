@@ -28,7 +28,7 @@ export default function PasswordSetupPage() {
             <strong>Besoin d'un nouveau lien ?</strong>
             <p>
               Si l'email n'est plus valable ou si le lien a expiré, nous pouvons renvoyer un nouvel
-              accès depuis l'administration en quelques secondes.
+              accès rapidement via l'équipe support.
             </p>
           </div>
         </div>
