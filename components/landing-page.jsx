@@ -278,7 +278,10 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
 
       setFormState({
         status: "success",
-        message: result.message || "Votre demande a bien été envoyée."
+        message:
+          result?.emailDelivery?.ok === false
+            ? "Votre demande est bien enregistrée. Nous avons un retard temporaire sur l'envoi des emails de confirmation."
+            : result.message || "Votre demande a bien été envoyée."
       });
       form.reset();
       setBirthDateDisplay("");
@@ -708,6 +711,5 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
     </>
   );
 }
-
 
 
