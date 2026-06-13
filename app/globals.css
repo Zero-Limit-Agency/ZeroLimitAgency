@@ -1423,7 +1423,6 @@ h3 {
 
 .site-footer {
   padding: 4.4rem 0 3.2rem;
-  border-top: 1px solid rgba(255, 236, 236, 0.08);
 }
 
 .footer-grid {
@@ -4109,7 +4108,13 @@ main {
   display: flex;
   flex-wrap: wrap;
   gap: 0.65rem;
-  margin-bottom: 1rem;
+  margin-block: 1.15rem;
+}
+
+.market-month-switcher + .market-region-grid,
+.market-month-switcher + .market-month-focus,
+.market-month-switcher + .market-region-focus {
+  margin-top: 0;
 }
 
 .market-month-chip {
