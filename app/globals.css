@@ -6820,3 +6820,50 @@ body {
 .error-page-button {
   min-width: 12rem;
 }
+
+/* Client space mobile alignment hardening: keep the profile block centered and contained. */
+@media (max-width: 760px) {
+  .client-dashboard-shell {
+    overflow-x: hidden;
+    padding-inline: max(0.75rem, env(safe-area-inset-left)) max(0.75rem, env(safe-area-inset-right));
+  }
+
+  .client-dashboard-frame,
+  .client-profile-frame,
+  .client-profile-header,
+  .client-profile-main,
+  .client-profile-card,
+  .client-profile-copy {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .client-dashboard-frame {
+    margin-inline: auto;
+    padding-inline: 0;
+    justify-items: stretch;
+  }
+
+  .client-profile-frame,
+  .client-profile-header,
+  .client-profile-main {
+    justify-items: stretch;
+  }
+
+  .client-profile-card {
+    justify-self: stretch;
+    margin-inline: 0;
+    overflow: hidden;
+  }
+
+  .client-profile-topline,
+  .client-dashboard-footer-refined {
+    align-items: stretch;
+  }
+
+  .client-identity-chip {
+    max-width: 100%;
+    white-space: normal;
+  }
+}
