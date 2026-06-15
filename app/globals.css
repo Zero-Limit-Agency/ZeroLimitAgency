@@ -6820,3 +6820,55 @@ body {
 .error-page-button {
   min-width: 12rem;
 }
+
+/* Client space responsive containment: prevent the profile view from creating a right-side gutter while resizing. */
+@media (max-width: 900px) {
+  .client-dashboard-shell {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+    padding-inline:
+      max(0.65rem, env(safe-area-inset-left))
+      max(0.65rem, env(safe-area-inset-right));
+  }
+
+  .client-dashboard-frame,
+  .client-profile-frame,
+  .client-profile-header,
+  .client-profile-main,
+  .client-profile-card,
+  .client-profile-copy {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .client-dashboard-frame {
+    max-width: min(100%, 1200px);
+    margin-inline: auto;
+    justify-items: stretch;
+    overflow-x: clip;
+  }
+
+  .client-profile-frame,
+  .client-profile-header,
+  .client-profile-main {
+    justify-items: stretch;
+  }
+
+  .client-profile-card {
+    justify-self: stretch;
+    margin-inline: 0;
+    overflow: hidden;
+  }
+
+  .client-profile-topline,
+  .client-dashboard-footer-refined {
+    align-items: stretch;
+  }
+
+  .client-identity-chip {
+    max-width: 100%;
+    white-space: normal;
+  }
+}
