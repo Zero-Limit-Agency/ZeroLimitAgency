@@ -6821,11 +6821,15 @@ body {
   min-width: 12rem;
 }
 
-/* Client space mobile alignment hardening: keep the profile block centered and contained. */
-@media (max-width: 760px) {
+/* Client space responsive containment: prevent the profile view from creating a right-side gutter while resizing. */
+@media (max-width: 900px) {
   .client-dashboard-shell {
-    overflow-x: hidden;
-    padding-inline: max(0.75rem, env(safe-area-inset-left)) max(0.75rem, env(safe-area-inset-right));
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+    padding-inline:
+      max(0.65rem, env(safe-area-inset-left))
+      max(0.65rem, env(safe-area-inset-right));
   }
 
   .client-dashboard-frame,
@@ -6840,9 +6844,10 @@ body {
   }
 
   .client-dashboard-frame {
+    max-width: min(100%, 1200px);
     margin-inline: auto;
-    padding-inline: 0;
     justify-items: stretch;
+    overflow-x: clip;
   }
 
   .client-profile-frame,
