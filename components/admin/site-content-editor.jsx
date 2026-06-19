@@ -18,6 +18,7 @@ function createProjectDraft(existing = {}, index = 0, type = "project") {
   return {
     id: existing.id || `${type}-${index + 1}`,
     image: existing.image || "",
+    link: existing.link || "",
     title: existing.title || "",
     description: existing.description || "",
     date: existing.date || ""
@@ -449,7 +450,7 @@ export function SiteContentEditor({ initialSettings }) {
                       </label>
                       <label className="auth-field">
                         <span>Étoiles</span>
-                        <input type="number" min="1" max="5" value={item.stars} onChange={(event) => updateNestedArrayItem(section.key, index, "stars", event.target.value)} />
+                        <input type="number" min="1" max="5" step="0.5" value={item.stars} onChange={(event) => updateNestedArrayItem(section.key, index, "stars", event.target.value)} />
                       </label>
                       <label className="auth-field admin-field-full">
                         <span>Message</span>
@@ -474,6 +475,17 @@ export function SiteContentEditor({ initialSettings }) {
                         <span>Date</span>
                         <input value={item.date} onChange={(event) => updateNestedArrayItem(section.key, index, "date", event.target.value)} />
                       </label>
+                      {section.key === "projects" ? (
+                        <label className="auth-field admin-field-full">
+                          <span>Lien du visuel (optionnel)</span>
+                          <input
+                            type="url"
+                            value={item.link}
+                            placeholder="https://x.com/... ou https://youtube.com/..."
+                            onChange={(event) => updateNestedArrayItem(section.key, index, "link", event.target.value)}
+                          />
+                        </label>
+                      ) : null}
                       <label className="auth-field admin-field-full">
                         <span>Titre</span>
                         <input value={item.title} onChange={(event) => updateNestedArrayItem(section.key, index, "title", event.target.value)} />
