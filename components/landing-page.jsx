@@ -164,13 +164,36 @@ function UserNavButton({ currentUser, closeNav, label }) {
 }
 
 function renderStars(stars) {
-  const safeStars = Math.min(Math.max(Number(stars || 5), 1), 5);
+  const safeStars = Math.round(Math.min(Math.max(Number(stars || 5), 1), 5) * 2) / 2;
 
-  return Array.from({ length: 5 }, (_, index) => (
-    <span key={`star-${index}`} className={`review-star${index < safeStars ? " is-filled" : ""}`}>
-      ★
-    </span>
-  ));
+  return Array.from({ length: 5 }, (_, index) => {
+    const fill = safeStars - index;
+    const state = fill >= 1 ? "is-filled" : fill >= 0.5 ? "is-half" : "";
+
+    return (
+      <span key={`star-${index}`} className={`review-star ${state}`.trim()} aria-hidden="true">
+        ★
+      </span>
+    );
+  });
+}
+
+function ProjectMedia({ project }) {
+  const media = project.image ? (
+    <img className="project-media" src={project.image} alt={project.title} />
+  ) : (
+    <div className="project-visual project-visual-one" />
+  );
+
+  if (!project.link) {
+    return media;
+  }
+
+  return (
+    <a className="project-media-link" href={project.link} target="_blank" rel="noreferrer" aria-label={`Voir plus d'informations sur ${project.title}`}>
+      {media}
+    </a>
+  );
 }
 
 function FooterSocialLink({ href, label, icon }) {
@@ -433,7 +456,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
                   <div className="review-stars" aria-label={`${review.stars} étoiles`}>
                     {renderStars(review.stars)}
                   </div>
-                  <p>"{review.message}"</p>
+                  <p className="review-message">{review.message}</p>
                   <div className="review-meta">
                     <strong>{review.name}</strong>
                     <span>{review.date}</span>
@@ -454,11 +477,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
             <div className="projects-grid">
               {siteContent.projects.items.map((project) => (
                 <article key={project.id} className="project-card reveal is-visible">
-                  {project.image ? (
-                    <img className="project-media" src={project.image} alt={project.title} />
-                  ) : (
-                    <div className="project-visual project-visual-one" />
-                  )}
+                  <ProjectMedia project={project} />
                   <div className="project-copy">
                     <small>{project.date}</small>
                     <h3>{project.title}</h3>
