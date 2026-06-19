@@ -1,7 +1,9 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import { AnimatedSection, MotionReveal, StaggerContainer, StaggerItem } from "@/components/animations";
 
 import { DEFAULT_SITE_CONTENT, normalizeSiteContent } from "@/lib/site-content";
 
@@ -214,6 +216,7 @@ function FooterSocialLink({ href, label, icon }) {
 export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT }) {
   const siteContent = useMemo(() => normalizeSiteContent(content), [content]);
   const [navOpen, setNavOpen] = useState(false);
+  const [headerScrolled, setHeaderScrolled] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
   const [birthDateDisplay, setBirthDateDisplay] = useState("");
   const [birthDateError, setBirthDateError] = useState("");
@@ -221,6 +224,17 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
     status: "idle",
     message: "Le formulaire est prêt. Votre demande sera traitée par l'équipe Zero Limit Agency."
   });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setHeaderScrolled(window.scrollY > 16);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const trailerTitle = siteContent.media[0]?.title || "Trailer";
 
@@ -325,7 +339,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
 
   return (
     <>
-      <header className="site-header">
+      <header className={`site-header${headerScrolled ? " is-scrolled" : ""}`}>
         <div className="container nav-shell">
           <a className="brand" href="#hero" aria-label="Accueil Zero Limit Agency">
             <span className="brand-badge">
@@ -375,10 +389,10 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
       </header>
 
       <main id="main" className="public-site">
-        <section className="hero section" id="hero">
+        <AnimatedSection className="hero section" id="hero">
           <div className="hero-background" aria-hidden="true" />
           <div className="container hero-grid">
-            <div className="hero-copy reveal is-visible">
+            <MotionReveal className="hero-copy" variant="hero">
               <p className="eyebrow">{siteContent.hero.eyebrow}</p>
               <h1>{siteContent.hero.title}</h1>
               <p className="hero-lead">{siteContent.hero.subtitle}</p>
@@ -387,21 +401,21 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
                   {siteContent.hero.button}
                 </a>
               </div>
-              <div className="hero-stats">
-                {siteContent.blocks.map((block) => (
-                  <article key={block.id} className="stat-card reveal is-visible">
+              <StaggerContainer className="hero-stats">
+                {siteContent.blocks.map((block, index) => (
+                  <StaggerItem as="article" key={block.id} index={index} className="stat-card hover-lift">
                     <strong>{block.title}</strong>
                     <p>{block.text}</p>
-                  </article>
+                  </StaggerItem>
                 ))}
-              </div>
-            </div>
+              </StaggerContainer>
+            </MotionReveal>
           </div>
-        </section>
+        </AnimatedSection>
 
-        <section className="section intro-section" id="about">
+        <AnimatedSection className="section intro-section" id="about">
           <div className="container split-grid media-layout">
-            <div className="section-copy reveal is-visible">
+            <div className="section-copy motion-reveal motion-slide-up is-visible">
               <p className="eyebrow">{siteContent.description.title}</p>
               <h2>{siteContent.description.title}</h2>
               {siteContent.description.paragraphs.map((paragraph, index) => (
@@ -409,7 +423,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
               ))}
             </div>
 
-            <div className="media-shell reveal is-visible" id="media">
+            <div className="media-shell motion-reveal motion-slide-up is-visible" id="media">
               <div className="media-tabs" aria-label="Media Zero Limit Agency">
                 <div className="media-tab is-active">
                   <span className="tab-dot" />
@@ -419,10 +433,10 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
               <div className="media-panels">{activeMediaContent}</div>
             </div>
           </div>
-        </section>
+        </AnimatedSection>
 
-        <section className="section section-soft" id="portal">
-          <div className="container portal-card reveal is-visible">
+        <AnimatedSection className="section section-soft" id="portal">
+          <div className="container portal-card motion-reveal motion-slide-up is-visible">
             <div className="portal-copy">
               <p className="eyebrow">{siteContent.clientArea.title}</p>
               <h2>{siteContent.clientArea.title}</h2>
@@ -441,18 +455,18 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
               </div>
             </div>
           </div>
-        </section>
+        </AnimatedSection>
 
-        <section className="section section-soft" id="reviews">
+        <AnimatedSection className="section section-soft" id="reviews">
           <div className="container">
-            <div className="section-heading section-heading-wide reveal is-visible">
+            <div className="section-heading section-heading-wide motion-reveal motion-slide-up is-visible">
               <p className="eyebrow">{siteContent.reviews.title}</p>
               <h2>{siteContent.reviews.title}</h2>
               <p>{siteContent.reviews.text}</p>
             </div>
-            <div className="reviews-grid">
-              {siteContent.reviews.items.map((review) => (
-                <article key={review.id} className="review-card reveal is-visible">
+            <StaggerContainer className="reviews-grid">
+              {siteContent.reviews.items.map((review, index) => (
+                <StaggerItem as="article" key={review.id} index={index} className="review-card hover-lift">
                   <div className="review-stars" aria-label={`${review.stars} étoiles`}>
                     {renderStars(review.stars)}
                   </div>
@@ -461,44 +475,44 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
                     <strong>{review.name}</strong>
                     <span>{review.date}</span>
                   </div>
-                </article>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
-        </section>
+        </AnimatedSection>
 
-        <section className="section section-dark" id="projects">
+        <AnimatedSection className="section section-dark" id="projects">
           <div className="container">
-            <div className="section-heading section-heading-wide reveal is-visible">
+            <div className="section-heading section-heading-wide motion-reveal motion-slide-up is-visible">
               <p className="eyebrow">{siteContent.projects.title}</p>
               <h2>{siteContent.projects.title}</h2>
               <p>{siteContent.projects.text}</p>
             </div>
-            <div className="projects-grid">
-              {siteContent.projects.items.map((project) => (
-                <article key={project.id} className="project-card reveal is-visible">
+            <StaggerContainer className="projects-grid">
+              {siteContent.projects.items.map((project, index) => (
+                <StaggerItem as="article" key={project.id} index={index} className="project-card hover-lift">
                   <ProjectMedia project={project} />
                   <div className="project-copy">
                     <small>{project.date}</small>
                     <h3>{project.title}</h3>
                     <p>{project.description}</p>
                   </div>
-                </article>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
-        </section>
+        </AnimatedSection>
 
-        <section className="section" id="news">
+        <AnimatedSection className="section" id="news">
           <div className="container">
-            <div className="section-heading section-heading-wide reveal is-visible">
+            <div className="section-heading section-heading-wide motion-reveal motion-slide-up is-visible">
               <p className="eyebrow">{siteContent.news.title}</p>
               <h2>{siteContent.news.title}</h2>
               <p>{siteContent.news.text}</p>
             </div>
-            <div className="news-grid">
-              {siteContent.news.items.map((item) => (
-                <article key={item.id} className="news-card reveal is-visible">
+            <StaggerContainer className="news-grid">
+              {siteContent.news.items.map((item, index) => (
+                <StaggerItem as="article" key={item.id} index={index} className="news-card hover-lift">
                   {item.image ? (
                     <img className="news-image" src={item.image} alt={item.title} />
                   ) : (
@@ -507,22 +521,22 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
                   <span>{item.date}</span>
                   <h3>{item.title}</h3>
                   <p>{item.description}</p>
-                </article>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
-        </section>
+        </AnimatedSection>
 
-        <section className="section" id="ecosystem">
+        <AnimatedSection className="section" id="ecosystem">
           <div className="container">
-            <div className="section-heading section-heading-wide reveal is-visible">
+            <div className="section-heading section-heading-wide motion-reveal motion-slide-up is-visible">
               <p className="eyebrow">{siteContent.partners.title}</p>
               <h2>{siteContent.partners.title}</h2>
               <p>{siteContent.partners.text}</p>
             </div>
-            <div className="team-grid">
-              {siteContent.partners.items.map((item) => (
-                <article key={item.id} className="team-card reveal is-visible">
+            <StaggerContainer className="team-grid">
+              {siteContent.partners.items.map((item, index) => (
+                <StaggerItem as="article" key={item.id} index={index} className="team-card hover-lift">
                   {item.logo ? (
                     <img className="team-logo" src={item.logo} alt={item.name} />
                   ) : (
@@ -530,15 +544,15 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
                   )}
                   <h3>{item.name}</h3>
                   <p>{item.description}</p>
-                </article>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
-        </section>
+        </AnimatedSection>
 
-        <section className="section section-soft" id="faq">
+        <AnimatedSection className="section section-soft" id="faq">
           <div className="container faq-grid">
-            <div className="section-copy reveal is-visible">
+            <div className="section-copy motion-reveal motion-slide-up is-visible">
               <p className="eyebrow">{siteContent.faq.title}</p>
               <h2>{siteContent.faq.title}</h2>
               <p>{siteContent.faq.text}</p>
@@ -547,7 +561,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
               {siteContent.faq.items.map((item, index) => {
                 const isOpen = activeFaq === index;
                 return (
-                  <article key={item.id} className="faq-item reveal is-visible">
+                  <article key={item.id} className="faq-item motion-reveal motion-slide-up is-visible">
                     <button
                       className="faq-trigger"
                       type="button"
@@ -564,11 +578,11 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
               })}
             </div>
           </div>
-        </section>
+        </AnimatedSection>
 
-        <section className="section contact-section" id="contact">
+        <AnimatedSection className="section contact-section" id="contact">
           <div className="container contact-grid">
-            <div className="section-copy reveal is-visible">
+            <div className="section-copy motion-reveal motion-slide-up is-visible">
               <p className="eyebrow">Inscription</p>
               <h2>Rejoindre l'agence</h2>
               <p>
@@ -576,7 +590,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
                 d'accompagnement recherché.
               </p>
             </div>
-            <form className="contact-form reveal is-visible" id="contact-form" onSubmit={handleSubmit}>
+            <form className="contact-form motion-reveal motion-slide-up is-visible" id="contact-form" onSubmit={handleSubmit}>
               <input
                 type="text"
                 name="website"
@@ -691,7 +705,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
               </p>
             </form>
           </div>
-        </section>
+        </AnimatedSection>
 
         <footer className="site-footer">
           <div className="container footer-grid footer-grid-compact">
