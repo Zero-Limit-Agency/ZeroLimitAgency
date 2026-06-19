@@ -45,11 +45,13 @@ function formatApplicationDate(value) {
 
 function RequestCard({ application, tone }) {
   const badgeLabel = tone === "rejected" ? "Refusée" : "En attente";
+  const actionVerb = tone === "rejected" ? "Revoir" : "Ouvrir";
+  const actionTarget = tone === "rejected" ? "le dossier" : "la fiche";
 
   return (
-    <article className="admin-list-card admin-request-card">
-      <div className="admin-list-copy">
-        <div className="admin-card-topline">
+    <article className="admin-list-card admin-record-card admin-request-card">
+      <div className="admin-list-copy admin-record-copy">
+        <div className="admin-card-topline admin-record-topline">
           <small>{application.request_type || "Demande"}</small>
           <span className={`admin-status-badge admin-status-${tone}`}>{badgeLabel}</span>
         </div>
@@ -60,9 +62,13 @@ function RequestCard({ application, tone }) {
         <p className="admin-inline-note">Reçue le {formatApplicationDate(application.created_at)}</p>
       </div>
 
-      <div className="admin-list-actions">
-        <Link className="button button-primary" href={`/admin/${application.id}`}>
-          Ouvrir la fiche
+      <div className="admin-record-actions" aria-label={`Actions pour ${buildDisplayName(application)}`}>
+        <Link
+          className="button button-primary admin-record-action admin-record-action-primary"
+          href={`/admin/${application.id}`}
+        >
+          <span>{actionVerb}</span>
+          <strong>{actionTarget}</strong>
         </Link>
       </div>
     </article>
@@ -71,9 +77,9 @@ function RequestCard({ application, tone }) {
 
 function ClientCard({ application }) {
   return (
-    <article className="admin-list-card admin-client-card">
-      <div className="admin-list-copy">
-        <div className="admin-card-topline">
+    <article className="admin-list-card admin-record-card admin-client-card">
+      <div className="admin-list-copy admin-record-copy">
+        <div className="admin-card-topline admin-record-topline">
           <small>Client</small>
           <span className="admin-status-badge admin-status-approved">Client</span>
         </div>
@@ -86,12 +92,20 @@ function ClientCard({ application }) {
         </p>
       </div>
 
-      <div className="admin-list-actions">
-        <Link className="button button-primary" href={`/admin/${application.id}`}>
-          Gérer le client
+      <div className="admin-record-actions" aria-label={`Actions pour ${buildDisplayName(application)}`}>
+        <Link
+          className="button button-primary admin-record-action admin-record-action-primary"
+          href={`/admin/${application.id}`}
+        >
+          <span>Gérer</span>
+          <strong>le client</strong>
         </Link>
-        <Link className="button button-dark" href={`/espace-client/${application.id}?admin_preview=1`}>
-          Voir l'espace client
+        <Link
+          className="button button-dark admin-record-action"
+          href={`/espace-client/${application.id}?admin_preview=1`}
+        >
+          <span>Voir</span>
+          <strong>l'espace client</strong>
         </Link>
       </div>
     </article>
