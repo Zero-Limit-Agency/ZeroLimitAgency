@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { learnYoutubeNavItems } from "@/lib/learn-youtube/home-content";
+
 import styles from "./learn-youtube.module.css";
 
 const MODE_LABELS = {
@@ -22,7 +24,17 @@ export function LearnYoutubeShell({ children, settings, isAdmin }) {
           </div>
 
           <nav className={styles.nav} aria-label="Navigation Formation YouTube">
+            <div className={styles.anchorNav}>
+              {learnYoutubeNavItems.map((item) => (
+                <a href={item.href} key={item.href}>
+                  {item.label}
+                </a>
+              ))}
+            </div>
             {isAdmin ? <span className={styles.modeBadge}>Mode {modeLabel}</span> : null}
+            <a className={styles.primaryLink} href="#offres">
+              Découvrir les offres
+            </a>
             <Link className={styles.secondaryLink} href="/">
               Retour au site principal
             </Link>
@@ -66,39 +78,7 @@ export function LearnYoutubeMaintenance({ message }) {
   );
 }
 
-export function LearnYoutubeStatusCard() {
-  return (
-    <section className={styles.hero}>
-      <div className={styles.heroCopy}>
-        <p className={styles.kicker}>Plateforme en préparation</p>
-        <h1>La nouvelle Formation YouTube arrive dans un espace dédié.</h1>
-        <p>
-          Cette page temporaire valide la fondation technique de la Formation YouTube. L'espace réunira plus tard les
-          packs Montage, Graphisme, Monétisation et Se lancer / Les bases, sans exposer de faux contenu de cours à ce
-          stade.
-        </p>
-        <div className={styles.heroActions}>
-          <Link className={styles.primaryLink} href="/">
-            Retour au site principal
-          </Link>
-        </div>
-      </div>
-
-      <aside className={styles.previewCard}>
-        <span className={styles.previewEyebrow}>Fondation technique</span>
-        <h2>Preview contrôlée côté serveur</h2>
-        <ul>
-          <li>Route isolée dans l'application Next.js.</li>
-          <li>Layout dédié pour protéger les futures sous-routes.</li>
-          <li>Réglages indépendants : privée, publique ou maintenance.</li>
-          <li>Aucun prix, paiement, pack, module ou lecteur vidéo dans cette étape.</li>
-        </ul>
-      </aside>
-    </section>
-  );
-}
-
-export function LearnYoutubeErrorState({ title = "Une erreur est survenue." }) {
+export function LearnYoutubeErrorState({ title = "Une erreur est survenue.", onRetry = null }) {
   return (
     <main className={styles.shell}>
       <section className={`${styles.frame} ${styles.centerFrame}`}>
@@ -106,7 +86,12 @@ export function LearnYoutubeErrorState({ title = "Une erreur est survenue." }) {
           <p className={styles.kicker}>Formation YouTube</p>
           <h1>{title}</h1>
           <p>Cette section n'a pas pu être affichée correctement. Aucun détail technique sensible n'est exposé.</p>
-          <Link className={styles.primaryLink} href="/">
+          {onRetry ? (
+            <button className={styles.primaryLink} type="button" onClick={onRetry}>
+              Réessayer
+            </button>
+          ) : null}
+          <Link className={styles.secondaryButton} href="/">
             Revenir à l'accueil principal
           </Link>
         </div>

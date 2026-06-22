@@ -15,7 +15,20 @@ export async function PATCH(request) {
   }
 
   try {
-    const payload = await request.json();
+    let payload;
+
+    try {
+      payload = await request.json();
+    } catch {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Le corps de la requête doit être un JSON valide."
+        },
+        { status: 400 }
+      );
+    }
+
     const validation = validateYoutubeTrainingSettingsPayload(payload);
 
     if (!validation.ok) {
