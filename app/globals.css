@@ -1567,7 +1567,8 @@ h3 {
   .nav-shell {
     border-radius: 28px;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-items: center;
+    padding-block: 0.7rem;
   }
 
   .nav-toggle {
@@ -1580,6 +1581,15 @@ h3 {
     flex-direction: column;
     align-items: stretch;
     padding-top: 0.8rem;
+  }
+
+  .brand-badge {
+    width: 2.45rem;
+    height: 2.45rem;
+  }
+
+  .nav-toggle {
+    padding: 0.7rem 0.95rem;
   }
 
   .site-nav.is-open {
@@ -5238,7 +5248,7 @@ body {
 
   .nav-shell {
     gap: 0.8rem;
-    padding: 0.9rem 1rem;
+    padding: 0.65rem 0.85rem;
     border-radius: 22px;
   }
 
