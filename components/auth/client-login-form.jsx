@@ -13,6 +13,7 @@ export function ClientLoginForm() {
     status: "idle",
     message: ""
   });
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   async function submitLogin(payload, loadingMessage) {
     setForgotState({
@@ -145,7 +146,38 @@ export function ClientLoginForm() {
 
       <label className="auth-field">
         <span>Mot de passe</span>
-        <input name="password" type="password" autoComplete="current-password" required />
+        <span className="password-input-wrap">
+          <input
+            name="password"
+            type={isPasswordVisible ? "text" : "password"}
+            autoComplete="current-password"
+            required
+          />
+          <button
+            className="password-visibility-toggle"
+            type="button"
+            onClick={() => setIsPasswordVisible((current) => !current)}
+            aria-label={
+              isPasswordVisible
+                ? "Masquer le mot de passe"
+                : "Prévisualiser le mot de passe"
+            }
+            aria-pressed={isPasswordVisible}
+          >
+            <svg
+              className="password-eye"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                className="password-eye-outline"
+                d="M2.8 12s3.4-5.2 9.2-5.2S21.2 12 21.2 12s-3.4 5.2-9.2 5.2S2.8 12 2.8 12Z"
+              />
+              <circle className="password-eye-pupil" cx="12" cy="12" r="2.6" />
+            </svg>
+          </button>
+        </span>
       </label>
 
       <button className="button button-primary" type="submit" disabled={state.status === "loading"}>

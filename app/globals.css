@@ -1909,6 +1909,97 @@ h3 {
   color: var(--white);
 }
 
+.password-input-wrap {
+  position: relative;
+  display: block;
+}
+
+.auth-field .password-input-wrap {
+  color: inherit;
+  font-size: inherit;
+}
+
+.password-input-wrap input {
+  padding-right: 3.65rem;
+}
+
+.password-visibility-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.65rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  border: 1px solid rgba(255, 245, 243, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 245, 243, 0.06);
+  color: #fff5f3;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.password-visibility-toggle:hover,
+.password-visibility-toggle:focus-visible,
+.password-visibility-toggle[aria-pressed="true"] {
+  border-color: rgba(212, 170, 106, 0.54);
+  background: rgba(212, 170, 106, 0.14);
+  box-shadow: 0 0 18px rgba(212, 170, 106, 0.16);
+  outline: none;
+}
+
+.password-eye {
+  width: 1.28rem;
+  height: 1.28rem;
+  overflow: visible;
+}
+
+.password-eye-outline,
+.password-eye-pupil {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.85;
+}
+
+.password-eye-pupil {
+  fill: currentColor;
+  stroke: none;
+  transform-origin: center;
+  animation: password-eye-glance 2.8s ease-in-out infinite;
+}
+
+.password-visibility-toggle[aria-pressed="true"] .password-eye-pupil {
+  animation-duration: 1.45s;
+}
+
+@keyframes password-eye-glance {
+  0%,
+  24%,
+  100% {
+    transform: translateX(0) scale(1);
+  }
+
+  38% {
+    transform: translateX(-1.6px) scale(1);
+  }
+
+  52% {
+    transform: translateX(0) scale(1, 0.34);
+  }
+
+  68% {
+    transform: translateX(1.6px) scale(1);
+  }
+}
+
 .password-strength {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
