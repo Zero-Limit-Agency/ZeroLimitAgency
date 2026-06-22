@@ -5,9 +5,11 @@ import { GlobalMarketEditor } from "@/components/admin/global-market-editor";
 import { MaintenanceModeEditor } from "@/components/admin/maintenance-mode-editor";
 import { SiteContentEditor } from "@/components/admin/site-content-editor";
 import { SupportChannelsEditor } from "@/components/admin/support-channels-editor";
+import { YoutubeTrainingSettingsEditor } from "@/components/admin/youtube-training-settings-editor";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { getUserRole, isAdminUser } from "@/lib/auth/admin-access";
 import { getClientSession } from "@/lib/auth/client-auth";
+import { getYoutubeTrainingSettings } from "@/lib/learn-youtube/settings";
 import { getMaintenanceModeState } from "@/lib/maintenance";
 import { normalizeSiteContent } from "@/lib/site-content";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -184,6 +186,7 @@ export default async function AdminPage({ searchParams }) {
   const globalMarketResult = await adminClient.globalMarketSettings.get();
   const siteContentResult = await adminClient.globalSiteSettings.get();
   const maintenanceSettings = await getMaintenanceModeState(adminClient);
+  const youtubeTrainingSettings = await getYoutubeTrainingSettings(adminClient);
   const applications = result.ok && Array.isArray(result.data) ? result.data : [];
   const globalMarketSettings =
     globalMarketResult.ok && Array.isArray(globalMarketResult.data) && globalMarketResult.data.length > 0
@@ -266,6 +269,7 @@ export default async function AdminPage({ searchParams }) {
 
         <div className="admin-sections">
           <MaintenanceModeEditor initialSettings={maintenanceSettings} />
+          <YoutubeTrainingSettingsEditor initialSettings={youtubeTrainingSettings} />
           <SupportChannelsEditor initialSettings={globalSiteSettings?.support} />
           <SiteContentEditor initialSettings={globalSiteSettings} />
           <GlobalMarketEditor initialSettings={globalMarketSettings} />
@@ -304,5 +308,4 @@ export default async function AdminPage({ searchParams }) {
     </main>
   );
 }
-
 
