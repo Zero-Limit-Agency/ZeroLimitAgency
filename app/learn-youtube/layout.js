@@ -8,7 +8,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const metadata = {
   title: "Formation YouTube | Zero Limit Agency",
-  description: "Fondation temporaire de la Formation YouTube Zero Limit Agency."
+  description: "Formation YouTube Zero Limit Agency : montage, graphisme, monétisation et bases pour créer sur YouTube."
 };
 
 export default async function LearnYoutubeLayout({ children }) {

@@ -4,19 +4,24 @@ import { learnYoutubeNavItems } from "@/lib/learn-youtube/home-content";
 
 import styles from "./learn-youtube.module.css";
 
-const MODE_LABELS = {
-  private: "Privée",
-  public: "Publique",
-  maintenance: "Maintenance"
-};
-
 export function LearnYoutubeShell({ children, settings, isAdmin }) {
-  const modeLabel = MODE_LABELS[settings.mode] || MODE_LABELS.private;
+  const previewLabel = settings.mode === "maintenance"
+    ? "Preview administrateur — maintenance visible pour le public"
+    : settings.mode === "private"
+      ? "Preview administrateur — Formation privée"
+      : null;
 
   return (
     <main className={styles.shell}>
       <div className={styles.backgroundGlow} aria-hidden="true" />
       <section className={styles.frame}>
+        {isAdmin && previewLabel ? (
+          <div className={styles.adminPreviewBadge} role="status">
+            <span>{previewLabel}</span>
+            <Link href="/admin">Gérer la disponibilité</Link>
+          </div>
+        ) : null}
+
         <header className={styles.header}>
           <div>
             <p className={styles.kicker}>Zero Limit Agency</p>
@@ -31,7 +36,6 @@ export function LearnYoutubeShell({ children, settings, isAdmin }) {
                 </a>
               ))}
             </div>
-            {isAdmin ? <span className={styles.modeBadge}>Mode {modeLabel}</span> : null}
             <a className={styles.primaryLink} href="#offres">
               Découvrir les offres
             </a>
@@ -40,18 +44,6 @@ export function LearnYoutubeShell({ children, settings, isAdmin }) {
             </Link>
           </nav>
         </header>
-
-        {isAdmin && settings.mode === "private" ? (
-          <div className={styles.notice} role="status">
-            Preview administrateur : la Formation YouTube est privée et invisible pour les visiteurs et clients.
-          </div>
-        ) : null}
-
-        {isAdmin && settings.mode === "maintenance" ? (
-          <div className={styles.warningNotice} role="status">
-            Preview administrateur : la Formation YouTube est en maintenance pour le public.
-          </div>
-        ) : null}
 
         {children}
       </section>

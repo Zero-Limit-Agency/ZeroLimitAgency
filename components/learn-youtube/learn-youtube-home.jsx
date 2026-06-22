@@ -201,7 +201,7 @@ export function LearnYoutubeHome() {
 
       <section className={styles.finalCta}>
         <p className={styles.kicker}>Prochaine ouverture</p>
-        <h2>La Formation YouTube se prépare dans un espace dédié Zero Limit.</h2>
+        <h2>La Formation YouTube se prépare chez Zero Limit.</h2>
         <p>
           Les accès, les packs et les contenus seront ouverts progressivement lorsque la partie formation sera prête.
         </p>
