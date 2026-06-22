@@ -2,20 +2,81 @@ import Link from "next/link";
 
 import {
   learnYoutubeFaq,
-  learnYoutubeLearningFeatures,
+  learnYoutubeHighlights,
+  learnYoutubeHowItWorks,
   learnYoutubeOffers,
   learnYoutubePacks,
-  learnYoutubeSteps
+  learnYoutubeTrainerSlots
 } from "@/lib/learn-youtube/home-content";
 
 import styles from "./learn-youtube.module.css";
 
-function SectionHeading({ eyebrow, title, description }) {
+function SectionHeader({ eyebrow, title, description, actionHref, actionLabel }) {
   return (
-    <div className={styles.sectionHeading}>
-      <p className={styles.kicker}>{eyebrow}</p>
+    <div className={styles.sectionHeader}>
+      <span className={styles.eyebrow}>{eyebrow}</span>
       <h2>{title}</h2>
       {description ? <p>{description}</p> : null}
+      {actionHref && actionLabel ? <a className={styles.primaryLink} href={actionHref}>{actionLabel}</a> : null}
+    </div>
+  );
+}
+
+function InterfacePreview({ compact = false }) {
+  return (
+    <div className={`${styles.interfacePreview} ${compact ? styles.interfacePreviewCompact : ""}`}>
+      <div className={styles.previewTopbar}>
+        <span />
+        <span />
+        <span />
+        <strong>Formation YouTube</strong>
+      </div>
+      <div className={styles.previewBody}>
+        <div className={styles.previewPlayer}>
+          <span>Aperçu de l'interface en cours de conception</span>
+          <div className={styles.playerControls}><i /><b /><b /></div>
+        </div>
+        <aside className={styles.previewLessons}>
+          <strong>Pack Montage</strong>
+          <small>Rythme et narration</small>
+          <div className={styles.progressTrack}><i /></div>
+          <ol>
+            <li>Préparer ses rushs</li>
+            <li>Construire la timeline</li>
+            <li>Affiner le sound design</li>
+          </ol>
+          <button type="button">Leçon suivante</button>
+        </aside>
+      </div>
+    </div>
+  );
+}
+
+function CardVisual({ type }) {
+  return (
+    <div className={styles.cardVisual} data-visual={type}>
+      {type === "editing" ? (
+        <div className={styles.timelineMock}><span /><span /><i /><i /><i /><b /></div>
+      ) : null}
+      {type === "design" ? (
+        <div className={styles.thumbnailMock}><strong>Miniature</strong><span>Typo · contraste · identité</span></div>
+      ) : null}
+      {type === "business" ? (
+        <div className={styles.businessMock}><span>Proposition</span><span>Tarification</span><span>Partenariat</span></div>
+      ) : null}
+      {type === "launch" ? (
+        <div className={styles.roadmapMock}><span>Idée</span><span>Plan</span><span>Vidéo</span><span>Publication</span></div>
+      ) : null}
+    </div>
+  );
+}
+
+function StepVisual({ type }) {
+  return (
+    <div className={styles.stepVisual} data-step={type}>
+      {type === "path" ? <><span /><span /><span /></> : null}
+      {type === "modules" ? <><i /><i /><i /><i /></> : null}
+      {type === "progress" ? <><b /><strong>Pack → Module → Leçon</strong></> : null}
     </div>
   );
 }
@@ -26,84 +87,38 @@ export function LearnYoutubeHome() {
   return (
     <>
       <section className={styles.hero} id="presentation">
-        <div className={styles.heroCopy}>
-          <p className={styles.kicker}>Formation YouTube par Zero Limit Agency</p>
-          <h1>Développez vos compétences pour créer sur YouTube</h1>
+        <div className={styles.heroInner}>
+          <span className={styles.eyebrow}>Formation YouTube</span>
+          <h1>Créez, structurez et développez vos projets YouTube.</h1>
           <p>
-            Une formation structurée autour du montage, du graphisme, de la monétisation et des bases essentielles pour
-            construire et faire évoluer un projet YouTube.
+            Une formation Zero Limit pensée pour réunir montage, graphisme, monétisation et bases stratégiques dans une expérience d'apprentissage premium.
           </p>
           <div className={styles.heroActions}>
-            <a className={styles.primaryLink} href="#packs">
-              Découvrir les packs
-            </a>
-            <a className={styles.secondaryButton} href="#fonctionnement">
-              Voir le fonctionnement
-            </a>
+            <a className={styles.primaryLink} href="#programme">Découvrir le programme</a>
+            <a className={styles.secondaryLink} href="#fonctionnement">Voir l'expérience</a>
           </div>
-        </div>
-
-        <aside className={styles.heroVisual} aria-label="Aperçu abstrait de la structure Formation YouTube">
-          <div className={styles.videoFrame}>
-            <span className={styles.playMark} aria-hidden="true" />
-            <div>
-              <strong>Formation YouTube</strong>
-              <small>Pack → Module → Leçon</small>
-            </div>
+          <div className={styles.heroProduct}>
+            <InterfacePreview compact />
           </div>
-          <div className={styles.visualGrid} aria-hidden="true">
-            <span>Montage</span>
-            <span>Graphisme</span>
-            <span>Monétisation</span>
-            <span>Les bases</span>
-          </div>
-        </aside>
-      </section>
-
-      <section className={styles.contentSection} id="packs">
-        <SectionHeading
-          eyebrow="Les quatre packs"
-          title="Choisissez une thématique ou avancez avec la formation complète"
-          description="Chaque pack correspond à un axe de travail précis. Les packs sont aussi inclus dans les offres complètes prévues."
-        />
-        <div className={styles.packGrid}>
-          {learnYoutubePacks.map((pack) => (
-            <article className={styles.packCard} key={pack.title}>
-              <div className={styles.cardTopline}>
-                <h3>{pack.title}</h3>
-                <span>{pack.price}</span>
-              </div>
-              <p>{pack.description}</p>
-              <ul className={styles.tagList}>
-                {pack.themes.map((theme) => (
-                  <li key={theme}>{theme}</li>
-                ))}
-              </ul>
-              <p className={styles.includedLabel}>Inclus dans la formation complète</p>
-              <a className={styles.disabledAction} href="#fonctionnement" aria-label={`Voir la structure prévue pour le pack ${pack.title}`}>
-                Voir le programme prévu
-              </a>
-            </article>
-          ))}
         </div>
       </section>
 
-      <section className={styles.contentSection} id="fonctionnement">
-        <SectionHeading
-          eyebrow="Fonctionnement"
-          title="Une progression simple : Pack → Module → Leçon"
-          description="L'espace de formation est conçu pour réunir les contenus, la progression et les ressources autour d'un parcours lisible."
+      <section className={styles.reassurance} aria-label="Informations réelles sur la Formation YouTube">
+        {learnYoutubeHighlights.map((item) => <span key={item}>{item}</span>)}
+      </section>
+
+      <section className={styles.section} id="fonctionnement">
+        <SectionHeader
+          eyebrow="Comment ça marche"
+          title="Une progression claire, dans un espace pensé pour apprendre."
+          description="La Formation YouTube reste structurée autour d'un parcours simple : choisir un axe, suivre ses modules, puis avancer leçon après leçon."
+          actionHref="#programme"
+          actionLabel="Voir le programme"
         />
-        <div className={styles.flowCard} aria-label="Hiérarchie de la formation">
-          <span>Formation YouTube</span>
-          <strong>Pack</strong>
-          <strong>Module</strong>
-          <strong>Leçon</strong>
-        </div>
-        <div className={styles.stepGrid}>
-          {learnYoutubeSteps.map((step, index) => (
+        <div className={styles.stepsPanel}>
+          {learnYoutubeHowItWorks.map((step) => (
             <article className={styles.stepCard} key={step.title}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
+              <StepVisual type={step.visual} />
               <h3>{step.title}</h3>
               <p>{step.description}</p>
             </article>
@@ -111,85 +126,100 @@ export function LearnYoutubeHome() {
         </div>
       </section>
 
-      <section className={styles.splitSection} aria-labelledby="apprendre-title">
-        <div>
-          <p className={styles.kicker}>Pensée pour apprendre</p>
-          <h2 id="apprendre-title">Un futur espace clair pour suivre vos leçons</h2>
-          <p>
-            Votre futur espace de formation réunira les outils nécessaires pour suivre les vidéos, retrouver les
-            ressources utiles et garder le fil de votre progression.
-          </p>
-        </div>
-        <ul className={styles.featureList}>
-          {learnYoutubeLearningFeatures.map((feature) => (
-            <li key={feature}>{feature}</li>
+      <section className={styles.section} id="programme">
+        <SectionHeader
+          eyebrow="Programme"
+          title="Quatre packs spécialisés, un même système de formation."
+          description="Chaque pack dispose d'un grand espace de contenu, de modules dédiés et de ressources associées lorsqu'elles sont prévues."
+        />
+        <div className={styles.packGrid}>
+          {learnYoutubePacks.map((pack) => (
+            <article className={styles.packCard} key={pack.title}>
+              <CardVisual type={pack.visual} />
+              <div className={styles.packContent}>
+                <div>
+                  <h3>{pack.title}</h3>
+                  <strong>{pack.price}</strong>
+                </div>
+                <p>{pack.description}</p>
+                <ul>{pack.themes.map((theme) => <li key={theme}>{theme}</li>)}</ul>
+                <span>Inclus dans la Formation complète</span>
+                <a href="#fonctionnement">Découvrir le contenu</a>
+              </div>
+            </article>
           ))}
-        </ul>
+        </div>
       </section>
 
-      <section className={styles.contentSection} id="offres">
-        <SectionHeading
-          eyebrow="Offres prévues"
-          title="Trois formats d'accès, sans achat actif pour le moment"
-          description="Les offres sont présentées pour clarifier la structure prévue. Aucun bouton ne crée de commande à cette étape."
+      <section className={styles.section} id="experience">
+        <SectionHeader
+          eyebrow="Espace de formation"
+          title="Un aperçu d'interface conçu comme un vrai produit."
+          description="Le panneau ci-dessous montre la direction prévue : lecteur, progression, leçons, formateur, notes, ressources et commentaires."
         />
-        <div className={styles.offerGrid}>
+        <div className={styles.learningPanel}>
+          <InterfacePreview />
+          <div className={styles.learningMeta}>
+            <div>
+              <span>Leçon</span>
+              <strong>Construire une timeline efficace</strong>
+            </div>
+            <div>
+              <span>Formateur</span>
+              <strong>Présentation prochainement</strong>
+            </div>
+            <nav aria-label="Zones prévues autour de la leçon">
+              <span>Notes</span>
+              <span>Ressources</span>
+              <span>Commentaires</span>
+            </nav>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.section} id="formateurs">
+        <SectionHeader
+          eyebrow="Formateurs"
+          title="Une équipe spécialisée sera présentée lorsque les informations seront validées."
+          description="Aucun faux profil n'est affiché : cette section prépare simplement la place pour les photos, noms, spécialités, packs et réseaux."
+        />
+        <div className={styles.trainerGrid}>
+          {learnYoutubeTrainerSlots.map((trainer) => (
+            <article className={styles.trainerCard} key={trainer.specialty}>
+              <div className={styles.trainerVisual}><span>ZL</span></div>
+              <div>
+                <h3>Présentation prochainement</h3>
+                <p>{trainer.specialty}</p>
+                <small>{trainer.pack}</small>
+                <span>Réseaux à ajouter</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.section} id="offres">
+        <SectionHeader
+          eyebrow="Offres"
+          title="Des accès clairs, sans achat actif pour le moment."
+          description="Les offres présentent la structure prévue. Aucun checkout ni paiement n'est connecté à cette page."
+        />
+        <div className={styles.offersPanel}>
           {learnYoutubeOffers.map((offer) => (
-            <article className={`${styles.offerCard} ${offer.highlighted ? styles.highlightedOffer : ""}`.trim()} key={offer.name}>
-              <p className={styles.offerName}>{offer.name}</p>
+            <article className={`${styles.offerCard} ${offer.highlighted ? styles.offerFeatured : ""}`} key={offer.name}>
+              <p>{offer.name}</p>
               <strong>{offer.price}</strong>
-              <p>{offer.description}</p>
-              <ul>
-                {offer.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-              <span className={styles.disabledAction}>{offer.cta}</span>
+              <span>{offer.description}</span>
+              <ul>{offer.items.map((item) => <li key={item}>{item}</li>)}</ul>
+              <a href="#programme">{offer.cta}</a>
             </article>
           ))}
         </div>
       </section>
 
-      <section className={styles.previewSection} aria-labelledby="interface-title">
-        <div className={styles.sectionHeading}>
-          <p className={styles.kicker}>Aperçu de l'espace client</p>
-          <h2 id="interface-title">Une interface en cours de conception</h2>
-          <p>
-            Cette représentation est un aperçu statique. Elle ne correspond pas encore à un dashboard fonctionnel.
-          </p>
-        </div>
-        <div className={styles.dashboardMock}>
-          <div className={styles.mockHeader}>
-            <span>Aperçu de l'interface en cours de conception</span>
-            <strong>Progression globale</strong>
-          </div>
-          <div className={styles.progressBar} aria-hidden="true">
-            <span />
-          </div>
-          <div className={styles.mockGrid}>
-            <article>
-              <small>Leçon à reprendre</small>
-              <strong>Structurer son projet YouTube</strong>
-            </article>
-            <article>
-              <small>Packs disponibles</small>
-              <strong>4 thématiques</strong>
-            </article>
-            <article>
-              <small>Prochaine étape</small>
-              <strong>Mettre en pratique</strong>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.contentSection} id="questions">
-        <SectionHeading
-          eyebrow="Questions fréquentes"
-          title="Les points importants avant l'ouverture"
-          description="Ces réponses décrivent le fonctionnement prévu sans annoncer de fonctionnalité déjà disponible."
-        />
-        <div className={styles.faqList}>
+      <section className={styles.section} id="faq">
+        <SectionHeader eyebrow="FAQ" title="Les réponses essentielles avant l'ouverture." />
+        <div className={styles.faqPanel}>
           {learnYoutubeFaq.map((item) => (
             <details className={styles.faqItem} key={item.question}>
               <summary>{item.question}</summary>
@@ -200,26 +230,18 @@ export function LearnYoutubeHome() {
       </section>
 
       <section className={styles.finalCta}>
-        <p className={styles.kicker}>Prochaine ouverture</p>
-        <h2>La Formation YouTube se prépare chez Zero Limit.</h2>
-        <p>
-          Les accès, les packs et les contenus seront ouverts progressivement lorsque la partie formation sera prête.
-        </p>
-        <div className={styles.heroActions}>
-          <a className={styles.primaryLink} href="#packs">
-            Revoir les packs
-          </a>
-          <Link className={styles.secondaryButton} href="/">
-            Retour à Zero Limit Agency
-          </Link>
+        <div>
+          <span className={styles.eyebrow}>Zero Limit Agency</span>
+          <h2>Donnez une nouvelle dimension à vos projets YouTube.</h2>
+          <p>
+            Une formation pensée pour réunir les compétences essentielles à la création, à la progression et au développement de votre projet.
+          </p>
+          <a className={styles.primaryLink} href="#programme">Découvrir le programme</a>
         </div>
       </section>
 
       <footer className={styles.footer}>
-        <div>
-          <strong>Zero Limit Agency</strong>
-          <span>Formation YouTube</span>
-        </div>
+        <div><strong>Zero Limit Agency</strong><span>Formation YouTube</span></div>
         <nav aria-label="Liens légaux Formation YouTube">
           <Link href="/mentions-legales">Mentions légales</Link>
           <Link href="/conditions-generales-de-vente">CGV</Link>
