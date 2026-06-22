@@ -1955,47 +1955,48 @@ h3 {
 }
 
 .password-eye {
-  position: relative;
-  width: 1.18rem;
-  height: 0.76rem;
-  border: 1.8px solid currentColor;
-  border-radius: 80% 20% 80% 20%;
-  transform: rotate(45deg);
+  width: 1.28rem;
+  height: 1.28rem;
+  overflow: visible;
+}
+
+.password-eye-outline,
+.password-eye-pupil {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.85;
 }
 
 .password-eye-pupil {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0.38rem;
-  height: 0.38rem;
-  border-radius: 999px;
-  background: currentColor;
-  transform: translate(-50%, -50%);
-  animation: password-eye-glance 2.6s ease-in-out infinite;
+  fill: currentColor;
+  stroke: none;
+  transform-origin: center;
+  animation: password-eye-glance 2.8s ease-in-out infinite;
 }
 
 .password-visibility-toggle[aria-pressed="true"] .password-eye-pupil {
-  animation-duration: 1.35s;
+  animation-duration: 1.45s;
 }
 
 @keyframes password-eye-glance {
   0%,
-  22%,
+  24%,
   100% {
-    transform: translate(-50%, -50%);
+    transform: translateX(0) scale(1);
   }
 
-  35% {
-    transform: translate(-72%, -50%);
+  38% {
+    transform: translateX(-1.6px) scale(1);
   }
 
-  50% {
-    transform: translate(-50%, -50%) scaleY(0.18);
+  52% {
+    transform: translateX(0) scale(1, 0.34);
   }
 
-  65% {
-    transform: translate(-28%, -50%);
+  68% {
+    transform: translateX(1.6px) scale(1);
   }
 }
 

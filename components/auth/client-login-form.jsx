@@ -164,9 +164,18 @@ export function ClientLoginForm() {
             }
             aria-pressed={isPasswordVisible}
           >
-            <span className="password-eye" aria-hidden="true">
-              <span className="password-eye-pupil" />
-            </span>
+            <svg
+              className="password-eye"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                className="password-eye-outline"
+                d="M2.8 12s3.4-5.2 9.2-5.2S21.2 12 21.2 12s-3.4 5.2-9.2 5.2S2.8 12 2.8 12Z"
+              />
+              <circle className="password-eye-pupil" cx="12" cy="12" r="2.6" />
+            </svg>
           </button>
         </span>
       </label>
