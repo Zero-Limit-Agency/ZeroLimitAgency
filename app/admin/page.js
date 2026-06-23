@@ -241,6 +241,16 @@ export default async function AdminPage({ searchParams }) {
             <strong>{approvedApplications.length}</strong>
             <p className="admin-inline-note">Dossiers validés et gérés comme vrais clients.</p>
           </article>
+          <article className="admin-subpanel">
+            <small>DropMap</small>
+            <strong>Confidentiel</strong>
+            <p className="admin-inline-note">Pilotez la visibilité privée, maintenance ou publique de /dropmap.</p>
+            <div className="admin-actions admin-actions-inline">
+              <Link className="button button-dark button-compact" href="/admin/dropmap">
+                Réglages DropMap
+              </Link>
+            </div>
+          </article>
         </section>
 
         <nav className="admin-filters" aria-label="Filtres administration">
@@ -308,4 +318,3 @@ export default async function AdminPage({ searchParams }) {
     </main>
   );
 }
-
