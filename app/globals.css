@@ -8021,3 +8021,291 @@ body {
     animation: none !important;
   }
 }
+
+/* Zero Limit shared premium tokens and cross-surface palette balance. */
+:root {
+  --zl-bg: var(--bg, #12090b);
+  --zl-surface: rgba(18, 9, 11, 0.72);
+  --zl-surface-solid: rgba(18, 10, 13, 0.94);
+  --zl-glass: linear-gradient(145deg, rgba(255, 248, 245, 0.07), rgba(255, 248, 245, 0.025));
+  --zl-glass-strong: linear-gradient(145deg, rgba(32, 13, 18, 0.78), rgba(13, 6, 8, 0.7));
+  --zl-border: rgba(255, 245, 243, 0.11);
+  --zl-border-strong: rgba(255, 245, 243, 0.18);
+  --zl-pink: var(--accent-hot, #d01974);
+  --zl-pink-soft: var(--accent-soft, #b15f73);
+  --zl-beige: var(--accent-gold, #d4aa6a);
+  --zl-beige-08: rgba(212, 170, 106, 0.08);
+  --zl-beige-14: rgba(212, 170, 106, 0.14);
+  --zl-beige-22: rgba(212, 170, 106, 0.22);
+  --zl-beige-38: rgba(212, 170, 106, 0.38);
+  --zl-white: var(--white, #fff8f5);
+  --zl-ink: var(--ink, #190d10);
+  --zl-muted-shared: rgba(255, 245, 243, 0.7);
+  --zl-focus-ring: 0 0 0 4px rgba(212, 170, 106, 0.16);
+  --zl-shadow-ui: 0 18px 46px rgba(0, 0, 0, 0.26);
+  --zl-shadow-panel: 0 22px 64px rgba(0, 0, 0, 0.34), 0 0 44px rgba(212, 170, 106, 0.045);
+}
+
+/* Landing: keep the validated glass composition, but make repetitive icons/details warmer and less pink. */
+.landing-page .avatar-placeholder,
+.landing-page .social-icon,
+.landing-page .tab-dot,
+.landing-page .eyebrow::before {
+  background: linear-gradient(135deg, var(--zl-beige), rgba(255, 248, 245, 0.62));
+  color: var(--zl-ink);
+  box-shadow: 0 0 18px var(--zl-beige-22);
+}
+
+.landing-page .team-card,
+.landing-page .project-card,
+.landing-page .news-card,
+.landing-page .review-card,
+.landing-page .faq-item {
+  border-color: rgba(212, 170, 106, 0.11);
+}
+
+.landing-page .project-media,
+.landing-page .news-image,
+.landing-page .news-media {
+  border-color: rgba(212, 170, 106, 0.12);
+  background: radial-gradient(circle at 72% 20%, var(--zl-beige-22), transparent 14rem), rgba(8, 4, 6, 0.62);
+}
+
+.landing-page .footer-column a,
+.landing-page .social-link {
+  color: rgba(255, 245, 243, 0.72);
+}
+
+.landing-page .footer-column a:hover,
+.landing-page .footer-column a:focus-visible,
+.landing-page .social-link:hover,
+.landing-page .social-link:focus-visible {
+  color: var(--zl-beige);
+  text-shadow: 0 0 18px var(--zl-beige-14);
+}
+
+/* Client spaces: functional premium surfaces, beige for passive icons, pink only for current/primary states. */
+.client-hub-shell,
+.client-dashboard-shell {
+  background:
+    radial-gradient(circle at 14% 8%, rgba(212, 170, 106, 0.1), transparent 24rem),
+    radial-gradient(circle at 88% 16%, rgba(208, 25, 116, 0.08), transparent 26rem),
+    linear-gradient(180deg, #12090b 0%, #0d0608 100%);
+}
+
+.client-hub-frame,
+.client-dashboard-frame,
+.client-profile-card,
+.client-overview-card,
+.client-panel,
+.client-info-card,
+.client-resource-card,
+.client-summary-box,
+.client-timeline-content,
+.client-dashboard-footer,
+.collaboration-thread-header {
+  border-color: rgba(212, 170, 106, 0.12);
+  background: var(--zl-glass), rgba(18, 10, 13, 0.72);
+  box-shadow: var(--zl-shadow-ui);
+}
+
+.client-kicker,
+.client-info-card small,
+.client-resource-card small,
+.client-panel-note,
+.client-profile-meta span strong,
+.client-identity-chip,
+.client-dashboard-footer p {
+  color: var(--zl-muted-shared);
+}
+
+.client-resource-logo,
+.client-timeline-dot,
+.client-overview-points span::before,
+.client-profile-avatar,
+.client-identity-chip-soft {
+  border-color: rgba(212, 170, 106, 0.2);
+  background: var(--zl-beige-14);
+  color: var(--zl-beige);
+  box-shadow: 0 0 20px var(--zl-beige-08);
+}
+
+.client-timeline-item.is-current .client-timeline-dot,
+.client-newsletter-status.is-active,
+.client-inline-feedback {
+  background: rgba(208, 25, 116, 0.14);
+  color: #ffd7e9;
+  box-shadow: 0 0 0 6px rgba(208, 25, 116, 0.08), 0 0 24px rgba(208, 25, 116, 0.22);
+}
+
+/* Auth: simple centered glass with warm secondary details. */
+.auth-shell {
+  background:
+    radial-gradient(circle at 20% 12%, rgba(212, 170, 106, 0.12), transparent 24rem),
+    radial-gradient(circle at 78% 20%, rgba(208, 25, 116, 0.08), transparent 25rem),
+    linear-gradient(180deg, #12090b 0%, #0b0507 100%);
+}
+
+.auth-card,
+.auth-form,
+.auth-demo-panel,
+.auth-copy-note {
+  border-color: rgba(212, 170, 106, 0.13);
+  background: var(--zl-glass), rgba(18, 10, 13, 0.76);
+  box-shadow: var(--zl-shadow-ui);
+}
+
+.auth-field span,
+.auth-helper,
+.auth-inline-link,
+.auth-copy-note p,
+.auth-demo-panel p {
+  color: rgba(255, 245, 243, 0.7);
+}
+
+.auth-field input,
+.admin-textarea,
+.admin-select {
+  border-color: rgba(212, 170, 106, 0.14);
+}
+
+.auth-field input:focus,
+.admin-textarea:focus,
+.admin-select:focus {
+  border-color: var(--zl-beige-38);
+  box-shadow: var(--zl-focus-ring);
+}
+
+.auth-inline-link:hover,
+.auth-inline-link:focus-visible {
+  color: var(--zl-beige);
+}
+
+/* Admin: denser, calmer and more legible; beige for secondary metadata, pink only for active/important states. */
+.admin-shell {
+  background:
+    radial-gradient(circle at 12% 10%, rgba(212, 170, 106, 0.08), transparent 22rem),
+    radial-gradient(circle at 88% 18%, rgba(208, 25, 116, 0.06), transparent 26rem),
+    linear-gradient(180deg, #0f090c 0%, #0c090c 100%);
+}
+
+.admin-frame,
+.admin-panel,
+.admin-subpanel,
+.admin-list-card,
+.admin-empty-state,
+.admin-link-card,
+.admin-overview-grid > article,
+.admin-record-card {
+  border-color: rgba(212, 170, 106, 0.12);
+  background: linear-gradient(180deg, rgba(255, 248, 245, 0.045), rgba(255, 248, 245, 0.018)), rgba(14, 9, 12, 0.9);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+}
+
+.admin-inline-note,
+.admin-list-copy small,
+.admin-list-copy p,
+.admin-subpanel small,
+.admin-lead,
+.admin-raw-message {
+  color: rgba(255, 245, 243, 0.68);
+}
+
+.admin-filter-chip,
+.admin-status-badge,
+.admin-status-pill,
+.admin-record-action span {
+  border-color: rgba(212, 170, 106, 0.16);
+  background: rgba(212, 170, 106, 0.08);
+  color: rgba(255, 245, 243, 0.78);
+}
+
+.admin-filter-chip.is-active,
+.admin-filter-chip:hover,
+.admin-filter-chip:focus-visible,
+.admin-status-pending_review {
+  border-color: rgba(208, 25, 116, 0.32);
+  background: rgba(208, 25, 116, 0.13);
+  color: #ffd9ea;
+}
+
+.admin-status-approved {
+  background: rgba(212, 170, 106, 0.12);
+  color: #f3d9a8;
+}
+
+.admin-header-actions .button-dark,
+.admin-list-actions .button-dark,
+.admin-actions .button-dark,
+.admin-record-action {
+  border-color: rgba(212, 170, 106, 0.2);
+  background: rgba(212, 170, 106, 0.07);
+}
+
+/* Legal, maintenance and errors: coherent but restrained reading surfaces. */
+.legal-page-shell,
+.maintenance-shell,
+.error-page-shell {
+  background:
+    radial-gradient(circle at 18% 10%, rgba(212, 170, 106, 0.1), transparent 24rem),
+    radial-gradient(circle at 82% 12%, rgba(208, 25, 116, 0.055), transparent 24rem),
+    linear-gradient(180deg, #12090b 0%, #0c0507 100%);
+}
+
+.legal-page-header,
+.legal-page-card,
+.maintenance-frame,
+.error-page-card {
+  border-color: rgba(212, 170, 106, 0.13);
+  background: linear-gradient(180deg, rgba(255, 248, 245, 0.055), rgba(255, 248, 245, 0.02)), rgba(18, 10, 13, 0.78);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.24);
+}
+
+.legal-page-card {
+  box-shadow: none;
+}
+
+.legal-page-card h2,
+.legal-page-updated,
+.maintenance-note,
+.error-page-card a:not(.button) {
+  color: var(--zl-beige);
+}
+
+.legal-page-card a,
+.legal-page-actions a,
+.maintenance-admin-link {
+  color: #f0d3a2;
+  text-decoration-color: rgba(212, 170, 106, 0.42);
+}
+
+.legal-page-card a:hover,
+.legal-page-actions a:hover,
+.maintenance-admin-link:hover {
+  color: var(--zl-white);
+}
+
+/* Shared interaction hierarchy: secondary buttons lean warm, primaries keep their high-contrast CTA role. */
+.button-dark:not(.landing-page .button-dark) {
+  border-color: rgba(212, 170, 106, 0.2);
+  background: linear-gradient(180deg, rgba(212, 170, 106, 0.09), rgba(18, 8, 11, 0.9));
+}
+
+.button-dark:not(.landing-page .button-dark):hover,
+.button-dark:not(.landing-page .button-dark):focus-visible {
+  border-color: rgba(212, 170, 106, 0.34);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.26), 0 0 22px rgba(212, 170, 106, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .client-panel,
+  .client-resource-card,
+  .admin-list-card,
+  .admin-filter-chip,
+  .auth-card,
+  .legal-page-card,
+  .maintenance-frame,
+  .error-page-card {
+    transition: none !important;
+  }
+}
