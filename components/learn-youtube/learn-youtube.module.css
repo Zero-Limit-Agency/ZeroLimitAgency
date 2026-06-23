@@ -1303,4 +1303,21 @@
   }
 }
 
-/* PR refresh: no visual change. */
+
+@media (max-height: 820px) and (min-width: 721px) {
+  .hero {
+    min-height: auto;
+    padding-block: clamp(4.5rem, 8vh, 6rem) clamp(3.5rem, 7vh, 5rem);
+  }
+
+  .heroProduct {
+    margin-top: clamp(2rem, 4vh, 3rem);
+  }
+}
+
+@media (max-width: 1120px) {
+  .mobileMenu nav {
+    max-height: calc(100dvh - 6rem);
+    overflow-y: auto;
+  }
+}
