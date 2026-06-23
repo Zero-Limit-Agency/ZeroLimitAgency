@@ -9,7 +9,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "ci": "npm run build"
+    "ci": "npm run build",
+    "verify:dropmap": "node scripts/verify-dropmap-visibility.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.104.0",
