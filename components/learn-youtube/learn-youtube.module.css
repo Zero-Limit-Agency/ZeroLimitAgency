@@ -161,7 +161,7 @@
 .offerCard a {
   background: var(--zl-white);
   color: var(--zl-ink);
-  box-shadow: 0 14px 34px rgba(208, 25, 116, 0.12);
+  box-shadow: 0 14px 34px rgba(208, 25, 116, 0.1);
 }
 
 .secondaryLink,
@@ -243,8 +243,8 @@
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 999px;
-  background: var(--zl-hot);
-  box-shadow: 0 0 18px rgba(208, 25, 116, 0.72);
+  background: var(--zl-gold);
+  box-shadow: 0 0 16px rgba(212, 170, 106, 0.48);
 }
 
 .hero {
@@ -411,7 +411,7 @@
 }
 
 .previewTopbar span:first-child {
-  background: var(--zl-hot);
+  background: var(--zl-gold);
 }
 
 .previewTopbar strong {
@@ -475,7 +475,7 @@
 }
 
 .playerControls b:first-of-type {
-  background: linear-gradient(90deg, var(--zl-hot), rgba(208, 25, 116, 0.18));
+  background: linear-gradient(90deg, var(--zl-hot), rgba(212, 170, 106, 0.2));
 }
 
 .previewLessons {
@@ -558,8 +558,8 @@
   height: 0.42rem;
   margin-right: 0.55rem;
   border-radius: 999px;
-  background: var(--zl-hot);
-  box-shadow: 0 0 14px rgba(208, 25, 116, 0.68);
+  background: var(--zl-gold);
+  box-shadow: 0 0 14px rgba(212, 170, 106, 0.46);
 }
 
 .section {
@@ -621,7 +621,7 @@
   border-radius: 26px;
   border: 1px solid rgba(255, 245, 243, 0.08);
   background:
-    radial-gradient(circle at 70% 18%, rgba(208, 25, 116, 0.17), transparent 12rem),
+    radial-gradient(circle at 70% 18%, rgba(212, 170, 106, 0.14), transparent 12rem),
     linear-gradient(145deg, rgba(255, 245, 243, 0.055), rgba(255, 245, 243, 0.018));
 }
 
@@ -642,7 +642,7 @@
 
 .stepVisual[data-step="path"] span:nth-child(2) {
   transform: translateY(-1rem);
-  background: linear-gradient(180deg, rgba(208, 25, 116, 0.48), rgba(255, 245, 243, 0.08));
+  background: linear-gradient(180deg, rgba(212, 170, 106, 0.3), rgba(255, 245, 243, 0.08));
 }
 
 .stepVisual[data-step="modules"] {
@@ -660,7 +660,7 @@
 }
 
 .stepVisual[data-step="modules"] i:nth-child(2) {
-  background: linear-gradient(90deg, rgba(208, 25, 116, 0.7), rgba(208, 25, 116, 0.12));
+  background: linear-gradient(90deg, rgba(212, 170, 106, 0.52), rgba(212, 170, 106, 0.1));
 }
 
 .stepVisual[data-step="progress"] {
@@ -675,7 +675,7 @@
   height: 8rem;
   border-radius: 999px;
   border: 10px solid rgba(255, 245, 243, 0.1);
-  border-top-color: var(--zl-hot);
+  border-top-color: var(--zl-gold);
 }
 
 .stepVisual[data-step="progress"] strong {
@@ -744,7 +744,7 @@
 
 .timelineMock i {
   width: 78%;
-  background: linear-gradient(90deg, rgba(208, 25, 116, 0.78), rgba(177, 95, 115, 0.16));
+  background: linear-gradient(90deg, rgba(212, 170, 106, 0.58), rgba(177, 95, 115, 0.12));
 }
 
 .timelineMock b {
@@ -763,7 +763,7 @@
   padding: 1.5rem;
   border-radius: 24px;
   background:
-    linear-gradient(135deg, rgba(208, 25, 116, 0.72), rgba(177, 95, 115, 0.28)),
+    linear-gradient(135deg, rgba(212, 170, 106, 0.42), rgba(177, 95, 115, 0.22)),
     rgba(255, 245, 243, 0.08);
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.28);
 }
@@ -905,7 +905,7 @@
   border-radius: 28px;
   border: 1px solid rgba(255, 245, 243, 0.08);
   background:
-    radial-gradient(circle at 50% 20%, rgba(208, 25, 116, 0.2), transparent 12rem),
+    radial-gradient(circle at 50% 20%, rgba(212, 170, 106, 0.16), transparent 12rem),
     linear-gradient(145deg, rgba(255, 245, 243, 0.07), rgba(255, 245, 243, 0.02));
 }
 

@@ -338,7 +338,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
   }
 
   return (
-    <>
+    <div className="landing-page">
       <header className={`site-header${headerScrolled ? " is-scrolled" : ""}`}>
         <div className="container nav-shell">
           <a className="brand" href="#hero" aria-label="Accueil Zero Limit Agency">
@@ -741,7 +741,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
           </div>
         </footer>
       </main>
-    </>
+    </div>
   );
 }
 
