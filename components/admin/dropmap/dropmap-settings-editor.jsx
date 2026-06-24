@@ -2,24 +2,26 @@
 
 import { useState } from "react";
 
+import styles from "./dropmap-admin.module.css";
+
 const MODE_OPTIONS = [
   {
     value: "private",
     label: "Privé",
     description:
-      "DropMap est invisible publiquement. Les visiteurs et clients sont redirigés vers l'accueil. Seuls les administrateurs voient la preview."
+      "Invisible publiquement. Visiteurs et clients redirigés vers l'accueil. Preview administrateur uniquement."
   },
   {
     value: "maintenance",
     label: "Maintenance",
     description:
-      "Les visiteurs voient uniquement une page de maintenance. Les administrateurs gardent accès à la preview."
+      "Page de maintenance pour le public. Preview complète pour les administrateurs."
   },
   {
     value: "public",
     label: "Public",
     description:
-      "La page DropMap devient visible publiquement. Cela ne donne pas automatiquement accès aux futures fonctions payantes."
+      "Page visible publiquement. Cela ne donne pas automatiquement accès aux futures fonctions payantes."
   }
 ];
 
@@ -84,53 +86,54 @@ export function DropMapSettingsEditor({ initialSettings }) {
   const selectedOption = MODE_OPTIONS.find((option) => option.value === form.visibilityMode) || MODE_OPTIONS[0];
 
   return (
-    <section className="admin-panel">
-      <div className="admin-panel-heading">
+    <section className={styles.panel}>
+      <div className={styles.panelHeading}>
         <div>
-          <p className="eyebrow">DropMap</p>
+          <p className={styles.eyebrow}>DropMap</p>
           <h2>Visibilité confidentielle</h2>
-          <p className="admin-inline-note">
-            Cette configuration contrôle uniquement la découverte de /dropmap. Les futurs accès payants resteront séparés.
+          <p className={styles.note}>
+            Cette console pilote uniquement la visibilité de /dropmap. Elle ne publie aucun moteur, aucune offre et aucune donnée sensible.
           </p>
         </div>
       </div>
 
-      <div className="admin-overview-grid">
-        <article className="admin-subpanel">
+      <div className={styles.overviewGrid}>
+        <article className={styles.subpanel}>
           <small>Mode actuel</small>
           <strong>{selectedOption.label}</strong>
-          <p className="admin-inline-note">En cas d'erreur ou de doute, DropMap revient toujours en mode privé.</p>
+          <p className={styles.note}>En cas d'erreur ou de doute, DropMap revient toujours en mode privé.</p>
         </article>
-        <article className="admin-subpanel">
+        <article className={styles.subpanel}>
           <small>Preview admin</small>
           <strong>Autorisée</strong>
-          <p className="admin-inline-note">Les administrateurs gardent accès à la preview dans les trois modes.</p>
+          <p className={styles.note}>Les administrateurs gardent accès à la preview dans les trois modes.</p>
         </article>
       </div>
 
-      <div className="admin-meta-grid">
-        <div className="auth-field admin-field-full">
+      <div className={styles.metaGrid}>
+        <div className={styles.field}>
           <span>Mode de visibilité</span>
-          <div className="admin-overview-grid">
+          <div className={styles.modeGrid}>
             {MODE_OPTIONS.map((option) => (
               <button
                 key={option.value}
-                className={`admin-filter-chip${form.visibilityMode === option.value ? " is-active" : ""}`}
+                className={`${styles.modeButton}${form.visibilityMode === option.value ? ` ${styles.modeButtonActive}` : ""}`}
                 type="button"
                 aria-pressed={form.visibilityMode === option.value}
                 onClick={() => updateField("visibilityMode", option.value)}
               >
-                {option.label}
+                <strong>{option.label}</strong>
+                <span>{option.description}</span>
               </button>
             ))}
           </div>
-          <p className="admin-inline-note">{selectedOption.description}</p>
+          <p className={styles.note}>Mode sélectionné : {selectedOption.description}</p>
         </div>
 
-        <label className="auth-field admin-field-full">
+        <label className={styles.field}>
           <span>Message de maintenance DropMap</span>
           <textarea
-            className="admin-textarea"
+            className={styles.textarea}
             rows={4}
             maxLength={320}
             value={form.maintenanceMessage}
@@ -139,21 +142,21 @@ export function DropMapSettingsEditor({ initialSettings }) {
         </label>
       </div>
 
-      <div className="admin-empty-state">
+      <div className={styles.emptyState}>
         <strong>Rappel sécurité</strong>
         <p>
-          Le mode privé redirige visiteurs, clients et mode démo vers l'accueil sans rendre de contenu DropMap. Les endpoints futurs devront réutiliser le garde de visibilité serveur.
+          Le mode privé redirige visiteurs, clients et mode démo vers l'accueil sans rendre de contenu DropMap. Le doute, l'erreur serveur ou une configuration absente doivent rester interprétés comme privé.
         </p>
       </div>
 
-      <div className="admin-actions">
-        <a className="button button-dark" href="/dropmap" target="_blank" rel="noreferrer">
+      <div className={styles.actions}>
+        <a className={styles.button} href="/dropmap" target="_blank" rel="noreferrer">
           Prévisualiser /dropmap
         </a>
-        <button className="button button-primary" type="button" onClick={handleSave} disabled={state.status === "loading"}>
+        <button className={`${styles.button} ${styles.buttonPrimary}`} type="button" onClick={handleSave} disabled={state.status === "loading"}>
           {state.status === "loading" ? "Enregistrement..." : "Enregistrer les réglages DropMap"}
         </button>
-        {state.message ? <p className={`form-note form-note-${state.status}`}>{state.message}</p> : null}
+        {state.message ? <p className={`${styles.formNote} ${state.status === "success" ? styles.formNoteSuccess : ""} ${state.status === "error" ? styles.formNoteError : ""}`}>{state.message}</p> : null}
       </div>
     </section>
   );

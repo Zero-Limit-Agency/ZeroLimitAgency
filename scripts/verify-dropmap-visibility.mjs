@@ -73,3 +73,39 @@ assertEqual("erreur de lecture simulée", normalizeSettings(undefined).visibilit
 assertEqual("message vide", normalizeSettings({ visibilityMode: "maintenance", maintenanceMessage: "" }).maintenanceMessage, defaultSettings.maintenanceMessage);
 
 console.log("DropMap visibility verification passed.");
+
+const { execFileSync } = await import("node:child_process");
+
+const allowedChangedFilePatterns = [
+  /^app\/dropmap\//,
+  /^app\/admin\/dropmap\//,
+  /^app\/api\/admin\/dropmap\//,
+  /^components\/dropmap\//,
+  /^components\/admin\/dropmap\//,
+  /^lib\/dropmap\//,
+  /^supabase\/migrations\/.*dropmap.*$/,
+  /^scripts\/.*dropmap.*$/,
+  /^lib\/supabase\/admin\.js$/,
+  /^app\/admin\/page\.js$/
+];
+
+const changedFiles = [
+  ...execFileSync("git", ["diff", "--name-only", "HEAD"], { encoding: "utf8" })
+    .split("\n")
+    .map((file) => file.trim())
+    .filter(Boolean),
+  ...execFileSync("git", ["ls-files", "--others", "--exclude-standard"], { encoding: "utf8" })
+    .split("\n")
+    .map((file) => file.trim())
+    .filter(Boolean)
+];
+
+const forbiddenChangedFiles = changedFiles.filter(
+  (file) => !allowedChangedFilePatterns.some((pattern) => pattern.test(file))
+);
+
+if (forbiddenChangedFiles.length > 0) {
+  throw new Error(`Forbidden non-DropMap files changed:\n${forbiddenChangedFiles.join("\n")}`);
+}
+
+console.log("DropMap scope verification passed.");
