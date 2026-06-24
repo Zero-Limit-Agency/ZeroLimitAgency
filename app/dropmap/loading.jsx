@@ -1,3 +1,3 @@
-export default function DropMapLoading() {
+export default function Loading() {
   return null;
 }

@@ -3,6 +3,12 @@ import { redirect } from "next/navigation";
 
 import { LogoutButton } from "@/components/auth/logout-button";
 import { MaintenanceScreen } from "@/components/maintenance-screen";
+import { InternalEmptyState } from "@/components/internal/internal-empty-state";
+import { InternalHeader } from "@/components/internal/internal-header";
+import { InternalPageShell } from "@/components/internal/internal-page-shell";
+import { InternalSectionHeading } from "@/components/internal/internal-section-heading";
+import { InternalStatusBadge } from "@/components/internal/internal-status-badge";
+import internalStyles from "@/components/internal/internal.module.css";
 import { getUserRole } from "@/lib/auth/admin-access";
 import { buildClientApplicationUrl, getClientWorkspaceContext } from "@/lib/auth/client-access";
 import { getClientSession } from "@/lib/auth/client-auth";
@@ -72,42 +78,55 @@ export default async function ClientSpaceIndexPage() {
 
   if (!session?.user) {
     return (
-      <main className="client-hub-shell">
-        <section className="client-hub-frame">
-          <div className="client-hub-copy">
-            <p className="eyebrow">Espace client</p>
-            <h1>Un espace privé pour suivre votre dossier.</h1>
-            <p>
-              Votre espace client est séparé du site public. Une fois connecté, vous accédez uniquement
-              à votre dossier, à ses ressources utiles et au suivi de votre accompagnement.
-            </p>
+      <InternalPageShell legacyClassName="client-hub-shell" contentClassName="client-hub-frame">
+        <InternalHeader
+          eyebrow="Espace client"
+          title="Un espace privé pour suivre votre dossier."
+          description="Votre espace client est séparé du site public. Une fois connecté, vous accédez uniquement à votre dossier, à ses ressources utiles et au suivi de votre accompagnement."
+          badge={<InternalStatusBadge variant="client">Accès personnel</InternalStatusBadge>}
+          actions={
+            <>
+              <Link className="button button-primary" href="/connexion">
+                Accéder à la connexion client
+              </Link>
+              <Link className="button button-dark" href="/">
+                Retour au site public
+              </Link>
+            </>
+          }
+        />
+
+        <section className={internalStyles.actionsGrid} aria-label="Accès et fonctionnement de l'espace client">
+          <div className={internalStyles.panel}>
+            <InternalSectionHeading
+              eyebrow="Fonctionnement"
+              title="Un dossier, une session, un suivi."
+              description="L'espace client reste volontairement privé : l'équipe valide le dossier avant d'ouvrir l'accompagnement réel."
+            />
+            <div className={internalStyles.metricsGrid}>
+              <span className={internalStyles.metricCard}>
+                <strong>Privé</strong>
+                <small>Accès uniquement après authentification ou démonstration isolée.</small>
+              </span>
+              <span className={internalStyles.metricCard}>
+                <strong>Structuré</strong>
+                <small>Dossier, ressources et prochaines étapes rassemblés.</small>
+              </span>
+              <span className={internalStyles.metricCard}>
+                <strong>Accompagné</strong>
+                <small>Chaque demande reste relue par l'équipe avant ouverture complète.</small>
+              </span>
+            </div>
           </div>
 
-          <div className="client-hub-grid">
-            <article className="client-hub-card">
-              <strong>Accès personnel</strong>
-              <p>Chaque client se connecte avec l'e-mail et le mot de passe définis à l'inscription.</p>
-            </article>
-            <article className="client-hub-card">
-              <strong>Validation humaine</strong>
-              <p>Le dossier est relu par l'équipe avant d'ouvrir l'accompagnement réel.</p>
-            </article>
-            <article className="client-hub-card">
-              <strong>Suivi structuré</strong>
-              <p>Le dossier peut ensuite être enrichi avec Drive, Notion, ressources et suivi du projet.</p>
-            </article>
-          </div>
-
-          <div className="client-hub-actions">
-            <Link className="button button-primary" href="/connexion">
-              Accéder à la connexion client
-            </Link>
-            <Link className="button button-dark" href="/">
-              Retour au site public
-            </Link>
-          </div>
+          <aside className={internalStyles.panel} aria-label="Prochaine action">
+            <InternalEmptyState
+              title="Connectez-vous pour continuer."
+              description="Si votre dossier a déjà été validé, vous serez redirigé vers son tableau de bord. Sinon, vous verrez l'état actuel de votre demande."
+            />
+          </aside>
         </section>
-      </main>
+      </InternalPageShell>
     );
   }
 
@@ -120,48 +139,71 @@ export default async function ClientSpaceIndexPage() {
   const statusContent = buildStatusContent(application);
 
   return (
-    <main className="client-hub-shell">
-      <section className={`client-hub-frame client-hub-frame-${statusContent.tone}`}>
-        <div className="client-hub-copy">
-          <p className="eyebrow">Espace client</p>
-          <h1>{statusContent.title}</h1>
-          <p>{statusContent.description}</p>
+    <InternalPageShell
+      legacyClassName="client-hub-shell"
+      contentClassName={`client-hub-frame client-hub-frame-${statusContent.tone}`}
+    >
+      <InternalHeader
+        eyebrow="Espace client"
+        title={statusContent.title}
+        description={statusContent.description}
+        badge={
+          <InternalStatusBadge variant={application?.status === "rejected" ? "danger" : "client"}>
+            {application?.status === "rejected" ? "Demande refusée" : "Suivi en cours"}
+          </InternalStatusBadge>
+        }
+        actions={
+          <>
+            <Link className="button button-dark" href="/">
+              Retour au site public
+            </Link>
+            <LogoutButton />
+          </>
+        }
+      />
+
+      <section className={internalStyles.actionsGrid} aria-label="État actuel du dossier">
+        <div className={internalStyles.panel}>
+          <InternalSectionHeading
+            eyebrow="Dossier principal"
+            title="Informations disponibles"
+            description="Cette vue reste volontairement limitée tant que l'équipe n'a pas ouvert l'espace complet."
+          />
+          <div className="client-hub-grid">
+            <article className="client-hub-card">
+              <strong>Dossier</strong>
+              <p>
+                {application
+                  ? `${formatRequestTypeLabel(application.request_type)} · ${
+                      application.language || "Langue non renseignée"
+                    }`
+                  : "Aucune demande exploitable n'a encore été retrouvée pour ce compte."}
+              </p>
+            </article>
+            <article className="client-hub-card">
+              <strong>Statut actuel</strong>
+              <p>
+                {application?.status === "rejected"
+                  ? "Refusé"
+                  : application?.status === "pending_review"
+                    ? "En cours d'analyse"
+                    : "En attente"}
+              </p>
+            </article>
+            <article className="client-hub-card">
+              <strong>Contact</strong>
+              <p>contact@zerolimit.agency</p>
+            </article>
+          </div>
         </div>
 
-        <div className="client-hub-grid">
-          <article className="client-hub-card">
-            <strong>Dossier</strong>
-            <p>
-              {application
-                ? `${formatRequestTypeLabel(application.request_type)} · ${
-                    application.language || "Langue non renseignée"
-                  }`
-                : "Aucune demande exploitable n'a encore été retrouvée pour ce compte."}
-            </p>
-          </article>
-          <article className="client-hub-card">
-            <strong>Statut actuel</strong>
-            <p>
-              {application?.status === "rejected"
-                ? "Refusé"
-                : application?.status === "pending_review"
-                  ? "En cours d'analyse"
-                  : "En attente"}
-            </p>
-          </article>
-          <article className="client-hub-card">
-            <strong>Contact</strong>
-            <p>contact@zerolimit.agency</p>
-          </article>
-        </div>
-
-        <div className="client-hub-actions">
-          <Link className="button button-dark" href="/">
-            Retour au site public
-          </Link>
-          <LogoutButton />
-        </div>
+        <aside className={internalStyles.panel}>
+          <InternalEmptyState
+            title={application ? "Prochaine étape : validation humaine." : "Aucun dossier exploitable."}
+            description={application ? "L'équipe Zero Limit vous donnera accès au tableau de bord complet dès que votre dossier sera prêt." : "Contactez l'équipe si vous pensez que votre demande devrait déjà être liée à ce compte."}
+          />
+        </aside>
       </section>
-    </main>
+    </InternalPageShell>
   );
 }

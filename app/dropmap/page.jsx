@@ -12,7 +12,7 @@ export const metadata = {
   title: "Zero Limit Agency"
 };
 
-export default async function DropMapPage() {
+export default async function Page() {
   const adminClient = createSupabaseAdminClient();
   const settings = await getDropMapSettings(adminClient);
   const session = await getClientSession();
