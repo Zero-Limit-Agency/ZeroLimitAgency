@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { DropMapSettingsEditor } from "@/components/admin/dropmap/dropmap-settings-editor";
 import { LogoutButton } from "@/components/auth/logout-button";
+import styles from "@/components/admin/dropmap/dropmap-admin.module.css";
 import { getUserRole, isAdminUser } from "@/lib/auth/admin-access";
 import { getClientSession } from "@/lib/auth/client-auth";
 import { getDropMapSettings } from "@/lib/dropmap/server/settings";
@@ -32,26 +33,26 @@ export default async function AdminDropMapPage() {
   const settings = await getDropMapSettings(createSupabaseAdminClient());
 
   return (
-    <main className="admin-shell">
-      <section className="admin-frame">
-        <header className="admin-header admin-header-compact">
+    <main className={styles.shell}>
+      <section className={styles.frame}>
+        <header className={styles.header}>
           <div>
-            <p className="eyebrow">Administration</p>
+            <p className={styles.eyebrow}>Administration</p>
             <h1>DropMap</h1>
-            <p className="admin-lead">
+            <p className={styles.lead}>
               Pilotez la visibilité confidentielle de /dropmap sans exposer la fonctionnalité publiquement avant décision officielle.
             </p>
           </div>
 
-          <div className="admin-header-actions">
-            <Link className="button button-dark" href="/admin">
+          <div className={styles.headerActions}>
+            <Link className={styles.button} href="/admin">
               Retour à l'administration
             </Link>
             <LogoutButton label="Se déconnecter" />
           </div>
         </header>
 
-        <div className="admin-sections">
+        <div className={styles.sections}>
           <DropMapSettingsEditor initialSettings={settings} />
         </div>
       </section>
