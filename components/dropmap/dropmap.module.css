@@ -132,11 +132,6 @@
   color: var(--zl-white);
 }
 
-.lead {
-  max-width: 720px;
-  margin: 1.2rem 0 0;
-}
-
 .headerActions {
   justify-content: flex-end;
   gap: 0.65rem;
@@ -1021,47 +1016,6 @@
   gap: 1rem;
 }
 
-.deepPanel,
-.accessSection {
-  padding: clamp(1.2rem, 3vw, 2rem);
-  border-radius: 30px;
-}
-
-.deepPanel li + li {
-  margin-top: 0.15rem;
-}
-
-.accessSection {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.35fr);
-  gap: 1rem;
-  align-items: center;
-}
-
-.accessStatus {
-  justify-content: flex-start;
-}
-
-.footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 1rem;
-  padding: 1rem;
-  border-radius: 24px;
-  color: rgba(255, 245, 243, 0.72);
-}
-
-.footer div {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-}
-
-.footer a {
-  color: rgba(255, 245, 243, 0.72);
-}
-
 .maintenanceShell {
   min-height: 100vh;
   display: grid;
@@ -1076,10 +1030,6 @@
 .maintenanceCard h1 {
   font-size: clamp(2.5rem, 6vw, 5.6rem);
   line-height: 0.96;
-}
-
-.maintenanceCard h1 {
-  font-size: clamp(2.4rem, 7vw, 5rem);
 }
 
 .maintenanceCard p:not(.eyebrow) {
@@ -1257,5 +1207,654 @@
     left: 0.6rem;
     bottom: 0.6rem;
     font-size: 0.7rem;
+  }
+}
+
+/* DropMap product-specific narrative overrides */
+.hero {
+  width: min(1220px, calc(100% - 2rem));
+  min-height: auto;
+  grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1.1fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  margin: 0 auto;
+  padding: clamp(5rem, 9vw, 8rem) 0 clamp(4rem, 7vw, 6rem);
+  text-align: left;
+}
+
+.heroCopy {
+  position: relative;
+  z-index: 1;
+}
+
+.heroCopy .eyebrow,
+.sectionIntroLeft .eyebrow {
+  margin-inline: 0;
+}
+
+.hero h1 {
+  margin-inline: 0;
+  max-width: 780px;
+}
+
+.hero > .heroCopy > p {
+  max-width: 660px;
+  margin: 1.35rem 0 0;
+  color: var(--zl-muted);
+  font-size: clamp(1.05rem, 2vw, 1.28rem);
+  line-height: 1.75;
+}
+
+.hero .heroActions {
+  justify-content: flex-start;
+}
+
+.heroTool,
+.comparisonPanel,
+.layerScene,
+.resultInterface,
+.profileMap,
+.gesturePanel,
+.demoShell,
+.modeGrid article,
+.reliabilityPanel,
+.accessSection,
+.faqPanel,
+.finalCta > div {
+  position: relative;
+  overflow: hidden;
+  border-radius: 34px;
+  border: 1px solid rgba(255, 245, 243, 0.1);
+  background: var(--glass-bg), rgba(18, 9, 11, 0.52);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 24px 80px rgba(0, 0, 0, 0.42),
+    0 0 70px rgba(208, 25, 116, 0.07);
+  backdrop-filter: blur(24px) saturate(135%);
+  -webkit-backdrop-filter: blur(24px) saturate(135%);
+}
+
+.heroTool {
+  min-height: 600px;
+  padding: 1rem;
+}
+
+.toolTopbar {
+  display: flex;
+  align-items: center;
+  gap: 0.48rem;
+  min-height: 2.35rem;
+  padding: 0 0.7rem;
+  border-bottom: 1px solid rgba(255, 245, 243, 0.08);
+}
+
+.toolTopbar span {
+  width: 0.58rem;
+  height: 0.58rem;
+  border-radius: 999px;
+  background: rgba(255, 245, 243, 0.22);
+}
+
+.toolTopbar span:first-child {
+  background: var(--zl-gold);
+}
+
+.toolTopbar strong {
+  margin-left: 0.45rem;
+  color: rgba(255, 245, 243, 0.72);
+  font-size: 0.82rem;
+}
+
+.routePreview {
+  position: relative;
+  min-height: 360px;
+  overflow: hidden;
+  border-radius: 28px;
+  background:
+    linear-gradient(rgba(255, 245, 243, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 245, 243, 0.028) 1px, transparent 1px),
+    radial-gradient(circle at 70% 22%, rgba(208, 25, 116, 0.18), transparent 18rem),
+    radial-gradient(circle at 20% 70%, rgba(212, 170, 106, 0.1), transparent 16rem),
+    linear-gradient(145deg, rgba(255, 245, 243, 0.05), rgba(9, 4, 5, 0.82));
+  background-size: 52px 52px, 52px 52px, auto, auto, auto;
+}
+
+.heroTool > .routePreview {
+  min-height: 490px;
+  margin-top: 1rem;
+}
+
+.toolResultCard {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  width: min(320px, calc(100% - 3rem));
+  padding: 1rem;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 245, 243, 0.1);
+  background: rgba(8, 4, 6, 0.78);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.3);
+}
+
+.toolResultCard span,
+.factorList li,
+.layerRail span,
+.accessBenefits span,
+.scenarioGrid span,
+.reliabilityPanel span {
+  color: rgba(255, 245, 243, 0.72);
+  font-weight: 900;
+}
+
+.toolResultCard strong {
+  display: block;
+  margin: 0.35rem 0;
+  color: var(--zl-white);
+  font-size: 1.25rem;
+}
+
+.toolResultCard p {
+  margin: 0;
+  color: var(--zl-muted);
+  line-height: 1.6;
+}
+
+.altRouteLine,
+.demoAltRoute,
+.demoRouteLine {
+  position: absolute;
+  pointer-events: none;
+}
+
+.altRouteLine,
+.demoAltRoute {
+  left: 32%;
+  top: 44%;
+  width: 42%;
+  height: 2px;
+  transform: rotate(-18deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 245, 243, 0.34), transparent);
+}
+
+.routePreviewintuitive .routeLine {
+  width: 54%;
+  height: 2px;
+  border: 0;
+  border-radius: 0;
+  transform: rotate(-8deg);
+}
+
+.routePreviewoptimized .altRouteLine {
+  opacity: 0.45;
+}
+
+.problemSection,
+.resultSection,
+.gestureSection,
+.reliabilitySection,
+.accessSection {
+  width: min(1220px, calc(100% - 2rem));
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(420px, 1.14fr);
+  gap: clamp(1.4rem, 4vw, 3rem);
+  align-items: center;
+  margin: 0 auto;
+  padding: clamp(4.5rem, 8vw, 8rem) 0;
+}
+
+.resultSection,
+.gestureSection {
+  grid-template-columns: minmax(420px, 1.1fr) minmax(0, 0.9fr);
+}
+
+.sectionIntro {
+  max-width: 860px;
+  margin: 0 auto clamp(2.6rem, 5vw, 4rem);
+  text-align: center;
+}
+
+.sectionIntroLeft {
+  margin: 0;
+  text-align: left;
+}
+
+.sectionIntro h2 {
+  margin: 0;
+  color: var(--zl-white);
+  font-size: clamp(2.35rem, 5.8vw, 5.8rem);
+  line-height: 0.96;
+  letter-spacing: -0.055em;
+}
+
+.sectionIntro p {
+  max-width: 680px;
+  margin: 1.1rem auto 0;
+  color: var(--zl-muted);
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.sectionIntroLeft p {
+  margin-inline: 0;
+}
+
+.factorList {
+  display: grid;
+  gap: 0.7rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.factorList li,
+.scenarioGrid span,
+.accessBenefits span,
+.layerRail span,
+.reliabilityPanel span {
+  padding: 0.72rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 245, 243, 0.08);
+  background: rgba(255, 245, 243, 0.045);
+}
+
+.comparisonPanel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  padding: 1px;
+}
+
+.comparisonPanel article {
+  padding: 1rem;
+  background: rgba(8, 4, 6, 0.48);
+}
+
+.comparisonPanel .routePreview {
+  min-height: 280px;
+  margin: 0.8rem 0;
+}
+
+.comparisonPanel p,
+.modeGrid p,
+.useCaseGrid p,
+.profileCard p {
+  color: var(--zl-muted);
+  line-height: 1.65;
+}
+
+.analysisSection,
+.profileSection,
+.demoSection,
+.modesSection,
+.useCaseSection,
+.faqSection {
+  width: min(1220px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: clamp(4.5rem, 8vw, 8rem) 0;
+}
+
+.layerScene {
+  padding: 1rem;
+}
+
+.layerScene .routePreview {
+  min-height: 560px;
+}
+
+.layerRail,
+.gestureSteps,
+.accessBenefits,
+.scenarioGrid,
+.reliabilityPanel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.layerRail {
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.resultInterface {
+  padding: 1rem;
+}
+
+.resultBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.38fr);
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.resultBody .routePreview {
+  min-height: 430px;
+}
+
+.resultBody ol {
+  display: grid;
+  align-content: start;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 1rem 1rem 1rem 2rem;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 245, 243, 0.08);
+  background: rgba(8, 4, 6, 0.58);
+  color: rgba(255, 245, 243, 0.74);
+  line-height: 1.7;
+  font-weight: 800;
+}
+
+.profileMap {
+  min-height: 660px;
+  padding: 1rem;
+}
+
+.profileMap > .routePreview {
+  min-height: 620px;
+}
+
+.profileCard {
+  position: absolute;
+  width: min(320px, calc(100% - 2rem));
+  padding: 1rem;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 245, 243, 0.1);
+  background: rgba(8, 4, 6, 0.78);
+}
+
+.profileCard h3,
+.modeGrid h3,
+.useCaseGrid h3 {
+  margin: 0 0 0.5rem;
+  color: var(--zl-white);
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1;
+}
+
+.profileCard[data-profile="0"] {
+  left: 2rem;
+  top: 5rem;
+}
+
+.profileCard[data-profile="1"] {
+  right: 2rem;
+  top: 12rem;
+}
+
+.profileCard[data-profile="2"] {
+  left: 50%;
+  bottom: 2rem;
+  transform: translateX(-50%);
+}
+
+.scenarioSection {
+  width: min(1220px, calc(100% - 2rem));
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1fr);
+  gap: clamp(1.4rem, 4vw, 3rem);
+  align-items: start;
+  margin: 0 auto;
+  padding: clamp(4.5rem, 8vw, 8rem) 0;
+}
+
+.scenarioGrid {
+  align-content: start;
+}
+
+.gesturePanel {
+  padding: 1rem;
+}
+
+.gesturePanel .routePreview {
+  min-height: 430px;
+}
+
+.gestureSteps {
+  margin-top: 1rem;
+}
+
+.demoShell {
+  padding: 1rem;
+}
+
+.demoStage {
+  border-radius: 28px;
+  border: 1px solid rgba(255, 245, 243, 0.08);
+  background: rgba(8, 4, 6, 0.58);
+  overflow: hidden;
+}
+
+.demoGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.34fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.demoMap {
+  position: relative;
+  min-height: 520px;
+  overflow: hidden;
+  border-radius: 26px;
+  background:
+    linear-gradient(rgba(255, 245, 243, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 245, 243, 0.028) 1px, transparent 1px),
+    radial-gradient(circle at 70% 22%, rgba(208, 25, 116, 0.18), transparent 18rem),
+    linear-gradient(145deg, rgba(255, 245, 243, 0.05), rgba(9, 4, 5, 0.82));
+  background-size: 52px 52px, 52px 52px, auto, auto;
+}
+
+.demoStage[data-relief="hidden"] .mapRidge,
+.demoStage[data-relief="hidden"] .mapRidgeAlt {
+  opacity: 0.08;
+}
+
+.demoRouteLine {
+  left: 34%;
+  top: 36%;
+  width: calc(var(--demo-route) - 20%);
+  height: 34%;
+  border-top: 2px solid rgba(255, 248, 245, 0.75);
+  border-right: 2px solid rgba(255, 248, 245, 0.32);
+  border-radius: 50%;
+  transform: rotate(18deg);
+}
+
+.demoBusLine {
+  left: 8%;
+  top: 22%;
+  width: 84%;
+  height: 2px;
+  transform: rotate(var(--demo-rotation));
+  transform-origin: left center;
+  background: linear-gradient(90deg, transparent, var(--zl-gold), transparent);
+}
+
+.demoControls {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 245, 243, 0.08);
+  background: rgba(8, 4, 6, 0.62);
+}
+
+.profileSwitch {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.demoControls button,
+.profileSwitch button {
+  min-height: 2.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 245, 243, 0.1);
+  background: rgba(255, 245, 243, 0.08);
+  color: var(--zl-white);
+  font-weight: 900;
+}
+
+.profileSwitch button[aria-pressed="true"],
+.demoControls > button {
+  background: var(--zl-white);
+  color: var(--zl-ink);
+}
+
+.demoControls label {
+  display: grid;
+  gap: 0.55rem;
+  color: rgba(255, 245, 243, 0.66);
+  font-weight: 800;
+}
+
+.demoControls input {
+  width: 100%;
+  accent-color: var(--zl-gold);
+}
+
+.modeGrid,
+.useCaseGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.modeGrid article,
+.useCaseGrid article {
+  padding: 1rem;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 245, 243, 0.1);
+  background: var(--glass-bg), rgba(18, 9, 11, 0.52);
+}
+
+.modeGrid .routePreview {
+  min-height: 240px;
+  margin-bottom: 1rem;
+}
+
+.reliabilityPanel,
+.accessBenefits {
+  padding: 1rem;
+}
+
+.useCaseGrid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.accessSection {
+  padding: clamp(2rem, 5vw, 3.5rem);
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+}
+
+.faqSection .sectionIntro {
+  margin-bottom: 2rem;
+}
+
+.finalCta h2 {
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+@media (max-width: 1080px) {
+  .hero,
+  .problemSection,
+  .resultSection,
+  .gestureSection,
+  .reliabilitySection,
+  .accessSection,
+  .scenarioSection {
+    grid-template-columns: 1fr;
+  }
+
+  .comparisonPanel,
+  .resultBody,
+  .demoGrid,
+  .modeGrid,
+  .useCaseGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .profileCard {
+    position: relative;
+    inset: auto !important;
+    transform: none !important;
+    width: auto;
+    margin-top: 1rem;
+  }
+
+  .profileMap > .routePreview {
+    min-height: 420px;
+  }
+}
+
+@media (max-width: 760px) {
+  .hero,
+  .problemSection,
+  .analysisSection,
+  .resultSection,
+  .profileSection,
+  .scenarioSection,
+  .gestureSection,
+  .demoSection,
+  .modesSection,
+  .reliabilitySection,
+  .useCaseSection,
+  .accessSection,
+  .faqSection {
+    width: min(100% - 1rem, 1220px);
+  }
+
+  .heroTool,
+  .comparisonPanel,
+  .layerScene,
+  .resultInterface,
+  .profileMap,
+  .gesturePanel,
+  .demoShell,
+  .modeGrid article,
+  .reliabilityPanel,
+  .accessSection,
+  .faqPanel,
+  .finalCta > div {
+    border-radius: 26px;
+  }
+
+  .heroTool > .routePreview,
+  .layerScene .routePreview,
+  .demoMap {
+    min-height: 380px;
+  }
+}
+
+@media (max-width: 430px) {
+  .hero {
+    padding-top: 4rem;
+  }
+
+  .heroTool,
+  .layerScene,
+  .resultInterface,
+  .gesturePanel,
+  .demoShell {
+    padding: 0.6rem;
+  }
+
+  .routePreview,
+  .demoMap {
+    min-height: 300px;
+  }
+
+  .toolResultCard {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    width: auto;
+    margin-top: 0.75rem;
+  }
+
+  .sectionIntro h2 {
+    font-size: clamp(2.4rem, 14vw, 4.2rem);
   }
 }

@@ -4,79 +4,61 @@ import { useMemo, useState } from "react";
 
 import styles from "./dropmap.module.css";
 
-const MODES = [
-  { id: "theory", label: "Théorique", rotation: -9, destination: 58 },
-  { id: "competitive", label: "Compétitif", rotation: 13, destination: 70 },
-  { id: "safe", label: "Sécurisé", rotation: -20, destination: 46 }
+const PROFILES = [
+  { id: "theory", label: "Théorique", rotation: -10, destination: 58, route: 62 },
+  { id: "competitive", label: "Compétitif", rotation: 12, destination: 70, route: 72 },
+  { id: "safe", label: "Sécurisé", rotation: -22, destination: 46, route: 52 }
 ];
 
+const LAYERS = ["Bus", "Relief", "Saut", "Déploiement", "Approche"];
+
 export function DropMapVisualDemo() {
-  const [modeId, setModeId] = useState(MODES[0].id);
-  const [destination, setDestination] = useState(58);
-  const mode = MODES.find((item) => item.id === modeId) || MODES[0];
+  const [profileId, setProfileId] = useState(PROFILES[1].id);
+  const [destination, setDestination] = useState(64);
+  const [bus, setBus] = useState(12);
+  const [showRelief, setShowRelief] = useState(true);
+  const profile = PROFILES.find((item) => item.id === profileId) || PROFILES[1];
 
   const style = useMemo(
     () => ({
-      "--demo-rotation": `${mode.rotation}deg`,
+      "--demo-rotation": `${bus + profile.rotation / 3}deg`,
       "--demo-destination": `${destination}%`,
-      "--demo-route": `${mode.destination}%`
+      "--demo-route": `${profile.route}%`
     }),
-    [destination, mode]
+    [bus, destination, profile]
   );
 
-  function resetDemo() {
-    setModeId(MODES[0].id);
-    setDestination(MODES[0].destination);
-  }
-
   return (
-    <div className={styles.learningPanel} style={style}>
-      <div className={styles.interfacePreview}>
-        <div className={styles.previewTopbar}>
-          <span /><span /><span />
-          <strong>Démonstration visuelle — aucun calcul réel</strong>
-        </div>
-        <div className={styles.previewBody}>
-          <div className={styles.previewMap}>
+    <div className={styles.demoShell} style={style}>
+      <div className={styles.demoStage} data-relief={showRelief ? "visible" : "hidden"}>
+        <div className={styles.toolTopbar}><span /><span /><span /><strong>Interface de démonstration</strong></div>
+        <div className={styles.demoGrid}>
+          <div className={styles.demoMap}>
             <div className={styles.mapMass} />
             <div className={styles.mapRidge} />
             <div className={styles.mapRidgeAlt} />
             <div className={styles.demoBusLine} />
-            <div className={styles.demoRoute} />
+            <div className={styles.demoRouteLine} />
+            <div className={styles.demoAltRoute} />
             <span className={styles.jumpPoint}>Saut</span>
             <span className={styles.deployPoint}>Deploy</span>
-            <span className={styles.demoDestination}>Destination</span>
-            <div className={styles.mapLegend}>Lecture visuelle uniquement · données de démonstration</div>
+            <span className={styles.demoDestination}>Arrivée</span>
           </div>
-          <aside className={styles.previewPanel}>
-            <strong>Contrôles</strong>
-            <small>Aucun appel API moteur</small>
-            <div className={styles.modeControls}>
-              {MODES.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  aria-pressed={item.id === mode.id}
-                  className={item.id === mode.id ? styles.modeActive : ""}
-                  onClick={() => setModeId(item.id)}
-                >
+          <aside className={styles.demoControls}>
+            <div className={styles.profileSwitch}>
+              {PROFILES.map((item) => (
+                <button key={item.id} type="button" aria-pressed={item.id === profile.id} onClick={() => setProfileId(item.id)}>
                   {item.label}
                 </button>
               ))}
             </div>
-            <label className={styles.rangeControl}>
-              <span>Position destination</span>
-              <input type="range" min="34" max="78" value={destination} onChange={(event) => setDestination(Number(event.target.value))} />
-            </label>
-            <button type="button" onClick={resetDemo}>Réinitialiser</button>
+            <label><span>Ligne de bus</span><input type="range" min="-24" max="24" value={bus} onChange={(event) => setBus(Number(event.target.value))} /></label>
+            <label><span>Destination</span><input type="range" min="34" max="78" value={destination} onChange={(event) => setDestination(Number(event.target.value))} /></label>
+            <button type="button" onClick={() => setShowRelief((value) => !value)}>{showRelief ? "Masquer le relief" : "Afficher le relief"}</button>
           </aside>
         </div>
       </div>
-      <div className={styles.learningMeta}>
-        <div><span>Mode</span><strong>{mode.label}</strong></div>
-        <div><span>Statut</span><strong>En calibration</strong></div>
-        <nav aria-label="Légende de simulation DropMap"><span>Bus</span><span>Destination</span><span>Route illustrative</span></nav>
-      </div>
+      <div className={styles.layerRail}>{LAYERS.map((layer) => <span key={layer}>{layer}</span>)}</div>
     </div>
   );
 }
