@@ -4,87 +4,79 @@ import { useMemo, useState } from "react";
 
 import styles from "./dropmap.module.css";
 
-const VISUAL_MODES = [
-  { id: "theory", label: "Théorique", busRotation: -8, markerX: 62, markerY: 42 },
-  { id: "competitive", label: "Compétitif", busRotation: 14, markerX: 72, markerY: 56 },
-  { id: "safe", label: "Sécurisé", busRotation: -22, markerX: 48, markerY: 64 }
+const MODES = [
+  { id: "theory", label: "Théorique", rotation: -9, destination: 58 },
+  { id: "competitive", label: "Compétitif", rotation: 13, destination: 70 },
+  { id: "safe", label: "Sécurisé", rotation: -20, destination: 46 }
 ];
 
 export function DropMapVisualDemo() {
-  const [modeId, setModeId] = useState(VISUAL_MODES[0].id);
-  const [marker, setMarker] = useState(58);
-  const mode = VISUAL_MODES.find((item) => item.id === modeId) || VISUAL_MODES[0];
+  const [modeId, setModeId] = useState(MODES[0].id);
+  const [destination, setDestination] = useState(58);
+  const mode = MODES.find((item) => item.id === modeId) || MODES[0];
 
-  const visualStyle = useMemo(
+  const style = useMemo(
     () => ({
-      "--demo-bus-rotation": `${mode.busRotation}deg`,
-      "--demo-marker-x": `${Math.max(16, Math.min(84, marker))}%`,
-      "--demo-marker-y": `${mode.markerY}%`,
-      "--demo-route-x": `${mode.markerX}%`
+      "--demo-rotation": `${mode.rotation}deg`,
+      "--demo-destination": `${destination}%`,
+      "--demo-route": `${mode.destination}%`
     }),
-    [marker, mode]
+    [destination, mode]
   );
 
+  function resetDemo() {
+    setModeId(MODES[0].id);
+    setDestination(MODES[0].destination);
+  }
+
   return (
-    <section className={styles.demoSection} id="simulation" aria-labelledby="dropmap-demo-title">
-      <div className={styles.sectionIntro}>
-        <p className={styles.eyebrow}>Simulation</p>
-        <h2 id="dropmap-demo-title">Démonstration visuelle — aucun calcul réel</h2>
-        <p>
-          Ajuste la trajectoire illustrative et le point de destination pour comprendre l'interface prévue. Cette démonstration reste locale au navigateur, sans appel API, sans résultat réel et sans stockage de donnée.
-        </p>
-      </div>
-
-      <div className={styles.demoLayout} style={visualStyle}>
-        <div className={styles.demoMap} aria-label="Démonstration abstraite interactive">
-          <div className={styles.gridOverlay} />
-          <div className={styles.demoReliefOne} />
-          <div className={styles.demoReliefTwo} />
-          <div className={styles.demoBusLine} aria-hidden="true" />
-          <div className={styles.demoRoute} aria-hidden="true" />
-          <div className={styles.demoStart} aria-label="Point de saut illustratif" />
-          <div className={styles.demoMarker} aria-label="Destination illustrative" />
-          <div className={styles.demoLabel}>
-            <span>État</span>
-            <strong>En calibration</strong>
-          </div>
+    <div className={styles.learningPanel} style={style}>
+      <div className={styles.interfacePreview}>
+        <div className={styles.previewTopbar}>
+          <span /><span /><span />
+          <strong>Démonstration visuelle — aucun calcul réel</strong>
         </div>
-
-        <aside className={styles.demoControls} aria-label="Contrôles de démonstration visuelle">
-          <div>
-            <span className={styles.controlLabel}>Mode visuel</span>
-            <div className={styles.segmentedControls}>
-              {VISUAL_MODES.map((item) => (
+        <div className={styles.previewBody}>
+          <div className={styles.previewMap}>
+            <div className={styles.mapMass} />
+            <div className={styles.mapRidge} />
+            <div className={styles.mapRidgeAlt} />
+            <div className={styles.demoBusLine} />
+            <div className={styles.demoRoute} />
+            <span className={styles.jumpPoint}>Saut</span>
+            <span className={styles.deployPoint}>Deploy</span>
+            <span className={styles.demoDestination}>Destination</span>
+            <div className={styles.mapLegend}>Lecture visuelle uniquement · données de démonstration</div>
+          </div>
+          <aside className={styles.previewPanel}>
+            <strong>Contrôles</strong>
+            <small>Aucun appel API moteur</small>
+            <div className={styles.modeControls}>
+              {MODES.map((item) => (
                 <button
                   key={item.id}
                   type="button"
-                  className={`${styles.segmentedButton}${item.id === mode.id ? ` ${styles.segmentedButtonActive}` : ""}`}
                   aria-pressed={item.id === mode.id}
+                  className={item.id === mode.id ? styles.modeActive : ""}
                   onClick={() => setModeId(item.id)}
                 >
                   {item.label}
                 </button>
               ))}
             </div>
-          </div>
-
-          <label className={styles.rangeControl}>
-            <span className={styles.controlLabel}>Position du marqueur</span>
-            <input
-              type="range"
-              min="22"
-              max="78"
-              value={marker}
-              onChange={(event) => setMarker(Number(event.target.value))}
-            />
-          </label>
-
-          <div className={styles.demoDisclosure}>
-            <strong>Désactivé</strong>
-            <p>Aucune recommandation n'est produite dans cette phase. Les lignes évoluent uniquement pour valider la lisibilité de l'interface.</p>
-          </div>
-        </aside>
+            <label className={styles.rangeControl}>
+              <span>Position destination</span>
+              <input type="range" min="34" max="78" value={destination} onChange={(event) => setDestination(Number(event.target.value))} />
+            </label>
+            <button type="button" onClick={resetDemo}>Réinitialiser</button>
+          </aside>
+        </div>
       </div>
-    </section>
+      <div className={styles.learningMeta}>
+        <div><span>Mode</span><strong>{mode.label}</strong></div>
+        <div><span>Statut</span><strong>En calibration</strong></div>
+        <nav aria-label="Légende de simulation DropMap"><span>Bus</span><span>Destination</span><span>Route illustrative</span></nav>
+      </div>
+    </div>
   );
 }
