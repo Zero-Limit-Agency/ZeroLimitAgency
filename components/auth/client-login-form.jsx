@@ -208,7 +208,6 @@ export function ClientLoginForm() {
       ) : null}
 
       <div className="auth-demo-panel">
-        <span className="demo-mode-badge">Mode démonstration · données fictives</span>
         <strong>Découvrir l'espace client</strong>
         <p>Ouvrez une démonstration fictive pour visualiser le tableau de bord, les ressources et le suivi.</p>
         <button

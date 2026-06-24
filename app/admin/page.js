@@ -7,10 +7,6 @@ import { SiteContentEditor } from "@/components/admin/site-content-editor";
 import { SupportChannelsEditor } from "@/components/admin/support-channels-editor";
 import { YoutubeTrainingSettingsEditor } from "@/components/admin/youtube-training-settings-editor";
 import { LogoutButton } from "@/components/auth/logout-button";
-import { InternalHeader } from "@/components/internal/internal-header";
-import { InternalPageShell } from "@/components/internal/internal-page-shell";
-import { InternalStatusBadge } from "@/components/internal/internal-status-badge";
-import internalStyles from "@/components/internal/internal.module.css";
 import { getUserRole, isAdminUser } from "@/lib/auth/admin-access";
 import { getClientSession } from "@/lib/auth/client-auth";
 import { getYoutubeTrainingSettings } from "@/lib/learn-youtube/settings";
@@ -209,40 +205,25 @@ export default async function AdminPage({ searchParams }) {
   const approvedApplications = applications.filter((application) => application.status === "approved");
 
   return (
-    <InternalPageShell legacyClassName="admin-shell" contentClassName="admin-frame">
-        <InternalHeader
-          eyebrow="Administration"
-          title="Demandes, clients et contenus"
-          description="Gérez les inscriptions, les clients actifs, le site public et les outils internes depuis une console compacte."
-          badge={<InternalStatusBadge variant="admin">Console interne</InternalStatusBadge>}
-          actions={
-            <>
-              <Link className="button button-dark" href="/">
-                Retour au site
-              </Link>
-              <LogoutButton label="Se déconnecter" />
-            </>
-          }
-        />
+    <main className="admin-shell">
+      <section className="admin-frame">
+        <header className="admin-header">
+          <div>
+            <p className="eyebrow">Administration</p>
+            <h1>Demandes, clients et contenus</h1>
+            <p className="admin-lead">
+              Gérez les inscriptions, les clients actifs, le site public et le Zero Limit Market depuis
+              un seul espace.
+            </p>
+          </div>
 
-        <section className={internalStyles.adminToolsGrid} aria-label="Raccourcis d'administration">
-          <a className={internalStyles.moduleCard} href="#requests">
-            <strong>Revue humaine</strong>
-            <small>Demandes à accepter ou refuser.</small>
-          </a>
-          <a className={internalStyles.moduleCard} href="#clients">
-            <strong>Espaces clients</strong>
-            <small>Dossiers validés et ressources.</small>
-          </a>
-          <a className={internalStyles.moduleCard} href="#settings">
-            <strong>Contenus</strong>
-            <small>Maintenance, support, Learn YouTube et Market.</small>
-          </a>
-          <Link className={internalStyles.moduleCard} href="/admin/dropmap">
-            <strong>DropMap</strong>
-            <small>Visibilité privée, maintenance ou publique.</small>
-          </Link>
-        </section>
+          <div className="admin-header-actions">
+            <Link className="button button-dark" href="/">
+              Retour au site
+            </Link>
+            <LogoutButton label="Se déconnecter" />
+          </div>
+        </header>
 
         <section className="admin-overview-grid">
           <article className="admin-subpanel">
@@ -296,7 +277,7 @@ export default async function AdminPage({ searchParams }) {
           </Link>
         </nav>
 
-        <div className="admin-sections" id="settings">
+        <div className="admin-sections">
           <MaintenanceModeEditor initialSettings={maintenanceSettings} />
           <YoutubeTrainingSettingsEditor initialSettings={youtubeTrainingSettings} />
           <SupportChannelsEditor initialSettings={globalSiteSettings?.support} />
@@ -304,16 +285,13 @@ export default async function AdminPage({ searchParams }) {
           <GlobalMarketEditor initialSettings={globalMarketSettings} />
 
           {(activeFilter === "all" || activeFilter === "pending_review") && (
-            <>
-              <div id="requests" />
-              <AdminSection
+            <AdminSection
               eyebrow="En attente"
               title="Demandes à traiter"
               note="Les demandes présentes ici sont les seules encore actives côté revue."
               items={pendingApplications}
               kind="pending_review"
-              />
-            </>
+            />
           )}
 
           {(activeFilter === "all" || activeFilter === "rejected") && (
@@ -327,18 +305,16 @@ export default async function AdminPage({ searchParams }) {
           )}
 
           {(activeFilter === "all" || activeFilter === "approved") && (
-            <>
-              <div id="clients" />
-              <AdminSection
+            <AdminSection
               eyebrow="Clients"
               title="Clients validés"
               note="Une demande acceptée quitte l'attente et rejoint cette section comme client."
               items={approvedApplications}
               kind="clients"
-              />
-            </>
+            />
           )}
         </div>
-    </InternalPageShell>
+      </section>
+    </main>
   );
 }
