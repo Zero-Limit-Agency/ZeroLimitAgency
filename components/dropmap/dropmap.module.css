@@ -1,198 +1,39 @@
 .shell {
-  --dm-cream: var(--zl-beige-light, #fff8f0);
-  --dm-beige: var(--zl-beige, #ead8bd);
-  --dm-deep: var(--zl-beige-deep, #b69263);
-  --dm-gold: var(--accent-gold, #d4aa6a);
-  --dm-line: rgba(255, 248, 240, 0.12);
-  --dm-muted: rgba(255, 248, 240, 0.68);
-  --dm-panel: linear-gradient(145deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.022));
-  position: relative;
   min-height: 100vh;
-  overflow-x: clip;
-  color: var(--dm-cream);
+  padding: 2rem 1rem 4rem;
+  color: var(--white);
   background:
-    radial-gradient(circle at 12% 0%, rgba(212, 170, 106, 0.14), transparent 34rem),
-    radial-gradient(circle at 88% 14%, rgba(255, 248, 240, 0.08), transparent 28rem),
-    radial-gradient(circle at 48% 46%, rgba(177, 95, 115, 0.08), transparent 40rem),
-    linear-gradient(180deg, #080504 0%, #120b0a 38%, #070403 100%);
+    radial-gradient(circle at 18% 8%, rgba(212, 170, 106, 0.13), transparent 24rem),
+    radial-gradient(circle at 82% 18%, rgba(177, 95, 115, 0.12), transparent 30rem),
+    linear-gradient(180deg, rgba(18, 9, 11, 0.98), rgba(9, 4, 5, 1));
 }
 
-.topographicVeil {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.42;
-  background:
-    repeating-radial-gradient(ellipse at 18% 20%, rgba(255, 248, 240, 0.06) 0 1px, transparent 1px 22px),
-    linear-gradient(rgba(255, 248, 240, 0.024) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 248, 240, 0.018) 1px, transparent 1px);
-  background-size: auto, 92px 92px, 92px 92px;
-  mask-image: linear-gradient(180deg, black, transparent 82%);
-}
-
-.localHeader,
-.hero,
-.problemSection,
-.featureSection,
-.processSection,
-.demoSection,
-.techSection,
-.trustSection,
-.accessSection,
-.footer {
-  position: relative;
-  width: min(1240px, calc(100% - 2rem));
+.frame {
+  width: min(1220px, calc(100% - 1rem));
   margin: 0 auto;
 }
 
-.localHeader {
-  z-index: 20;
-  position: sticky;
-  top: 1rem;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.7rem;
-  border: 1px solid var(--dm-line);
-  border-radius: 999px;
-  background: linear-gradient(145deg, rgba(16, 10, 9, 0.82), rgba(16, 10, 9, 0.55));
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.1rem;
+  border: 1px solid rgba(255, 245, 243, 0.1);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025));
+  box-shadow: var(--shadow);
   backdrop-filter: blur(22px) saturate(130%);
   -webkit-backdrop-filter: blur(22px) saturate(130%);
 }
 
-.brand,
-.localNav,
-.headerActions,
-.heroActions,
-.statusStrip,
-.sceneToolbar,
-.scenePanels,
-.accessActions,
-.footer nav,
-.demoModeButtons {
-  display: flex;
-  align-items: center;
-}
-
-.brand {
-  gap: 0.75rem;
-  color: var(--dm-cream);
-}
-
-.brandMark {
-  width: 2.35rem;
-  height: 2.35rem;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  color: #160d09;
-  background: linear-gradient(135deg, var(--dm-cream), var(--dm-gold));
-  font-weight: 900;
-  letter-spacing: -0.08em;
-}
-
-.brand span:last-child,
-.previewBadge {
-  display: flex;
-  flex-direction: column;
-}
-
-.brand small,
-.previewBadge span,
-.sceneToolbar span,
-.scenePanels span,
-.demoKicker,
-.featureCard span,
-.processStep small {
-  color: rgba(255, 248, 240, 0.58);
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 800;
-}
-
-.localNav {
-  justify-content: center;
-  gap: clamp(0.5rem, 2vw, 1.15rem);
-}
-
-.localNav a,
-.footer a {
-  color: rgba(255, 248, 240, 0.7);
-  font-size: 0.92rem;
-}
-
-.localNav a:hover,
-.localNav a:focus-visible,
-.footer a:hover,
-.footer a:focus-visible {
-  color: var(--dm-cream);
-}
-
-.headerActions {
-  justify-content: flex-end;
-  gap: 0.7rem;
-}
-
-.previewBadge {
-  gap: 0.12rem;
-  padding: 0.55rem 0.78rem;
-  border: 1px solid rgba(212, 170, 106, 0.28);
-  border-radius: 999px;
-  text-align: right;
-  background: rgba(212, 170, 106, 0.08);
-}
-
-.previewBadge strong {
-  color: var(--dm-gold);
-  font-size: 0.82rem;
-}
-
-.primaryButton,
-.secondaryButton,
-.ghostButton {
-  min-height: 2.8rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  padding: 0.85rem 1.1rem;
-  border: 1px solid rgba(255, 248, 240, 0.14);
-  font-weight: 850;
-  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, color 160ms ease;
-}
-
-.primaryButton {
-  color: #150d08;
-  background: linear-gradient(135deg, var(--dm-cream), var(--dm-gold));
-  box-shadow: 0 18px 54px rgba(212, 170, 106, 0.22);
-}
-
-.secondaryButton,
-.ghostButton {
-  color: var(--dm-cream);
-  background: rgba(255, 248, 240, 0.06);
-}
-
-.primaryButton:hover,
-.primaryButton:focus-visible,
-.secondaryButton:hover,
-.secondaryButton:focus-visible,
-.ghostButton:hover,
-.ghostButton:focus-visible {
-  transform: translateY(-1px);
-  border-color: rgba(212, 170, 106, 0.45);
-}
-
-.hero {
-  min-height: calc(100vh - 7rem);
-  display: grid;
-  grid-template-columns: minmax(0, 0.88fr) minmax(420px, 1fr);
-  align-items: center;
-  gap: clamp(1.5rem, 4vw, 4rem);
-  padding: clamp(4rem, 9vw, 7rem) 0 clamp(3rem, 7vw, 6rem);
+.header h1,
+.maintenanceCard h1 {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(2.5rem, 7vw, 5.8rem);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
 }
 
 .eyebrow {
@@ -200,15 +41,14 @@
   align-items: center;
   gap: 0.55rem;
   margin: 0 0 1rem;
-  padding: 0.45rem 0.76rem;
-  border: 1px solid rgba(255, 248, 240, 0.1);
+  padding: 0.45rem 0.75rem;
   border-radius: 999px;
-  color: rgba(255, 248, 240, 0.72);
-  background: rgba(255, 248, 240, 0.06);
+  color: rgba(255, 245, 243, 0.72);
+  background: rgba(255, 245, 243, 0.08);
   text-transform: uppercase;
-  letter-spacing: 0.075em;
+  letter-spacing: 0.06em;
   font-size: 0.76rem;
-  font-weight: 850;
+  font-weight: 800;
 }
 
 .eyebrow::before {
@@ -216,547 +56,350 @@
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 50%;
-  background: var(--dm-gold);
-  box-shadow: 0 0 24px rgba(212, 170, 106, 0.65);
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-soft));
 }
 
-.hero h1,
-.problemSection h2,
-.sectionIntro h2,
-.techPanel h2,
-.trustSection h2,
-.accessSection h2,
-.maintenanceCard h1 {
-  margin: 0;
-  font-family: "Playfair Display", serif;
-  letter-spacing: -0.055em;
-  line-height: 0.94;
-}
-
-.hero h1 {
-  max-width: 850px;
-  font-size: clamp(3.6rem, 9vw, 8.4rem);
-}
-
-.heroLead,
-.sectionIntro p,
-.problemGrid p,
-.techPanel p,
-.accessSection p,
-.footer p,
-.processStep p,
-.promiseGrid p,
-.panelNote,
-.demoControls p,
-.maintenanceCard p:not(.eyebrow) {
-  color: var(--dm-muted);
+.lead {
+  max-width: 720px;
+  margin: 1rem 0 0;
+  color: rgba(255, 245, 243, 0.72);
+  font-size: clamp(1rem, 2vw, 1.16rem);
   line-height: 1.7;
 }
 
-.heroLead {
-  max-width: 680px;
-  margin: 1.35rem 0 0;
-  font-size: clamp(1.06rem, 2vw, 1.26rem);
-}
-
-.heroActions {
-  flex-wrap: wrap;
+.headerActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   gap: 0.8rem;
-  margin-top: 1.65rem;
 }
 
-.statusStrip {
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-top: 1.4rem;
+.previewBadge,
+.notice,
+.controlPanel,
+.statusCard,
+.maintenanceCard {
+  border: 1px solid rgba(255, 245, 243, 0.11);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.072), rgba(255, 255, 255, 0.026));
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(18px) saturate(125%);
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
 }
 
-.statusStrip span,
-.foundationGrid span {
-  border: 1px solid rgba(255, 248, 240, 0.11);
-  border-radius: 999px;
-  padding: 0.55rem 0.75rem;
-  color: rgba(255, 248, 240, 0.72);
-  background: rgba(255, 248, 240, 0.055);
+.previewBadge {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 13rem;
+  padding: 0.72rem 0.9rem;
+  border-radius: 18px;
+  text-align: right;
 }
 
-.productScene,
-.featureCard,
-.techPanel,
-.promiseGrid article,
-.accessSection,
-.maintenanceCard,
-.demoStage,
-.processStep {
-  border: 1px solid var(--dm-line);
-  background: var(--dm-panel);
-  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.075);
-  backdrop-filter: blur(20px) saturate(126%);
-  -webkit-backdrop-filter: blur(20px) saturate(126%);
+.previewBadge span,
+.panelHeader span,
+.fieldPreview span,
+.statusCard small {
+  color: rgba(255, 245, 243, 0.56);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
-.productScene {
-  overflow: hidden;
-  border-radius: 34px;
-  transform: perspective(1100px) rotateX(2deg) rotateY(-4deg);
+.previewBadge strong,
+.panelHeader strong,
+.fieldPreview strong,
+.statusCard strong {
+  color: var(--white);
 }
 
-.sceneToolbar,
-.scenePanels {
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem;
-}
-
-.sceneToolbar strong {
-  color: var(--dm-gold);
-}
-
-.sceneMap {
-  position: relative;
-  min-height: 560px;
-  overflow: hidden;
-  border-top: 1px solid var(--dm-line);
-  border-bottom: 1px solid var(--dm-line);
-  background:
-    radial-gradient(circle at 24% 28%, rgba(212, 170, 106, 0.2), transparent 12rem),
-    radial-gradient(circle at 72% 62%, rgba(255, 248, 240, 0.11), transparent 18rem),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.018));
-}
-
-.sceneGrid,
-.demoGrid {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(rgba(255, 248, 240, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 248, 240, 0.032) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(circle at 50% 45%, black, transparent 80%);
-}
-
-.sceneContourOne,
-.sceneContourTwo {
-  position: absolute;
-  width: 60%;
-  height: 34%;
-  border: 1px solid rgba(212, 170, 106, 0.2);
-  border-radius: 46% 54% 58% 42%;
-}
-
-.sceneContourOne { left: 8%; top: 18%; transform: rotate(-12deg); }
-.sceneContourTwo { right: 6%; bottom: 16%; transform: rotate(18deg); }
-
-.sceneBus,
-.demoBusLine {
-  position: absolute;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(212, 170, 106, 0.92), transparent);
-  transform-origin: left center;
-}
-
-.sceneBus { left: 7%; top: 18%; width: 84%; transform: rotate(19deg); }
-
-.sceneRoute,
-.demoRouteLine {
-  position: absolute;
-  border-top: 2px solid rgba(255, 248, 240, 0.72);
-  border-right: 2px solid rgba(255, 248, 240, 0.34);
-  border-radius: 50%;
-}
-
-.sceneRoute { left: 34%; top: 30%; width: 32%; height: 32%; transform: rotate(22deg); }
-
-.sceneMarker,
-.demoPoint {
-  position: absolute;
+.secondaryButton,
+.primaryButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 3rem;
-  min-height: 2rem;
-  padding: 0.35rem 0.55rem;
   border-radius: 999px;
-  color: #160d08;
-  background: linear-gradient(135deg, var(--dm-cream), var(--dm-gold));
-  box-shadow: 0 0 0 8px rgba(212, 170, 106, 0.12), 0 0 34px rgba(212, 170, 106, 0.38);
-  font-size: 0.72rem;
-  font-weight: 900;
+  padding: 0.82rem 1.1rem;
+  border: 1px solid rgba(255, 245, 243, 0.13);
+  font-weight: 800;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
 }
 
-.sceneMarkerJump { left: 27%; top: 34%; }
-.sceneMarkerDeploy { left: 54%; top: 48%; }
-.sceneMarkerEnd { right: 14%; bottom: 24%; }
-
-.scenePanels {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.secondaryButton {
+  color: var(--white);
+  background: rgba(255, 245, 243, 0.075);
 }
 
-.scenePanels div {
-  min-height: 5.8rem;
-  padding: 1rem;
-  border: 1px solid rgba(255, 248, 240, 0.08);
+.primaryButton {
+  width: 100%;
+  color: rgba(25, 13, 16, 0.75);
+  background: linear-gradient(135deg, var(--accent-gold), #f0d8ad);
+  cursor: not-allowed;
+  opacity: 0.76;
+}
+
+.secondaryButton:hover,
+.secondaryButton:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(212, 170, 106, 0.48);
+  background: rgba(212, 170, 106, 0.12);
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 0.95rem 1.05rem;
   border-radius: 20px;
-  background: rgba(255, 248, 240, 0.04);
+  color: rgba(255, 245, 243, 0.7);
 }
 
-.scenePanels strong {
-  display: block;
-  margin-top: 0.4rem;
+.notice strong {
+  color: var(--accent-gold);
 }
 
-.problemSection,
-.featureSection,
-.processSection,
-.demoSection,
-.techSection,
-.trustSection,
-.accessSection {
-  padding: clamp(4rem, 9vw, 7rem) 0;
-}
-
-.problemSection,
-.techSection,
-.trustSection,
-.accessSection {
+.workspace {
   display: grid;
-  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
-  gap: clamp(1.4rem, 4vw, 4rem);
-  align-items: start;
-}
-
-.problemSection h2,
-.sectionIntro h2,
-.techPanel h2,
-.trustSection h2,
-.accessSection h2 {
-  font-size: clamp(2.35rem, 5vw, 5.2rem);
-}
-
-.problemGrid,
-.promiseGrid,
-.foundationGrid,
-.featureMosaic {
-  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.34fr);
   gap: 1rem;
 }
 
-.problemGrid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.mapPanel {
+  position: relative;
+  min-height: 560px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 245, 243, 0.1);
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at 28% 26%, rgba(212, 170, 106, 0.2), transparent 12rem),
+    radial-gradient(circle at 70% 62%, rgba(177, 95, 115, 0.16), transparent 16rem),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.018));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), var(--shadow);
 }
 
-.sectionIntro {
-  max-width: 850px;
-  margin-bottom: 1.5rem;
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(255, 245, 243, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 245, 243, 0.035) 1px, transparent 1px);
+  background-size: 58px 58px;
+  mask-image: radial-gradient(circle at 50% 45%, black, transparent 78%);
 }
 
-.featureMosaic {
-  grid-template-columns: 1.1fr 0.9fr 1fr;
-  align-items: stretch;
+.terrainLineOne,
+.terrainLineTwo,
+.routeArc,
+.busLine {
+  position: absolute;
+  pointer-events: none;
 }
 
-.featureCard {
-  min-height: 260px;
-  padding: clamp(1rem, 2vw, 1.45rem);
-  border-radius: 30px;
+.terrainLineOne,
+.terrainLineTwo {
+  width: 62%;
+  height: 34%;
+  border: 1px solid rgba(212, 170, 106, 0.18);
+  border-radius: 46% 54% 58% 42%;
 }
 
-.featureCardTall {
-  grid-row: span 2;
+.terrainLineOne {
+  left: 10%;
+  top: 20%;
+  transform: rotate(-12deg);
 }
 
-.featureCard h3 {
-  margin: 0.8rem 0 1rem;
-  font-size: clamp(1.5rem, 3vw, 2.45rem);
+.terrainLineTwo {
+  right: 7%;
+  bottom: 13%;
+  transform: rotate(18deg);
 }
 
-.featureCard ul {
-  display: grid;
-  gap: 0.65rem;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  color: var(--dm-muted);
+.busLine {
+  left: 9%;
+  top: 18%;
+  width: 78%;
+  height: 2px;
+  transform: rotate(20deg);
+  transform-origin: left center;
+  background: linear-gradient(90deg, transparent, rgba(212, 170, 106, 0.9), transparent);
 }
 
-.featureCard li::before {
-  content: "— ";
-  color: var(--dm-gold);
+.routeArc {
+  left: 36%;
+  top: 28%;
+  width: 30%;
+  height: 34%;
+  border-top: 2px solid rgba(255, 248, 245, 0.7);
+  border-right: 2px solid rgba(255, 248, 245, 0.28);
+  border-radius: 50%;
+  transform: rotate(22deg);
 }
 
-.processRail {
-  display: grid;
-  grid-template-columns: 1.2fr 0.9fr 1.05fr;
+.marker {
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--accent-gold);
+  box-shadow: 0 0 0 8px rgba(212, 170, 106, 0.13), 0 0 36px rgba(212, 170, 106, 0.55);
+}
+
+.markerStart {
+  left: 32%;
+  top: 37%;
+}
+
+.markerEnd {
+  right: 25%;
+  bottom: 31%;
+  background: var(--white);
+}
+
+.mapLabel {
+  position: absolute;
+  left: 1.1rem;
+  bottom: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.9rem 1rem;
+  border-radius: 18px;
+  color: rgba(255, 245, 243, 0.72);
+  background: rgba(9, 4, 5, 0.58);
+  border: 1px solid rgba(255, 245, 243, 0.09);
+}
+
+.mapLabel strong {
+  color: var(--white);
+}
+
+.controlPanel {
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
-}
-
-.processStep {
-  min-height: 220px;
-  padding: 1.2rem;
+  padding: 1rem;
   border-radius: 28px;
 }
 
-.processStep:nth-child(2),
-.processStep:nth-child(5) {
-  transform: translateY(2.6rem);
-}
-
-.processStep h3 {
-  margin: 0.75rem 0;
-  font-size: 1.35rem;
-}
-
-.demoStage {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.38fr);
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: 34px;
-}
-
-.demoMap {
-  position: relative;
-  min-height: 460px;
-  overflow: hidden;
-  border-radius: 26px;
-  border: 1px solid rgba(255, 248, 240, 0.09);
-  background: rgba(255, 248, 240, 0.035);
-}
-
-.demoBusLine { left: 9%; top: 24%; width: 82%; transform: rotate(14deg); }
-.demoRouteLine { left: 34%; top: 36%; width: 31%; height: 32%; transform: rotate(28deg); }
-.demoPointBus { left: 10%; top: 20%; }
-.demoPointJump { left: 32%; top: 34%; }
-.demoPointDeploy { left: 55%; top: 47%; }
-.demoPointLanding { right: 12%; bottom: 20%; }
-
-.demoStagesafe .demoRouteLine { width: 42%; height: 40%; transform: rotate(17deg); }
-.demoStagetheory .demoRouteLine { width: 25%; height: 27%; transform: rotate(36deg); }
-.demoStagesafe .demoPointDeploy { left: 46%; top: 56%; }
-.demoStagetheory .demoPointDeploy { left: 61%; top: 39%; }
-
-.demoControls {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 1rem;
-  padding: 1rem;
-}
-
-.demoModeButtons {
-  flex-wrap: wrap;
-  gap: 0.55rem;
-}
-
-.demoModeButtons button {
-  border: 1px solid rgba(255, 248, 240, 0.12);
-  border-radius: 999px;
-  padding: 0.68rem 0.8rem;
-  color: var(--dm-cream);
-  background: rgba(255, 248, 240, 0.055);
-  cursor: pointer;
-}
-
-.demoModeButtons button:hover,
-.demoModeButtons button:focus-visible,
-.demoModeButtons .demoModeActive {
-  border-color: rgba(212, 170, 106, 0.46);
-  background: rgba(212, 170, 106, 0.13);
-}
-
-.techPanel {
-  padding: clamp(1.2rem, 3vw, 2rem);
-  border-radius: 32px;
-}
-
-.foundationGrid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.foundationGrid span {
-  min-height: 5.5rem;
+.panelHeader,
+.fieldPreview {
   display: flex;
   align-items: center;
-  border-radius: 22px;
-}
-
-.promiseGrid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.promiseGrid article {
-  padding: 1.1rem;
-  border-radius: 26px;
-}
-
-.accessSection {
-  padding: clamp(1.5rem, 4vw, 2.2rem);
-  border-radius: 34px;
-}
-
-.accessActions {
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-}
-
-.footer {
-  display: flex;
   justify-content: space-between;
   gap: 1rem;
-  padding: 2rem 0 3rem;
-  border-top: 1px solid rgba(255, 248, 240, 0.1);
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid rgba(255, 245, 243, 0.08);
 }
 
-.footer p {
-  max-width: 540px;
-  margin: 0.55rem 0 0;
+.fieldPreview {
+  align-items: flex-start;
+  flex-direction: column;
+  padding: 0.9rem;
+  border: 1px solid rgba(255, 245, 243, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 245, 243, 0.04);
 }
 
-.footer nav {
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 0.9rem;
+.panelNote {
+  margin: 0;
+  color: rgba(255, 245, 243, 0.64);
+  line-height: 1.6;
+}
+
+.statusGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.statusCard {
+  min-height: 150px;
+  padding: 1rem;
+  border-radius: 24px;
+}
+
+.statusCard p {
+  margin: 0.65rem 0 0;
+  color: rgba(255, 245, 243, 0.62);
+  line-height: 1.55;
 }
 
 .maintenanceShell {
-  min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 1rem;
 }
 
 .maintenanceCard {
-  width: min(650px, 100%);
-  padding: clamp(1.4rem, 4vw, 2.4rem);
+  width: min(620px, calc(100% - 1rem));
+  padding: clamp(1.5rem, 4vw, 2.4rem);
   border-radius: 32px;
+  text-align: left;
 }
 
 .maintenanceCard p:not(.eyebrow) {
+  color: rgba(255, 245, 243, 0.72);
+  line-height: 1.7;
   margin: 1rem 0 1.5rem;
 }
 
-@media (max-width: 1100px) {
-  .localHeader {
-    grid-template-columns: 1fr auto;
-    border-radius: 28px;
+@media (max-width: 980px) {
+  .header,
+  .notice {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .localNav {
-    grid-column: 1 / -1;
-    justify-content: flex-start;
-    overflow-x: auto;
-    padding: 0.25rem 0.2rem;
-  }
-
-  .hero,
-  .problemSection,
-  .techSection,
-  .trustSection,
-  .accessSection,
-  .demoStage {
-    grid-template-columns: 1fr;
-  }
-
-  .productScene {
-    transform: none;
-  }
-
-  .processRail,
-  .featureMosaic,
-  .promiseGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .processStep:nth-child(2),
-  .processStep:nth-child(5) {
-    transform: none;
-  }
-}
-
-@media (max-width: 720px) {
-  .localHeader,
-  .headerActions,
-  .heroActions,
-  .statusStrip,
-  .scenePanels,
-  .problemGrid,
-  .processRail,
-  .featureMosaic,
-  .foundationGrid,
-  .promiseGrid,
-  .footer {
-    grid-template-columns: 1fr;
-  }
-
-  .localHeader,
-  .footer,
   .headerActions {
     align-items: stretch;
   }
 
-  .headerActions,
-  .footer,
-  .footer nav {
-    justify-content: flex-start;
+  .previewBadge {
+    text-align: left;
   }
 
-  .localNav a {
-    white-space: nowrap;
+  .workspace,
+  .statusGrid {
+    grid-template-columns: 1fr;
   }
 
-  .hero {
-    padding-top: 3rem;
-  }
-
-  .sceneMap {
-    min-height: 420px;
-  }
-
-  .demoMap {
-    min-height: 360px;
-  }
-
-  .hero h1 {
-    font-size: clamp(3rem, 18vw, 4.6rem);
+  .mapPanel {
+    min-height: 460px;
   }
 }
 
-@media (max-width: 430px) {
-  .localHeader,
-  .productScene,
-  .demoStage,
-  .accessSection,
-  .techPanel,
-  .featureCard,
-  .processStep,
-  .promiseGrid article,
+@media (max-width: 640px) {
+  .shell {
+    padding: 1rem 0.5rem 2rem;
+  }
+
+  .frame {
+    width: 100%;
+  }
+
+  .header,
+  .mapPanel,
+  .controlPanel,
+  .statusCard,
   .maintenanceCard {
     border-radius: 22px;
   }
 
-  .localHeader,
-  .demoStage {
-    width: min(100% - 1rem, 1240px);
+  .mapPanel {
+    min-height: 360px;
   }
 
-  .sceneMarker,
-  .demoPoint {
-    min-width: auto;
-    font-size: 0.64rem;
+  .notice {
+    align-items: flex-start;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .primaryButton,
   .secondaryButton,
-  .ghostButton {
+  .primaryButton {
     transition: none;
-  }
-
-  .processStep:nth-child(2),
-  .processStep:nth-child(5) {
-    transform: none;
   }
 }

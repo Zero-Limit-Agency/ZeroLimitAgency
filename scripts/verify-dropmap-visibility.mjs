@@ -49,15 +49,6 @@ function assertEqual(label, actual, expected) {
   }
 }
 
-function validatePayload(payload) {
-  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
-    return false;
-  }
-
-  const allowedKeys = ["visibilityMode", "visibility_mode", "maintenanceMessage", "maintenance_message"];
-  return Object.keys(payload).every((key) => allowedKeys.includes(key));
-}
-
 const cases = [
   ["private + visiteur", { settings: { visibilityMode: "private" } }, "redirect_home"],
   ["private + client", { role: "client", settings: { visibilityMode: "private" } }, "redirect_home"],
@@ -80,6 +71,5 @@ assertEqual("configuration absente", normalizeSettings(null).visibilityMode, "pr
 assertEqual("mode invalide", normalizeSettings({ visibilityMode: "leaked" }).visibilityMode, "private");
 assertEqual("erreur de lecture simulée", normalizeSettings(undefined).visibilityMode, "private");
 assertEqual("message vide", normalizeSettings({ visibilityMode: "maintenance", maintenanceMessage: "" }).maintenanceMessage, defaultSettings.maintenanceMessage);
-assertEqual("payload avec champ supplémentaire", validatePayload({ visibilityMode: "private", role: "admin" }), false);
 
 console.log("DropMap visibility verification passed.");

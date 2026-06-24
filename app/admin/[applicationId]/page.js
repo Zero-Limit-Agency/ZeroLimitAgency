@@ -4,9 +4,6 @@ import { notFound, redirect } from "next/navigation";
 import { ApplicationEditor } from "@/components/admin/application-editor";
 import { ApplicationReview } from "@/components/admin/application-review";
 import { LogoutButton } from "@/components/auth/logout-button";
-import { InternalHeader } from "@/components/internal/internal-header";
-import { InternalPageShell } from "@/components/internal/internal-page-shell";
-import { InternalStatusBadge } from "@/components/internal/internal-status-badge";
 import { normalizeCollaborationMessage } from "@/lib/collaboration";
 import { getUserRole, isAdminUser } from "@/lib/auth/admin-access";
 import { getClientSession } from "@/lib/auth/client-auth";
@@ -122,30 +119,30 @@ export default async function AdminApplicationPage({ params }) {
   const isClientFolder = application.status === "approved";
 
   return (
-    <InternalPageShell legacyClassName="admin-shell" contentClassName="admin-frame">
-        <InternalHeader
-          eyebrow={isClientFolder ? "Client" : "Requête"}
-          title={
-            [application.first_name, application.last_name].filter(Boolean).join(" ") ||
-            application.pseudo ||
-            application.email
-          }
-          description={
-            isClientFolder
-              ? "Gérez le profil client, ses ressources utiles et la progression du dossier."
-              : "Relisez la demande, puis acceptez-la pour en faire un client ou refusez-la sans perdre l'historique."
-          }
-          badge={<InternalStatusBadge variant={isClientFolder ? "client" : "admin"}>{isClientFolder ? "Dossier client" : "Revue requête"}</InternalStatusBadge>}
-          actions={
-            <>
-              <Link className="button button-dark" href="/admin">
-                Retour à l'administration
-              </Link>
-              <LogoutButton label="Se déconnecter" />
-            </>
-          }
-          compact
-        />
+    <main className="admin-shell">
+      <section className="admin-frame">
+        <header className="admin-header admin-header-compact">
+          <div>
+            <p className="eyebrow">{isClientFolder ? "Client" : "Requête"}</p>
+            <h1>
+              {[application.first_name, application.last_name].filter(Boolean).join(" ") ||
+                application.pseudo ||
+                application.email}
+            </h1>
+            <p className="admin-lead">
+              {isClientFolder
+                ? "Gérez le profil client, ses ressources utiles et la progression du dossier."
+                : "Relisez la demande, puis acceptez-la pour en faire un client ou refusez-la sans perdre l'historique."}
+            </p>
+          </div>
+
+          <div className="admin-header-actions">
+            <Link className="button button-dark" href="/admin">
+              Retour à l'administration
+            </Link>
+            <LogoutButton label="Se déconnecter" />
+          </div>
+        </header>
 
         {isClientFolder ? (
           <ApplicationEditor
@@ -163,6 +160,7 @@ export default async function AdminApplicationPage({ params }) {
         ) : (
           <ApplicationReview application={application} />
         )}
-    </InternalPageShell>
+      </section>
+    </main>
   );
 }

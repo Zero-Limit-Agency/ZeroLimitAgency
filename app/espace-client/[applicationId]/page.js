@@ -6,9 +6,6 @@ import { NewsletterPreferences } from "@/components/client/newsletter-preference
 import { CollaborationHub } from "@/components/collaboration/collaboration-hub";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { MaintenanceScreen } from "@/components/maintenance-screen";
-import { InternalHeader } from "@/components/internal/internal-header";
-import { InternalPageShell } from "@/components/internal/internal-page-shell";
-import { InternalStatusBadge } from "@/components/internal/internal-status-badge";
 import { ZeroLimitMarket } from "@/components/client/zero-limit-market";
 import { isCollaborationRequestType, normalizeCollaborationMessage } from "@/lib/collaboration";
 import { getUserRole } from "@/lib/auth/admin-access";
@@ -169,11 +166,10 @@ export default async function ClientApplicationPage({ params, searchParams }) {
     "";
 
   return (
-    <InternalPageShell
-      legacyClassName="client-dashboard-shell"
-      contentClassName="client-dashboard-frame client-profile-frame"
-    >
+    <main className="client-dashboard-shell">
       <div className="client-dashboard-bg" aria-hidden="true" />
+
+      <section className="client-dashboard-frame client-profile-frame">
         {isDemoSpace ? (
           <div className="client-demo-banner">
             <strong>Mode démonstration</strong>
@@ -191,33 +187,9 @@ export default async function ClientApplicationPage({ params, searchParams }) {
           </div>
         ) : null}
 
-        <InternalHeader
-          eyebrow="Espace client"
-          title={displayName}
-          description={contextLine}
-          badge={
-            <InternalStatusBadge variant={isDemoSpace ? "demo" : isAdminPreview ? "admin" : "client"}>
-              {isDemoSpace
-                ? "Mode démonstration"
-                : isAdminPreview
-                  ? "Prévisualisation admin"
-                  : isWorkspaceReady
-                    ? "Dossier actif"
-                    : "Dossier accepté"}
-            </InternalStatusBadge>
-          }
-          actions={
-            <nav className="client-overview-points" aria-label="Navigation du dossier client">
-              <a href="#details">Détails</a>
-              <a href="#resources">Ressources</a>
-              {workspaceFlags.showTimeline ? <a href="#timeline">Suivi</a> : null}
-            </nav>
-          }
-        />
-
         <header className="client-dashboard-header client-profile-header">
           <div className="client-profile-main">
-            <p className="client-kicker">Identité du dossier</p>
+            <p className="client-kicker">Espace client</p>
             <div className="client-profile-card">
               <AvatarUploader
                 initialAvatar={profile?.avatar_data_url || ""}
@@ -323,7 +295,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
             </article>
           ) : null}
 
-          <article className="client-panel client-panel-details" id="details">
+          <article className="client-panel client-panel-details">
             <div className="client-panel-heading">
               <p className="eyebrow">Détails du dossier</p>
               <h2>Informations principales</h2>
@@ -346,7 +318,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
             />
           ) : null}
 
-          <article className="client-panel client-panel-resources" id="resources">
+          <article className="client-panel client-panel-resources">
             <div className="client-panel-heading">
               <p className="eyebrow">Outils et ressources</p>
               <h2>Accès utiles du dossier</h2>
@@ -391,7 +363,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
           </article>
 
           {workspaceFlags.showTimeline ? (
-          <article className="client-panel client-panel-timeline" id="timeline">
+          <article className="client-panel client-panel-timeline">
             <div className="client-panel-heading client-panel-heading-split">
               <div>
                 <p className="eyebrow">Suivi du projet</p>
@@ -431,6 +403,7 @@ export default async function ClientApplicationPage({ params, searchParams }) {
 
           {!isDemoSpace && !isAdminPreview ? <LogoutButton /> : null}
         </footer>
-    </InternalPageShell>
+      </section>
+    </main>
   );
 }

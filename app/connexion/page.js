@@ -3,10 +3,6 @@ import { redirect } from "next/navigation";
 
 import { MaintenanceScreen } from "@/components/maintenance-screen";
 import { ClientLoginForm } from "@/components/auth/client-login-form";
-import { InternalHeader } from "@/components/internal/internal-header";
-import { InternalPageShell } from "@/components/internal/internal-page-shell";
-import { InternalStatusBadge } from "@/components/internal/internal-status-badge";
-import internalStyles from "@/components/internal/internal.module.css";
 import { getUserRole } from "@/lib/auth/admin-access";
 import { buildClientApplicationUrl, getClientWorkspaceContext } from "@/lib/auth/client-access";
 import { getClientSession } from "@/lib/auth/client-auth";
@@ -47,17 +43,16 @@ export default async function ConnexionPage({ searchParams }) {
   }
 
   return (
-    <InternalPageShell variant="auth" framed={false} contentClassName="auth-card auth-card-wide">
-      <div className={internalStyles.authLayout}>
-        <section className={`${internalStyles.editorialPanel} auth-copy`} aria-label="Présentation de la connexion client">
-          <InternalHeader
-            eyebrow="Connexion client"
-            title="Accéder à votre espace personnel"
-            description="Votre espace Zero Limit centralise le suivi de votre dossier, les ressources utiles et les prochaines étapes de votre accompagnement."
-            badge={<InternalStatusBadge variant="client">Zero Limit Agency</InternalStatusBadge>}
-            compact
-          />
-
+    <main className="auth-shell">
+      <section className="auth-card auth-card-wide">
+        <div className="auth-copy">
+          <p className="eyebrow">Connexion client</p>
+          <h1>Accéder à votre espace personnel</h1>
+          <p>
+            Connectez-vous avec les identifiants fournis par Zero Limit Agency lors de votre inscription
+            pour retrouver votre dossier, son statut et toutes les informations liées à votre
+            accompagnement.
+          </p>
           <div className="auth-copy-note">
             <strong>Accès sécurisé</strong>
             <p>
@@ -65,33 +60,17 @@ export default async function ConnexionPage({ searchParams }) {
               votre profil, vos ressources et l'état de votre accompagnement.
             </p>
           </div>
-
-          <div className={internalStyles.metricsGrid} aria-label="Repères de l'espace client Zero Limit">
-            <span className={internalStyles.metricCard}>
-              <strong>Suivi privé</strong>
-              <small>Dossier, statut et ressources au même endroit.</small>
-            </span>
-            <span className={internalStyles.metricCard}>
-              <strong>Accès maîtrisé</strong>
-              <small>Chaque session reste liée à un seul accompagnement.</small>
-            </span>
-            <span className={internalStyles.metricCard}>
-              <strong>Démo isolée</strong>
-              <small>Un aperçu fictif existe sans ouvrir de données réelles.</small>
-            </span>
-          </div>
-
           <div className="auth-actions auth-actions-stacked auth-copy-actions">
             <Link className="button button-dark" href="/">
               Retour au site
             </Link>
           </div>
-        </section>
+        </div>
 
-        <section className={`${internalStyles.panel} auth-panel`} aria-label="Formulaire de connexion client">
+        <div className="auth-panel">
           <ClientLoginForm />
-        </section>
-      </div>
-    </InternalPageShell>
+        </div>
+      </section>
+    </main>
   );
 }

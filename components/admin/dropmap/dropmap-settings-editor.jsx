@@ -111,23 +111,20 @@ export function DropMapSettingsEditor({ initialSettings }) {
       <div className="admin-meta-grid">
         <div className="auth-field admin-field-full">
           <span>Mode de visibilité</span>
-          <div className="admin-overview-grid" role="radiogroup" aria-label="Mode de visibilité DropMap">
+          <div className="admin-overview-grid">
             {MODE_OPTIONS.map((option) => (
               <button
                 key={option.value}
-                className={`admin-subpanel admin-mode-option${form.visibilityMode === option.value ? " is-active" : ""}`}
+                className={`admin-filter-chip${form.visibilityMode === option.value ? " is-active" : ""}`}
                 type="button"
-                role="radio"
-                aria-checked={form.visibilityMode === option.value}
+                aria-pressed={form.visibilityMode === option.value}
                 onClick={() => updateField("visibilityMode", option.value)}
               >
-                <small>{option.value}</small>
-                <strong>{option.label}</strong>
-                <span>{option.description}</span>
+                {option.label}
               </button>
             ))}
           </div>
-          <p className="admin-inline-note">Mode sélectionné : {selectedOption.description}</p>
+          <p className="admin-inline-note">{selectedOption.description}</p>
         </div>
 
         <label className="auth-field admin-field-full">
