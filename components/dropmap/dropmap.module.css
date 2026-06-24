@@ -132,6 +132,11 @@
   color: var(--zl-white);
 }
 
+.lead {
+  max-width: 720px;
+  margin: 1.2rem 0 0;
+}
+
 .headerActions {
   justify-content: flex-end;
   gap: 0.65rem;
@@ -1016,6 +1021,47 @@
   gap: 1rem;
 }
 
+.deepPanel,
+.accessSection {
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border-radius: 30px;
+}
+
+.deepPanel li + li {
+  margin-top: 0.15rem;
+}
+
+.accessSection {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.35fr);
+  gap: 1rem;
+  align-items: center;
+}
+
+.accessStatus {
+  justify-content: flex-start;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 24px;
+  color: rgba(255, 245, 243, 0.72);
+}
+
+.footer div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.footer a {
+  color: rgba(255, 245, 243, 0.72);
+}
+
 .maintenanceShell {
   min-height: 100vh;
   display: grid;
@@ -1030,6 +1076,10 @@
 .maintenanceCard h1 {
   font-size: clamp(2.5rem, 6vw, 5.6rem);
   line-height: 0.96;
+}
+
+.maintenanceCard h1 {
+  font-size: clamp(2.4rem, 7vw, 5rem);
 }
 
 .maintenanceCard p:not(.eyebrow) {
