@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { EditorialHero, ProductInterfaceMock } from "@/components/design-system/editorial-compositions";
+
 function formatLastUpdated(value = new Date()) {
   return new Intl.DateTimeFormat("fr-FR", {
     dateStyle: "long",
@@ -21,16 +23,23 @@ export function LegalPageTemplate({
   const hasCustomContent = Boolean(children);
 
   return (
-    <main className="legal-page-shell">
+    <main className="legal-page-shell legal-page-shell-editorial">
+      <EditorialHero
+        eyebrow={eyebrow}
+        title={title}
+        description={lead || "Cette page est prête à être remplie avec votre contenu définitif. Je pourrai ensuite y intégrer le texte juridique exact que vous m’enverrez."}
+        secondaryAction={{ href: "/", label: "Retour au site" }}
+        meta={["Lecture sobre", "Contraste élevé", `Mise à jour : ${resolvedLastUpdated}`]}
+        visual={(
+          <ProductInterfaceMock title="Cadre légal" steps={["Informations", "Responsabilités", "Contact"]}>
+            <span>Document officiel Zero Limit</span>
+          </ProductInterfaceMock>
+        )}
+      />
+
       <section className="section legal-page-section">
         <div className="container legal-page-stack">
-          <div className="legal-page-header">
-            <p className="eyebrow">{eyebrow}</p>
-            <h1>{title}</h1>
-            <p className="legal-page-lead">
-              {lead ||
-                "Cette page est prête à être remplie avec votre contenu définitif. Je pourrai ensuite y intégrer le texte juridique exact que vous m’enverrez."}
-            </p>
+          <div className="legal-page-header legal-page-header-compact">
             <p className="legal-page-updated">
               <strong>Dernière mise à jour :</strong> {resolvedLastUpdated}
             </p>

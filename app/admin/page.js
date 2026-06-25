@@ -2,6 +2,7 @@
 import { redirect } from "next/navigation";
 
 import { GlobalMarketEditor } from "@/components/admin/global-market-editor";
+import { DashboardComposition } from "@/components/design-system/editorial-compositions";
 import { MaintenanceModeEditor } from "@/components/admin/maintenance-mode-editor";
 import { SiteContentEditor } from "@/components/admin/site-content-editor";
 import { SupportChannelsEditor } from "@/components/admin/support-channels-editor";
@@ -205,25 +206,18 @@ export default async function AdminPage({ searchParams }) {
   const approvedApplications = applications.filter((application) => application.status === "approved");
 
   return (
-    <main className="admin-shell">
-      <section className="admin-frame">
-        <header className="admin-header">
-          <div>
-            <p className="eyebrow">Administration</p>
-            <h1>Demandes, clients et contenus</h1>
-            <p className="admin-lead">
-              Gérez les inscriptions, les clients actifs, le site public et le Zero Limit Market depuis
-              un seul espace.
-            </p>
-          </div>
-
-          <div className="admin-header-actions">
-            <Link className="button button-dark" href="/">
-              Retour au site
-            </Link>
-            <LogoutButton label="Se déconnecter" />
-          </div>
-        </header>
+    <DashboardComposition
+      className="admin-shell admin-shell-editorial"
+      eyebrow="Administration"
+      title="Demandes, clients et contenus"
+      description="Gérez les inscriptions, les clients actifs, le site public et le Zero Limit Market depuis un espace structuré comme un cockpit premium, plus proche de /learn-youtube que d’un dashboard SaaS générique."
+      actions={(
+        <>
+          <Link className="button button-dark" href="/">Retour au site</Link>
+          <LogoutButton label="Se déconnecter" />
+        </>
+      )}
+    >
 
         <section className="admin-overview-grid">
           <article className="admin-subpanel">
@@ -314,7 +308,6 @@ export default async function AdminPage({ searchParams }) {
             />
           )}
         </div>
-      </section>
-    </main>
+    </DashboardComposition>
   );
 }

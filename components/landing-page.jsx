@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { AnimatedSection, MotionReveal, StaggerContainer, StaggerItem } from "@/components/animations";
+import { EditorialHero, ProductInterfaceMock, SectionHeader } from "@/components/design-system/editorial-compositions";
 
 import { DEFAULT_SITE_CONTENT, normalizeSiteContent } from "@/lib/site-content";
 
@@ -389,28 +390,22 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
       </header>
 
       <main id="main" className="public-site">
-        <AnimatedSection className="hero section" id="hero">
-          <div className="hero-background" aria-hidden="true" />
-          <div className="container hero-grid">
-            <MotionReveal className="hero-copy" variant="hero">
-              <p className="eyebrow">{siteContent.hero.eyebrow}</p>
-              <h1>{siteContent.hero.title}</h1>
-              <p className="hero-lead">{siteContent.hero.subtitle}</p>
-              <div className="hero-actions">
-                <a className="button button-primary" href="#contact">
-                  {siteContent.hero.button}
-                </a>
-              </div>
-              <StaggerContainer className="hero-stats">
-                {siteContent.blocks.map((block, index) => (
-                  <StaggerItem as="article" key={block.id} index={index} className="stat-card hover-lift">
-                    <strong>{block.title}</strong>
-                    <p>{block.text}</p>
-                  </StaggerItem>
-                ))}
-              </StaggerContainer>
-            </MotionReveal>
-          </div>
+        <AnimatedSection className="home-editorial-hero" id="hero">
+          <MotionReveal variant="hero">
+            <EditorialHero
+              eyebrow={siteContent.hero.eyebrow}
+              title={siteContent.hero.title}
+              description={siteContent.hero.subtitle}
+              primaryAction={{ href: "#contact", label: siteContent.hero.button }}
+              secondaryAction={{ href: "/learn-youtube", label: "Voir l'univers Academy" }}
+              meta={siteContent.blocks.map((block) => block.title)}
+              visual={(
+                <ProductInterfaceMock title="Zero Limit Studio" steps={siteContent.blocks.map((block) => block.title)}>
+                  <span>Direction, production, accompagnement</span>
+                </ProductInterfaceMock>
+              )}
+            />
+          </MotionReveal>
         </AnimatedSection>
 
         <AnimatedSection className="section intro-section" id="about">
@@ -459,11 +454,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
 
         <AnimatedSection className="section section-soft" id="reviews">
           <div className="container">
-            <div className="section-heading section-heading-wide motion-reveal motion-slide-up is-visible">
-              <p className="eyebrow">{siteContent.reviews.title}</p>
-              <h2>{siteContent.reviews.title}</h2>
-              <p>{siteContent.reviews.text}</p>
-            </div>
+            <SectionHeader eyebrow={siteContent.reviews.title} title={siteContent.reviews.title} description={siteContent.reviews.text} />
             <StaggerContainer className="reviews-grid">
               {siteContent.reviews.items.map((review, index) => (
                 <StaggerItem as="article" key={review.id} index={index} className="review-card hover-lift">
@@ -483,11 +474,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
 
         <AnimatedSection className="section section-dark" id="projects">
           <div className="container">
-            <div className="section-heading section-heading-wide motion-reveal motion-slide-up is-visible">
-              <p className="eyebrow">{siteContent.projects.title}</p>
-              <h2>{siteContent.projects.title}</h2>
-              <p>{siteContent.projects.text}</p>
-            </div>
+            <SectionHeader eyebrow={siteContent.projects.title} title={siteContent.projects.title} description={siteContent.projects.text} />
             <StaggerContainer className="projects-grid">
               {siteContent.projects.items.map((project, index) => (
                 <StaggerItem as="article" key={project.id} index={index} className="project-card hover-lift">
@@ -505,11 +492,7 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
 
         <AnimatedSection className="section" id="news">
           <div className="container">
-            <div className="section-heading section-heading-wide motion-reveal motion-slide-up is-visible">
-              <p className="eyebrow">{siteContent.news.title}</p>
-              <h2>{siteContent.news.title}</h2>
-              <p>{siteContent.news.text}</p>
-            </div>
+            <SectionHeader eyebrow={siteContent.news.title} title={siteContent.news.title} description={siteContent.news.text} />
             <StaggerContainer className="news-grid">
               {siteContent.news.items.map((item, index) => (
                 <StaggerItem as="article" key={item.id} index={index} className="news-card hover-lift">

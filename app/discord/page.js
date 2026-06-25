@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EditorialGrid, EditorialHero, GlassFeatureCard, LargeCTASection, ProductInterfaceMock, SplitSection } from "@/components/design-system/editorial-compositions";
 import { DISCORD_BOT_CONFIG } from "@/lib/discord-bot-config";
 
 export const metadata = {
@@ -28,53 +29,36 @@ export default function DiscordBotPage() {
   const inviteUrl = DISCORD_BOT_CONFIG.inviteUrl;
 
   return (
-    <main className="discord-page-shell">
-      <section className="section discord-hero-section">
-        <div className="container discord-hero-grid">
-          <div className="discord-hero-copy">
-            <p className="eyebrow">Application Discord officielle</p>
-            <h1>{DISCORD_BOT_CONFIG.name}</h1>
-            <p className="discord-hero-kicker">Un bot développé par Zero Limit Agency</p>
-            <p className="discord-hero-lead">{DISCORD_BOT_CONFIG.description}</p>
-            <div className="discord-actions" aria-label="Actions principales du bot Discord">
-              {inviteUrl ? (
-                <a className="button button-primary" href={inviteUrl} target="_blank" rel="noopener noreferrer">
-                  Inviter le bot
-                </a>
-              ) : null}
-              <Link className="button button-secondary" href="/discord/support">
-                Contact et support
-              </Link>
-            </div>
-          </div>
-          <aside className="discord-hero-panel" aria-label="Informations clés">
-            <span className="discord-orb" aria-hidden="true" />
-            <h2>Concevoir un serveur plus vite, sans retirer le contrôle aux administrateurs.</h2>
-            <p>
-              Le bot accompagne la préparation de structures Discord : catégories, salons, rôles,
-              permissions, templates, messages et embeds utiles à une communauté.
-            </p>
-          </aside>
-        </div>
-      </section>
+    <main className="discord-page-shell discord-page-editorial">
+      <EditorialHero
+        eyebrow="Application Discord officielle"
+        title={DISCORD_BOT_CONFIG.name}
+        description={DISCORD_BOT_CONFIG.description}
+        primaryAction={inviteUrl ? { href: inviteUrl, label: "Inviter le bot" } : null}
+        secondaryAction={{ href: "/discord/support", label: "Contact et support" }}
+        meta={["Templates", "Permissions", "Communautés"]}
+        visual={(
+          <ProductInterfaceMock title="Discord Builder" steps={["Intentions", "Structure", "Validation admin"]}>
+            <span>Serveur Discord orchestré</span>
+          </ProductInterfaceMock>
+        )}
+      />
+
+      <SplitSection
+        eyebrow="Présentation"
+        title="Un assistant de structure, pas un remplacement de l'administrateur."
+        description="La page reprend le rythme éditorial de /learn-youtube : une idée forte, un visuel produit, puis des blocs utiles et lisibles."
+      >
+        <EditorialGrid>
+          {features.slice(0, 3).map((feature) => (
+            <GlassFeatureCard eyebrow="Fonction" title={feature} key={feature} />
+          ))}
+        </EditorialGrid>
+      </SplitSection>
 
       <section className="section discord-content-section">
-        <div className="container discord-content-grid">
-          <article className="discord-card">
-            <h2>Présentation</h2>
-            <p>
-              {DISCORD_BOT_CONFIG.name} aide les administrateurs à concevoir et administrer des
-              structures de serveurs Discord. Il sert d’assistant pour transformer une intention de
-              communauté en organisation plus claire, avec des éléments vérifiables par l’équipe du serveur.
-            </p>
-            <ul className="discord-check-list">
-              {features.map((feature) => (
-                <li key={feature}>{feature}</li>
-              ))}
-            </ul>
-          </article>
-
-          <article className="discord-card">
+        <div className="container discord-content-grid discord-content-grid-editorial">
+          <article className="discord-card discord-card-wide">
             <h2>Fonctionnement</h2>
             <ol className="discord-step-list">
               {steps.map((step) => (
@@ -83,7 +67,7 @@ export default function DiscordBotPage() {
             </ol>
           </article>
 
-          <article className="discord-card discord-card-wide">
+          <article className="discord-card">
             <h2>Sécurité et contrôle</h2>
             <p>
               Seules les permissions nécessaires doivent être accordées. Certaines actions peuvent
@@ -95,8 +79,23 @@ export default function DiscordBotPage() {
               affiliée, sponsorisée ou approuvée officiellement par Discord.
             </p>
           </article>
+
+          <article className="discord-card">
+            <h2>Capacités complémentaires</h2>
+            <ul className="discord-check-list">
+              {features.slice(3).map((feature) => <li key={feature}>{feature}</li>)}
+            </ul>
+          </article>
         </div>
       </section>
+
+      <LargeCTASection
+        eyebrow="Liens officiels"
+        title="Un bot utile doit rester transparent, documenté et contrôlable."
+        description="Retrouvez les conditions, la confidentialité, le support et le site Zero Limit principal."
+        primaryAction={{ href: "/discord/terms", label: "Conditions" }}
+        secondaryAction={{ href: "/discord/privacy", label: "Confidentialité" }}
+      />
 
       <section className="section discord-links-section">
         <div className="container discord-links-card">

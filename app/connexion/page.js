@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { EditorialHero, ProductInterfaceMock } from "@/components/design-system/editorial-compositions";
 import { MaintenanceScreen } from "@/components/maintenance-screen";
 import { ClientLoginForm } from "@/components/auth/client-login-form";
 import { getUserRole } from "@/lib/auth/admin-access";
@@ -43,28 +43,29 @@ export default async function ConnexionPage({ searchParams }) {
   }
 
   return (
-    <main className="auth-shell">
-      <section className="auth-card auth-card-wide">
+    <main className="auth-shell auth-shell-editorial">
+      <EditorialHero
+        eyebrow="Connexion client"
+        title="Accéder à votre espace personnel"
+        description="Retrouvez votre dossier, son statut et les ressources liées à votre accompagnement dans une expérience privée, structurée et sécurisée."
+        primaryAction={{ href: "#connexion", label: "Se connecter" }}
+        secondaryAction={{ href: "/", label: "Retour au site" }}
+        meta={["Accès privé", "Dossier client", "Ressources sécurisées"]}
+        visual={(
+          <ProductInterfaceMock title="Espace client" steps={["Connexion sécurisée", "Dossier personnel", "Suivi Zero Limit"]}>
+            <span>Portail client premium</span>
+          </ProductInterfaceMock>
+        )}
+      />
+
+      <section className="auth-card auth-card-wide auth-editorial-card" id="connexion">
         <div className="auth-copy">
-          <p className="eyebrow">Connexion client</p>
-          <h1>Accéder à votre espace personnel</h1>
+          <p className="eyebrow">Accès sécurisé</p>
+          <h2>Un panneau de connexion clair, relié à l’univers Zero Limit.</h2>
           <p>
-            Connectez-vous avec les identifiants fournis par Zero Limit Agency lors de votre inscription
-            pour retrouver votre dossier, son statut et toutes les informations liées à votre
-            accompagnement.
+            Chaque client accède uniquement à son propre espace. Une fois connecté, vous retrouvez
+            votre profil, vos ressources et l'état de votre accompagnement.
           </p>
-          <div className="auth-copy-note">
-            <strong>Accès sécurisé</strong>
-            <p>
-              Chaque client accède uniquement à son propre espace. Une fois connecté, vous retrouvez
-              votre profil, vos ressources et l'état de votre accompagnement.
-            </p>
-          </div>
-          <div className="auth-actions auth-actions-stacked auth-copy-actions">
-            <Link className="button button-dark" href="/">
-              Retour au site
-            </Link>
-          </div>
         </div>
 
         <div className="auth-panel">

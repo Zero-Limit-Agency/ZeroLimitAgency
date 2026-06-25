@@ -1,0 +1,413 @@
+.shell,
+.dashboardShell {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: clip;
+  color: var(--zl-text, #fff8f5);
+  background:
+    radial-gradient(circle at 18% 6%, rgba(208, 25, 116, 0.16), transparent 26rem),
+    radial-gradient(circle at 84% 18%, rgba(177, 95, 115, 0.12), transparent 30rem),
+    radial-gradient(circle at 50% 54%, rgba(226, 189, 130, 0.06), transparent 34rem),
+    linear-gradient(180deg, #16090c 0%, #0f0608 44%, #090405 100%);
+}
+
+.shell::before,
+.dashboardShell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255, 245, 243, 0.026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 245, 243, 0.018) 1px, transparent 1px),
+    radial-gradient(circle at 50% 0%, rgba(255, 248, 245, 0.05), transparent 34rem);
+  background-size: 88px 88px, 88px 88px, auto;
+  mask-image: linear-gradient(180deg, black, transparent 78%);
+}
+
+.shell > *,
+.dashboardShell > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hero,
+.section,
+.largeCta,
+.dashboardFrame {
+  width: min(1220px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.hero {
+  min-height: clamp(680px, 88vh, 960px);
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1.08fr);
+  align-items: center;
+  gap: clamp(1.4rem, 4vw, 4rem);
+  padding: clamp(6rem, 10vw, 9rem) 0 clamp(3.5rem, 7vw, 6rem);
+}
+
+.heroCopy {
+  max-width: 46rem;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: fit-content;
+  margin: 0 0 1.15rem;
+  padding: 0.55rem 0.82rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 245, 243, 0.11);
+  background: rgba(255, 245, 243, 0.045);
+  color: rgba(255, 245, 243, 0.86);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--zl-gold, #e2bd82);
+  box-shadow: 0 0 16px rgba(226, 189, 130, 0.48);
+}
+
+.hero h1,
+.dashboardHeader h1 {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  letter-spacing: -0.055em;
+  font-size: clamp(3.1rem, 7vw, 6.15rem);
+  line-height: 0.92;
+}
+
+.sectionHeader h2,
+.largeCta h2 {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  letter-spacing: -0.045em;
+  font-size: clamp(2.25rem, 5vw, 4.6rem);
+  line-height: 0.95;
+}
+
+.heroCopy > p,
+.sectionHeader > p,
+.largeCta > p,
+.dashboardHeader p {
+  max-width: 44rem;
+  color: rgba(255, 245, 243, 0.72);
+  font-size: clamp(1rem, 1.4vw, 1.18rem);
+  line-height: 1.75;
+}
+
+.actions,
+.dashboardActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.8rem;
+}
+
+.primaryLink,
+.secondaryLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.85rem;
+  padding: 0.85rem 1.18rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 245, 243, 0.16);
+  font-weight: 900;
+  text-decoration: none;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.primaryLink {
+  background: linear-gradient(135deg, var(--zl-gold-light, #f0d6aa), var(--zl-gold, #e2bd82));
+  color: var(--ink, #190d10);
+  box-shadow: 0 14px 34px rgba(226, 189, 130, 0.14);
+}
+
+.secondaryLink {
+  border-color: rgba(226, 189, 130, 0.28);
+  background: rgba(255, 245, 243, 0.055);
+  color: var(--zl-text, #fff8f5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.primaryLink:hover,
+.secondaryLink:hover,
+.card:hover,
+.showcase:hover {
+  transform: translateY(-3px);
+}
+
+.heroVisual,
+.showcase,
+.card,
+.largeCta,
+.dashboardFrame {
+  border: 1px solid rgba(255, 245, 243, 0.11);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.078), rgba(255, 255, 255, 0.022)),
+    rgba(18, 8, 11, 0.66);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 24px 70px rgba(0, 0, 0, 0.32),
+    0 0 70px rgba(226, 189, 130, 0.07);
+  backdrop-filter: blur(18px) saturate(130%);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+}
+
+.heroVisual {
+  min-height: clamp(28rem, 50vw, 42rem);
+  display: grid;
+  place-items: center;
+  border-radius: 42px;
+  padding: clamp(1rem, 2vw, 1.6rem);
+  overflow: hidden;
+}
+
+.metaRail,
+.featureRail {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem;
+}
+
+.metaRail span,
+.featureRail span {
+  border: 1px solid rgba(255, 245, 243, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 245, 243, 0.045);
+  color: rgba(255, 245, 243, 0.74);
+  padding: 0.65rem 0.85rem;
+  font-size: 0.84rem;
+  font-weight: 850;
+}
+
+.section {
+  padding: clamp(4rem, 9vw, 7.5rem) 0;
+}
+
+.splitSection {
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(340px, 1.14fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+}
+
+.reverse .sectionHeader {
+  order: 2;
+}
+
+.sectionHeader {
+  max-width: 54rem;
+  margin: 0 auto 2.2rem;
+  text-align: center;
+}
+
+.sectionHeaderLeft {
+  margin: 0;
+  text-align: left;
+}
+
+.splitMedia,
+.immersiveBody {
+  min-width: 0;
+}
+
+.immersive {
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  min-height: 100%;
+  padding: clamp(1.15rem, 2vw, 1.5rem);
+  border-radius: 28px;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.card small {
+  color: rgba(255, 245, 243, 0.54);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.card h3 {
+  margin: 0.8rem 0 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.35rem, 2.3vw, 2rem);
+  line-height: 1.05;
+}
+
+.card p {
+  color: rgba(255, 245, 243, 0.72);
+  line-height: 1.68;
+}
+
+.showcase {
+  min-height: 100%;
+  border-radius: 34px;
+  overflow: hidden;
+  transition: transform 180ms ease, border-color 180ms ease;
+}
+
+.showcaseTopbar {
+  min-height: 3.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  border-bottom: 1px solid rgba(255, 245, 243, 0.08);
+  color: rgba(255, 245, 243, 0.66);
+}
+
+.showcaseTopbar span {
+  width: 0.58rem;
+  height: 0.58rem;
+  border-radius: 999px;
+  background: rgba(255, 245, 243, 0.22);
+}
+
+.showcaseTopbar strong {
+  margin-left: auto;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.showcaseBody {
+  min-height: 22rem;
+  display: grid;
+  align-content: center;
+  gap: 1rem;
+  padding: clamp(1.15rem, 2.5vw, 2rem);
+  background:
+    radial-gradient(circle at 72% 18%, rgba(226, 189, 130, 0.12), transparent 16rem),
+    radial-gradient(circle at 20% 80%, rgba(208, 25, 116, 0.12), transparent 18rem);
+}
+
+.interfaceMock {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.5fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.interfaceCanvas {
+  min-height: 18rem;
+  display: grid;
+  place-items: center;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 245, 243, 0.1);
+  background: radial-gradient(circle at 50% 35%, rgba(226, 189, 130, 0.12), transparent 54%), rgba(0,0,0,0.18);
+  color: rgba(255, 245, 243, 0.72);
+  font-weight: 900;
+}
+
+.interfaceMock ol {
+  margin: 0;
+  padding: 1rem 1rem 1rem 2.2rem;
+  border-radius: 24px;
+  background: rgba(255, 245, 243, 0.045);
+  color: rgba(255, 245, 243, 0.72);
+  line-height: 1.65;
+}
+
+.largeCta {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  margin-block: clamp(3.5rem, 8vw, 7rem);
+  padding: clamp(2rem, 5vw, 4rem);
+  border-radius: 42px;
+}
+
+.dashboardShell {
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+.dashboardFrame {
+  display: grid;
+  gap: 1.2rem;
+  padding: clamp(1.2rem, 3vw, 2.4rem);
+  border-radius: 36px;
+}
+
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.dashboardHeader h1 {
+  font-size: clamp(2.4rem, 5vw, 4.4rem);
+}
+
+@media (max-width: 920px) {
+  .hero,
+  .splitSection,
+  .interfaceMock {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    min-height: auto;
+    padding-top: 5rem;
+  }
+
+  .heroVisual {
+    min-height: 24rem;
+  }
+
+  .reverse .sectionHeader {
+    order: initial;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboardHeader {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero,
+  .section,
+  .largeCta,
+  .dashboardFrame {
+    width: min(100% - 1rem, 1220px);
+  }
+
+  .hero h1,
+  .dashboardHeader h1 {
+    font-size: clamp(2.5rem, 16vw, 4rem);
+  }
+
+  .actions,
+  .dashboardActions,
+  .primaryLink,
+  .secondaryLink {
+    width: 100%;
+  }
+}
