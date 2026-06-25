@@ -732,6 +732,9 @@ export function LandingPage({ currentUser = null, content = DEFAULT_SITE_CONTENT
             </div>
             <div className="footer-column">
               <strong>Site</strong>
+              <Link href="/discord">Bot Discord</Link>
+              <Link href="/discord/terms">Conditions du bot</Link>
+              <Link href="/discord/privacy">Confidentialité du bot</Link>
               <Link href="/mentions-legales">Mentions légales</Link>
               <Link href="/politique-de-confidentialite">Politique de confidentialité</Link>
               <Link href="/conditions-generales-de-vente">Conditions générales de vente (CGV)</Link>
