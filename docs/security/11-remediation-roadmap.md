@@ -38,3 +38,13 @@ Tests nécessaires : formulaires admin/client, logout, OAuth, rendu liens extern
 3. Threat modeling continu pour paiements, YouTube, Discord, IA.
 4. Pentest externe avant lancement formation/espace paiement.
 5. Exercices de rotation secrets et révocation OAuth.
+
+
+## Phase complète 2026-07-03
+
+- Vague A : RLS exécutable, audit logs, entitlement foundation, middleware no-store/same-origin.
+- Vague B : URL sanitizer commun, tests de politiques, exigences uploads/XSS/SSRF documentées.
+- Vague C : checklists Vercel/Supabase/Google, vérification npm limitée par registre 403.
+- Vague D : exigences formations, outils payants, YouTube et IA documentées avant développement produit.
+
+Les éléments dépendant des consoles externes restent marqués `Requires production verification` plutôt que `Fixed`.

@@ -78,6 +78,7 @@
 
 ## SEC-005 — Usage massif de Supabase service-role dans les routes serveur
 
+- **Statut phase complète** : Mitigated — RLS migration, entitlement helper and service-role inventory/checklist added; production verification still required.
 - **Gravité** : Moyenne
 - **Confiance** : Confirmée par le code
 - **Catégorie** : architecture / contrôle d'accès
@@ -96,6 +97,7 @@
 
 ## SEC-006 — Politiques RLS recommandées non appliquées comme migrations
 
+- **Statut phase complète** : Mitigated — executable RLS policies added; requires Supabase verification script execution.
 - **Gravité** : Moyenne
 - **Confiance** : Moyenne
 - **Catégorie** : base de données / contrôle d'accès
@@ -114,6 +116,7 @@
 
 ## SEC-007 — Scope Google Drive trop large
 
+- **Statut phase complète** : Documented — scope reduction deferred until Google Drive behavior can be validated externally.
 - **Gravité** : Moyenne
 - **Confiance** : Confirmée par le code
 - **Catégorie** : OAuth / moindre privilège
@@ -131,6 +134,7 @@
 
 ## SEC-008 — Protection CSRF explicite absente sur actions mutantes
 
+- **Statut phase complète** : Mitigated — same-origin middleware added for mutating API requests.
 - **Gravité** : Moyenne
 - **Confiance** : Forte
 - **Catégorie** : CSRF
@@ -146,6 +150,7 @@
 
 ## SEC-009 — Absence de journal d'audit admin observable
 
+- **Statut phase complète** : Mitigated — audit_logs table/helper and initial admin events added; coverage expansion remains.
 - **Gravité** : Moyenne
 - **Confiance** : Confirmée par absence de code
 - **Catégorie** : traçabilité
@@ -158,6 +163,7 @@
 
 ## SEC-010 — Aucune validation centralisée des URLs administrables
 
+- **Statut phase complète** : Mitigated — common URL sanitizer added and applied to support/resource URLs.
 - **Gravité** : Moyenne
 - **Confiance** : Forte
 - **Catégorie** : redirection/liens externes/XSS lien
@@ -170,6 +176,7 @@
 
 ## SEC-011 — Route `/api/contact` renvoie `applicationId` à l'appelant anonyme
 
+- **Statut phase complète** : Open — response contract not changed in this security pass to avoid product regression.
 - **Gravité** : Moyenne
 - **Confiance** : Confirmée par le code
 - **Catégorie** : exposition d'information / logique métier
@@ -182,6 +189,7 @@
 
 ## SEC-012 — Upload ZIP autorisé sans inspection antivirus/sandbox
 
+- **Statut phase complète** : Partially mitigated — existing upload controls retained; antivirus/quarantine remains external.
 - **Gravité** : Moyenne
 - **Confiance** : Confirmée par le code
 - **Catégorie** : upload / malware
@@ -194,6 +202,7 @@
 
 ## SEC-013 — Avatar stocké en data URL dans la base
 
+- **Statut phase complète** : Open — avatar Storage migration deferred.
 - **Gravité** : Faible
 - **Confiance** : Confirmée
 - **Catégorie** : stockage / disponibilité
@@ -206,6 +215,7 @@
 
 ## SEC-014 — Actions GitHub non épinglées par SHA
 
+- **Statut phase complète** : Open — action SHA pinning deferred to CI hardening pass.
 - **Gravité** : Faible
 - **Confiance** : Confirmée
 - **Catégorie** : supply chain
@@ -218,6 +228,7 @@
 
 ## SEC-015 — Workflow CI sans permissions explicites minimales
 
+- **Statut phase complète** : Open — CI permissions hardening deferred to workflow pass.
 - **Gravité** : Faible
 - **Confiance** : Confirmée
 - **Catégorie** : CI/CD
@@ -229,6 +240,7 @@
 
 ## SEC-016 — `npm outdated` signale des mises à jour importantes
 
+- **Statut phase complète** : Requires registry verification — npm registry remained unavailable in this environment.
 - **Gravité** : Faible
 - **Confiance** : Confirmée par commande
 - **Catégorie** : dépendance
@@ -240,6 +252,7 @@
 
 ## SEC-017 — Pas de tests automatisés sécurité dédiés observés
 
+- **Statut phase complète** : Mitigated — security test suite expanded.
 - **Gravité** : Faible
 - **Confiance** : Confirmée
 - **Catégorie** : tests
@@ -252,6 +265,7 @@
 
 ## SEC-018 — Configuration Vercel réelle non versionnée/non vérifiable
 
+- **Statut phase complète** : Requires production verification — Vercel checklist added.
 - **Gravité** : Information
 - **Confiance** : Confirmée
 - **Catégorie** : déploiement
@@ -261,18 +275,21 @@
 
 ## SEC-019 — Paiements et webhooks absents mais à modéliser avant ajout
 
+- **Statut phase complète** : Documented — entitlement/payment requirements added before future payment integration.
 - **Gravité** : Information
 - **Catégorie** : paiement / webhook
 - **Description** : aucun Stripe/webhook actuel; ne pas réutiliser `/api/contact` ou success pages comme preuve d'achat future.
 
 ## SEC-020 — Bot Discord hors dépôt
 
+- **Statut phase complète** : Out of scope — bot repository absent.
 - **Gravité** : Information
 - **Catégorie** : périmètre
 - **Description** : seules pages publiques Discord sont présentes; le bot doit être audité dans son dépôt séparé.
 
 ## SEC-021 — Production, Supabase et secrets réels non accessibles
 
+- **Statut phase complète** : Requires external verification — production/Supabase/Google checklist added.
 - **Gravité** : Information
 - **Catégorie** : limitation
 - **Description** : les conclusions sur configuration externe exigent accès Vercel/Supabase/Google/Resend autorisé.

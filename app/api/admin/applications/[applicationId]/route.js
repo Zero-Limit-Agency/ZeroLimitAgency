@@ -7,6 +7,7 @@ import {
 } from "@/lib/auth/api-guards";
 import { normalizeCollaborationAttachments } from "@/lib/collaboration";
 import { isClientViewPreferenceResource } from "@/lib/applications/client-space";
+import { sanitizeExternalUrl } from "@/lib/security/urls";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
@@ -32,8 +33,8 @@ function normalizeResourceLinks(items) {
       name: normalizeText(item?.name),
       kind: normalizeText(item?.kind),
       description: normalizeText(item?.description),
-      url: normalizeText(item?.url),
-      logo_url: normalizeText(item?.logo_url)
+      url: sanitizeExternalUrl(item?.url),
+      logo_url: sanitizeExternalUrl(item?.logo_url)
     }))
     .filter((item) => item.name || item.url || item.description || isClientViewPreferenceResource(item.key));
 }
@@ -97,7 +98,7 @@ export async function PATCH(request, { params }) {
       country: normalizeText(body?.application?.country),
       language: normalizeText(body?.application?.language),
       message_rewritten: normalizeText(body?.application?.message_rewritten),
-      drive_folder_url: normalizeText(body?.application?.drive_folder_url)
+      drive_folder_url: sanitizeExternalUrl(body?.application?.drive_folder_url)
     };
 
     const updateApplication = await adminClient.applications.update(applicationId, applicationRecord);
@@ -123,7 +124,7 @@ export async function PATCH(request, { params }) {
         : null;
 
     const profileRecord = {
-      notion_url: normalizeText(body?.profile?.notion_url),
+      notion_url: sanitizeExternalUrl(body?.profile?.notion_url),
       space_status: body?.profile?.space_status === "active" ? "active" : "preparing",
       market_access_enabled: Boolean(body?.profile?.market_access_enabled),
       resource_links: normalizeResourceLinks(body?.profile?.resource_links),

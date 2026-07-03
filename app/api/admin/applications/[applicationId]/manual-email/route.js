@@ -146,6 +146,14 @@ export async function POST(request, { params }) {
       );
     }
 
+    await recordAuditEvent({
+      actorUserId: guard.session.user.id,
+      actorRole: "admin",
+      action: "admin.manual_email.send",
+      resourceType: "applications",
+      resourceId: applicationId
+    });
+
     return NextResponse.json({
       success: true,
       message: "L'email a bien ete envoye au client."

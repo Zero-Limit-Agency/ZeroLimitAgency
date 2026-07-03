@@ -2,6 +2,7 @@ import { Buffer } from "node:buffer";
 import { NextResponse } from "next/server";
 
 import { requireAdminApiSession } from "@/lib/auth/api-guards";
+import { recordAuditEvent } from "@/lib/security/audit-log";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import { assertSafeUpload } from "@/lib/security/uploads";
 import { normalizeSiteContent } from "@/lib/site-content";
@@ -146,6 +147,14 @@ export async function PATCH(request) {
         { status: result.status || 500 }
       );
     }
+
+    await recordAuditEvent({
+      actorUserId: guard.session.user.id,
+      actorRole: "admin",
+      action: "admin.site_content.update",
+      resourceType: "global_site_settings",
+      resourceId: "public_website_content"
+    });
 
     return NextResponse.json({
       success: true,
