@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { DEMO_CLIENT_USER_ID } from "@/lib/auth/demo-client";
 import { requireAuthenticatedApiSession } from "@/lib/auth/api-guards";
 import { getAuthorizedClientAccess } from "@/lib/auth/client-access";
-import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { assertSafeUpload } from "@/lib/security/uploads";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -18,7 +18,7 @@ function buildDataUrl(file, buffer) {
 
 export async function POST(request) {
   try {
-    const rateLimitResponse = enforceRateLimit(request, {
+    const rateLimitResponse = await checkRateLimit(request, {
       key: "client-avatar-upload",
       limit: 10,
       windowMs: 60 * 1000

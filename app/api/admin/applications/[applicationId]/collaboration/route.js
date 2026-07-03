@@ -18,7 +18,7 @@ import {
 } from "@/lib/emails/zero-limit";
 import { normalizeSiteContent } from "@/lib/site-content";
 import { assertSafeUploadBatch, clampText } from "@/lib/security/uploads";
-import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
   buildClientCollaborationStoragePath,
@@ -89,7 +89,7 @@ export async function GET(_request, { params }) {
 
 export async function POST(request, { params }) {
   try {
-    const rateLimitResponse = enforceRateLimit(request, {
+    const rateLimitResponse = await checkRateLimit(request, {
       key: "admin-collaboration-send",
       limit: 20,
       windowMs: 60 * 1000

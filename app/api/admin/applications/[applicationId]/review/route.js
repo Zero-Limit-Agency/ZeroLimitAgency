@@ -10,14 +10,14 @@ import {
   buildRejectionEmail,
   sendZeroLimitEmail
 } from "@/lib/emails/zero-limit";
-import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 
 export async function POST(request, { params }) {
   try {
-    const rateLimitResponse = enforceRateLimit(request, {
+    const rateLimitResponse = await checkRateLimit(request, {
       key: "admin-application-review",
       limit: 10,
       windowMs: 60 * 1000

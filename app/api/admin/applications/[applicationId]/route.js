@@ -7,7 +7,7 @@ import {
 } from "@/lib/auth/api-guards";
 import { normalizeCollaborationAttachments } from "@/lib/collaboration";
 import { isClientViewPreferenceResource } from "@/lib/applications/client-space";
-import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
   CLIENT_COLLABORATION_BUCKET,
@@ -62,7 +62,7 @@ function normalizeTimelineEvents(items) {
 
 export async function PATCH(request, { params }) {
   try {
-    const rateLimitResponse = enforceRateLimit(request, {
+    const rateLimitResponse = await checkRateLimit(request, {
       key: "admin-application-patch",
       limit: 20,
       windowMs: 60 * 1000
@@ -178,7 +178,7 @@ export async function PATCH(request, { params }) {
 
 export async function DELETE(_request, { params }) {
   try {
-    const rateLimitResponse = enforceRateLimit(_request, {
+    const rateLimitResponse = await checkRateLimit(_request, {
       key: "admin-application-delete",
       limit: 3,
       windowMs: 60 * 1000

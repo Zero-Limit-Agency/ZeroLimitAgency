@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { isValidEmailAddress, normalizeEmailAddress } from "@/lib/security/uploads";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -13,7 +13,7 @@ function buildPasswordResetRedirectUrl() {
 
 export async function POST(request) {
   try {
-    const rateLimitResponse = enforceRateLimit(request, {
+    const rateLimitResponse = await checkRateLimit(request, {
       key: "auth-forgot-password",
       limit: 3,
       windowMs: 60 * 1000

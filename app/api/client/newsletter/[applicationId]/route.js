@@ -6,7 +6,7 @@ import {
   requireAuthenticatedApiSession
 } from "@/lib/auth/api-guards";
 import { getAuthorizedClientAccess } from "@/lib/auth/client-access";
-import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -44,7 +44,7 @@ async function loadAuthorizedApplication(sessionUser, applicationId) {
 
 export async function PATCH(request, { params }) {
   try {
-    const rateLimitResponse = enforceRateLimit(request, {
+    const rateLimitResponse = await checkRateLimit(request, {
       key: "client-newsletter-toggle",
       limit: 10,
       windowMs: 60 * 1000

@@ -14,7 +14,7 @@ import {
   removeStorageObject,
   uploadStorageObject
 } from "@/lib/supabase/storage";
-import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -109,7 +109,7 @@ async function uploadPacketDocument(applicationId, document, file, existingPacke
 
 export async function PATCH(request, { params }) {
   try {
-    const rateLimitResponse = enforceRateLimit(request, {
+    const rateLimitResponse = await checkRateLimit(request, {
       key: "admin-post-call-zero-save",
       limit: 10,
       windowMs: 60 * 1000
