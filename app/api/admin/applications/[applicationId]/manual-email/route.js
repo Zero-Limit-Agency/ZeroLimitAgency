@@ -10,7 +10,7 @@ import {
   buildManualClientEmail,
   sendZeroLimitEmail
 } from "@/lib/emails/zero-limit";
-import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { assertSafeUpload } from "@/lib/security/uploads";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -25,7 +25,7 @@ function normalizeText(value) {
 
 export async function POST(request, { params }) {
   try {
-    const rateLimitResponse = enforceRateLimit(request, {
+    const rateLimitResponse = await checkRateLimit(request, {
       key: "admin-manual-email",
       limit: 5,
       windowMs: 60 * 1000

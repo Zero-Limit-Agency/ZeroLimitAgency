@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 
 import { requireAdminApiSession } from "@/lib/auth/api-guards";
-import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { normalizeSiteContent, normalizeSupportSettings } from "@/lib/site-content";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { formatSupabaseAdminError } from "@/lib/supabase/errors";
 
 export async function PATCH(request) {
-  const rateLimitResponse = enforceRateLimit(request, {
+  const rateLimitResponse = await checkRateLimit(request, {
     key: "admin-support-channels",
     limit: 10,
     windowMs: 60 * 1000

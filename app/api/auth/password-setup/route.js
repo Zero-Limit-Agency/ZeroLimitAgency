@@ -8,14 +8,14 @@ import {
   setClientAuthCookies
 } from "@/lib/auth/client-auth";
 import { buildClientApplicationUrl } from "@/lib/auth/client-access";
-import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 
 export async function POST(request) {
   try {
-    const rateLimitResponse = enforceRateLimit(request, {
+    const rateLimitResponse = await checkRateLimit(request, {
       key: "auth-password-setup",
       limit: 5,
       windowMs: 60 * 1000
