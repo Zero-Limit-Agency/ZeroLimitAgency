@@ -7,13 +7,13 @@ import {
 } from "@/lib/auth/client-auth";
 import { getClientWorkspaceContext } from "@/lib/auth/client-access";
 import { getUserRole } from "@/lib/auth/admin-access";
-import { enforceRateLimit, permanentlyBlockRequestIp } from "@/lib/security/rate-limit";
+import { checkRateLimit, permanentlyBlockRequestIp } from "@/lib/security/rate-limit";
 
 export const runtime = "nodejs";
 
 export async function POST(request) {
   try {
-    const rateLimitResponse = enforceRateLimit(request, {
+    const rateLimitResponse = await checkRateLimit(request, {
       key: "auth-login",
       limit: 20,
       windowMs: 60 * 1000

@@ -13,7 +13,7 @@ import {
   isValidEmailAddress,
   normalizeEmailAddress
 } from "@/lib/security/uploads";
-import { enforceRateLimit, permanentlyBlockRequestIp } from "@/lib/security/rate-limit";
+import { checkRateLimit, permanentlyBlockRequestIp } from "@/lib/security/rate-limit";
 
 function getSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -184,7 +184,7 @@ export async function POST(request) {
       );
     }
 
-    const rateLimitResponse = enforceRateLimit(request, {
+    const rateLimitResponse = await checkRateLimit(request, {
       key: "contact",
       limit: 15,
       windowMs: 60 * 1000

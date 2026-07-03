@@ -10,7 +10,7 @@ import {
   buildPostCallZeroPacketEmail,
   sendZeroLimitEmail
 } from "@/lib/emails/zero-limit";
-import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
   downloadStorageObject,
@@ -133,7 +133,7 @@ async function buildAttachments(packet) {
 
 export async function POST(_request, { params }) {
   try {
-    const rateLimitResponse = enforceRateLimit(request, {
+    const rateLimitResponse = await checkRateLimit(request, {
       key: "admin-post-call-zero-send",
       limit: 5,
       windowMs: 60 * 1000

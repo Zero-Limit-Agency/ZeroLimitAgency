@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { requireAdminApiSession } from "@/lib/auth/api-guards";
+import { recordAuditEvent } from "@/lib/security/audit-log";
 import { normalizeMaintenanceSettings } from "@/lib/maintenance";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { formatSupabaseAdminError } from "@/lib/supabase/errors";
@@ -35,6 +36,14 @@ export async function PATCH(request) {
         { status: result.status || 500 }
       );
     }
+
+    await recordAuditEvent({
+      actorUserId: guard.session.user.id,
+      actorRole: "admin",
+      action: "admin.maintenance.update",
+      resourceType: "global_maintenance_settings",
+      resourceId: "global"
+    });
 
     return NextResponse.json({
       success: true,

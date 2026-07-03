@@ -10,14 +10,15 @@ import {
   buildRejectionEmail,
   sendZeroLimitEmail
 } from "@/lib/emails/zero-limit";
-import { enforceRateLimit } from "@/lib/security/rate-limit";
+import { recordAuditEvent } from "@/lib/security/audit-log";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 
 export async function POST(request, { params }) {
   try {
-    const rateLimitResponse = enforceRateLimit(request, {
+    const rateLimitResponse = await checkRateLimit(request, {
       key: "admin-application-review",
       limit: 10,
       windowMs: 60 * 1000
@@ -123,6 +124,14 @@ export async function POST(request, { params }) {
         ...approvalEmail
       });
 
+      await recordAuditEvent({
+        actorUserId: guard.session.user.id,
+        actorRole: "admin",
+        action: "admin.application.review.approve",
+        resourceType: "applications",
+        resourceId: applicationId
+      });
+
       return NextResponse.json({
         success: true,
         action,
@@ -154,6 +163,14 @@ export async function POST(request, { params }) {
       to: application.email,
       from: process.env.INSCRIPTIONS_EMAIL,
       ...rejectionEmail
+    });
+
+    await recordAuditEvent({
+      actorUserId: guard.session.user.id,
+      actorRole: "admin",
+      action: "admin.application.review.reject",
+      resourceType: "applications",
+      resourceId: applicationId
     });
 
     return NextResponse.json({
