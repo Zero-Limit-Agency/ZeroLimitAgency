@@ -215,38 +215,129 @@ $$;
 revoke all on function public.has_training_access(uuid, uuid) from public;
 grant execute on function public.has_training_access(uuid, uuid) to authenticated;
 
+create or replace function public.has_training_lesson_access(target_lesson_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public, auth
+as $$
+  select public.has_training_access(
+    (
+      select p.program_id
+      from public.training_packs p
+      join public.training_modules m on m.pack_id = p.id
+      join public.training_lessons l on l.module_id = m.id
+      where l.id = target_lesson_id
+        and l.status = 'published'
+        and m.status = 'published'
+        and p.status = 'published'
+    ),
+    (
+      select m.pack_id
+      from public.training_modules m
+      join public.training_lessons l on l.module_id = m.id
+      where l.id = target_lesson_id
+        and l.status = 'published'
+        and m.status = 'published'
+    )
+  );
+$$;
+
+revoke all on function public.has_training_lesson_access(uuid) from public;
+grant execute on function public.has_training_lesson_access(uuid) to authenticated;
+
 drop policy if exists training_programs_access_select on public.training_programs;
-create policy training_programs_access_select on public.training_programs for select to authenticated using (public.has_training_access(id, null));
+create policy training_programs_access_select on public.training_programs
+  for select to authenticated
+  using (status = 'published' and public.has_training_access(id, null));
+
 drop policy if exists training_packs_access_select on public.training_packs;
-create policy training_packs_access_select on public.training_packs for select to authenticated using (public.has_training_access(program_id, id));
+create policy training_packs_access_select on public.training_packs
+  for select to authenticated
+  using (status = 'published' and public.has_training_access(program_id, id));
+
 drop policy if exists training_modules_access_select on public.training_modules;
-create policy training_modules_access_select on public.training_modules for select to authenticated using (public.has_training_access((select p.program_id from public.training_packs p where p.id = pack_id), pack_id));
+create policy training_modules_access_select on public.training_modules
+  for select to authenticated
+  using (
+    status = 'published'
+    and public.has_training_access(
+      (select p.program_id from public.training_packs p where p.id = pack_id and p.status = 'published'),
+      pack_id
+    )
+  );
+
 drop policy if exists training_lessons_access_select on public.training_lessons;
-create policy training_lessons_access_select on public.training_lessons for select to authenticated using (public.has_training_access((select p.program_id from public.training_packs p join public.training_modules m on m.pack_id = p.id where m.id = module_id), (select m.pack_id from public.training_modules m where m.id = module_id)));
+create policy training_lessons_access_select on public.training_lessons
+  for select to authenticated
+  using (status = 'published' and public.has_training_lesson_access(id));
+
 drop policy if exists training_resources_access_select on public.training_resources;
-create policy training_resources_access_select on public.training_resources for select to authenticated using (status = 'published' and public.has_training_access((select p.program_id from public.training_packs p join public.training_modules m on m.pack_id = p.id join public.training_lessons l on l.module_id = m.id where l.id = lesson_id), (select m.pack_id from public.training_modules m join public.training_lessons l on l.module_id = m.id where l.id = lesson_id)));
+create policy training_resources_access_select on public.training_resources
+  for select to authenticated
+  using (status = 'published' and public.has_training_lesson_access(lesson_id));
 
 drop policy if exists training_entitlements_self_or_admin_select on public.training_entitlements;
-create policy training_entitlements_self_or_admin_select on public.training_entitlements for select to authenticated using (user_id = auth.uid() or public.is_admin_user());
+create policy training_entitlements_self_or_admin_select on public.training_entitlements
+  for select to authenticated
+  using (user_id = auth.uid() or public.is_admin_user());
+
 drop policy if exists training_entitlements_admin_insert on public.training_entitlements;
-create policy training_entitlements_admin_insert on public.training_entitlements for insert to authenticated with check (public.is_admin_user());
+create policy training_entitlements_admin_insert on public.training_entitlements
+  for insert to authenticated
+  with check (public.is_admin_user());
+
 drop policy if exists training_entitlements_admin_update on public.training_entitlements;
-create policy training_entitlements_admin_update on public.training_entitlements for update to authenticated using (public.is_admin_user()) with check (public.is_admin_user());
+create policy training_entitlements_admin_update on public.training_entitlements
+  for update to authenticated
+  using (public.is_admin_user())
+  with check (public.is_admin_user());
 
 drop policy if exists training_lesson_progress_self_select on public.training_lesson_progress;
-create policy training_lesson_progress_self_select on public.training_lesson_progress for select to authenticated using (user_id = auth.uid() or public.is_admin_user());
+create policy training_lesson_progress_self_select on public.training_lesson_progress
+  for select to authenticated
+  using ((user_id = auth.uid() and public.has_training_lesson_access(lesson_id)) or public.is_admin_user());
+
 drop policy if exists training_lesson_progress_self_insert on public.training_lesson_progress;
-create policy training_lesson_progress_self_insert on public.training_lesson_progress for insert to authenticated with check (user_id = auth.uid());
+create policy training_lesson_progress_self_insert on public.training_lesson_progress
+  for insert to authenticated
+  with check (user_id = auth.uid() and public.has_training_lesson_access(lesson_id));
+
 drop policy if exists training_lesson_progress_self_update on public.training_lesson_progress;
-create policy training_lesson_progress_self_update on public.training_lesson_progress for update to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+create policy training_lesson_progress_self_update on public.training_lesson_progress
+  for update to authenticated
+  using (user_id = auth.uid() and public.has_training_lesson_access(lesson_id))
+  with check (user_id = auth.uid() and public.has_training_lesson_access(lesson_id));
 
 drop policy if exists training_favorites_self_all on public.training_favorites;
-create policy training_favorites_self_all on public.training_favorites for all to authenticated using (user_id = auth.uid() or public.is_admin_user()) with check (user_id = auth.uid());
+create policy training_favorites_self_all on public.training_favorites
+  for all to authenticated
+  using ((user_id = auth.uid() and public.has_training_lesson_access(lesson_id)) or public.is_admin_user())
+  with check (user_id = auth.uid() and public.has_training_lesson_access(lesson_id));
+
 drop policy if exists training_notes_self_all on public.training_notes;
-create policy training_notes_self_all on public.training_notes for all to authenticated using (user_id = auth.uid() or public.is_admin_user()) with check (user_id = auth.uid());
+create policy training_notes_self_all on public.training_notes
+  for all to authenticated
+  using ((user_id = auth.uid() and public.has_training_lesson_access(lesson_id)) or public.is_admin_user())
+  with check (user_id = auth.uid() and public.has_training_lesson_access(lesson_id));
+
 drop policy if exists training_comments_self_or_admin_select on public.training_comments;
-create policy training_comments_self_or_admin_select on public.training_comments for select to authenticated using ((status = 'published' and public.has_training_access((select p.program_id from public.training_packs p join public.training_modules m on m.pack_id = p.id join public.training_lessons l on l.module_id = m.id where l.id = lesson_id), (select m.pack_id from public.training_modules m join public.training_lessons l on l.module_id = m.id where l.id = lesson_id))) or user_id = auth.uid() or public.is_admin_user());
+create policy training_comments_self_or_admin_select on public.training_comments
+  for select to authenticated
+  using (
+    (status = 'published' and public.has_training_lesson_access(lesson_id))
+    or user_id = auth.uid()
+    or public.is_admin_user()
+  );
+
 drop policy if exists training_comments_self_insert on public.training_comments;
-create policy training_comments_self_insert on public.training_comments for insert to authenticated with check (user_id = auth.uid());
+create policy training_comments_self_insert on public.training_comments
+  for insert to authenticated
+  with check (user_id = auth.uid() and public.has_training_lesson_access(lesson_id));
+
 drop policy if exists training_comments_self_update on public.training_comments;
-create policy training_comments_self_update on public.training_comments for update to authenticated using (user_id = auth.uid() or public.is_admin_user()) with check (user_id = auth.uid() or public.is_admin_user());
+create policy training_comments_self_update on public.training_comments
+  for update to authenticated
+  using ((user_id = auth.uid() and public.has_training_lesson_access(lesson_id)) or public.is_admin_user())
+  with check ((user_id = auth.uid() and public.has_training_lesson_access(lesson_id)) or public.is_admin_user());
