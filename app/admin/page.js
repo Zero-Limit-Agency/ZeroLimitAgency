@@ -251,6 +251,16 @@ export default async function AdminPage({ searchParams }) {
               </Link>
             </div>
           </article>
+          <article className="admin-subpanel">
+            <small>Formation</small>
+            <strong>YouTube</strong>
+            <p className="admin-inline-note">Gérez le catalogue, les ressources et les accès formation.</p>
+            <div className="admin-actions admin-actions-inline">
+              <Link className="button button-dark button-compact" href="/admin/formations">
+                Catalogue formation
+              </Link>
+            </div>
+          </article>
         </section>
 
         <nav className="admin-filters" aria-label="Filtres administration">
