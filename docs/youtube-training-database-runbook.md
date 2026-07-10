@@ -14,7 +14,7 @@ Ce runbook documente la mise en service contrôlée du socle base de données de
 1. Identifier explicitement l'environnement cible : preview, staging ou production.
 2. Vérifier le project ref Supabase via la CLI, le dashboard ou la configuration d'infrastructure.
 3. Vérifier qu'une sauvegarde ou un point de restauration existe avant toute application en production.
-4. Confirmer que `public.is_admin_user()` existe déjà. Elle est créée par `supabase/migrations/20260703_security_policies_and_entitlements.sql`.
+4. `public.is_admin_user()` est maintenant recréée dans la migration formation pour éviter un blocage si la base cible ne contient pas encore la fonction de sécurité précédente.
 5. Vérifier qu'aucun objet `training_*`, `has_training_access` ou `has_training_lesson_access` incompatible n'existe déjà.
 
 ## Application recommandée
@@ -24,7 +24,7 @@ Utiliser le mécanisme officiel du projet et de Supabase pour appliquer la migra
 À vérifier après application :
 
 - tables : `training_programs`, `training_packs`, `training_modules`, `training_lessons`, `training_entitlements`, `training_lesson_progress`, `training_favorites`, `training_notes`, `training_resources`, `training_comments` ;
-- fonctions : `has_training_access`, `has_training_lesson_access` ;
+- fonctions : `is_admin_user`, `has_training_access`, `has_training_lesson_access` ;
 - RLS activées sur toutes les tables ;
 - policies présentes ;
 - indexes et contraintes créés.
