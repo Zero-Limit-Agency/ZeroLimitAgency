@@ -1,0 +1,233 @@
+.shell {
+  min-height:100vh;
+  background:#090708;
+  color:#fff7ef;
+  padding:22px}
+
+.frame {
+  display:grid;
+  grid-template-columns:240px minmax(0,1fr);
+  gap:20px;
+  max-width:1440px;
+  margin:0 auto}
+
+.sidebar {
+  position:sticky;
+  top:20px;
+  align-self:start;
+  border:1px solid rgba(238,213,184,.2);
+  border-radius:24px;
+  background:rgba(255,247,239,.06);
+  padding:18px}
+
+.brand {
+  font-weight:800;
+  margin-bottom:16px}
+
+.nav {
+  display:grid;
+  gap:8px}
+
+.nav a,.logout {
+  border:1px solid rgba(238,213,184,.15);
+  border-radius:14px;
+  color:#fff7ef;
+  text-decoration:none;
+  padding:10px 12px;
+  background:rgba(255,255,255,.04)}
+
+.nav a:hover,.nav a:focus {
+  border-color:#ef5da8}
+
+.main {
+  min-width:0}
+
+.topbar,.card {
+  border:1px solid rgba(238,213,184,.16);
+  border-radius:28px;
+  background:linear-gradient(135deg,rgba(255,247,239,.08),rgba(255,255,255,.035));
+  box-shadow:0 24px 80px rgba(0,0,0,.24)}
+
+.topbar {
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  align-items:center;
+  padding:20px;
+  margin-bottom:18px}
+
+.kicker {
+  color:#e9caa6;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:12px;
+  margin:0 0 6px}
+
+.title {
+  font-size:clamp(28px,4vw,48px);
+  line-height:1;
+  margin:0}
+
+.muted {
+  color:rgba(255,247,239,.72)}
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:16px}
+
+.card {
+  padding:20px}
+
+.wide {
+  grid-column:span 8}
+
+.side {
+  grid-column:span 4}
+
+.full {
+  grid-column:1/-1}
+
+.packs {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px}
+
+.pack {
+  border:1px solid rgba(238,213,184,.14);
+  border-radius:22px;
+  padding:16px;
+  background:rgba(10,8,10,.45)}
+
+.button {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  border-radius:999px;
+  padding:0 16px;
+  text-decoration:none;
+  border:1px solid rgba(238,213,184,.2);
+  color:#fff7ef;
+  background:rgba(255,255,255,.06);
+  font-weight:700}
+
+.primary {
+  background:#ef5da8;
+  color:#160b12;
+  border-color:#ef5da8}
+
+.progress {
+  height:9px;
+  border-radius:999px;
+  background:rgba(255,255,255,.11);
+  overflow:hidden}
+
+.bar {
+  height:100%;
+  background:linear-gradient(90deg,#ef5da8,#e9caa6)}
+
+.module {
+  border:1px solid rgba(238,213,184,.14);
+  border-radius:20px;
+  padding:16px;
+  margin-top:12px}
+
+.lesson {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  border-top:1px solid rgba(238,213,184,.12);
+  padding:12px 0;
+  color:#fff7ef;
+  text-decoration:none}
+
+.player {
+  aspect-ratio:16/9;
+  border-radius:26px;
+  border:1px solid rgba(238,213,184,.18);
+  background:radial-gradient(circle at 50% 30%,rgba(239,93,168,.25),transparent 35%),#111;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  padding:20px}
+
+.lessonLayout {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 340px;
+  gap:16px}
+
+.courseList {
+  max-height:70vh;
+  overflow:auto}
+
+.textarea {
+  width:100%;
+  min-height:130px;
+  border-radius:18px;
+  border:1px solid rgba(238,213,184,.18);
+  background:rgba(0,0,0,.22);
+  color:#fff7ef;
+  padding:14px}
+
+.actions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px}
+
+.empty {
+  border:1px dashed rgba(238,213,184,.28);
+  border-radius:20px;
+  padding:18px;
+  color:rgba(255,247,239,.72)}
+
+@media(max-width:900px) {
+  .shell {
+  padding:12px}
+
+.frame {
+  display:block}
+
+.sidebar {
+  position:static;
+  margin-bottom:12px}
+
+.nav {
+  grid-template-columns:repeat(2,minmax(0,1fr))}
+
+.topbar {
+  display:block}
+
+.wide,.side {
+  grid-column:1/-1}
+
+.packs {
+  grid-template-columns:1fr}
+
+.lessonLayout {
+  display:flex;
+  flex-direction:column}
+
+.courseList {
+  max-height:none}
+
+.player {
+  border-radius:18px}
+
+.card {
+  padding:16px}
+}
+
+@media(max-width:380px) {
+  .nav {
+  grid-template-columns:1fr}
+
+.lesson {
+  align-items:flex-start;
+  flex-direction:column}
+
+.actions .button {
+  width:100%}
+}
+
