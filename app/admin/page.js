@@ -1,14 +1,9 @@
 ﻿import Link from "next/link";
-import { redirect } from "next/navigation";
-
 import { GlobalMarketEditor } from "@/components/admin/global-market-editor";
 import { MaintenanceModeEditor } from "@/components/admin/maintenance-mode-editor";
 import { SiteContentEditor } from "@/components/admin/site-content-editor";
 import { SupportChannelsEditor } from "@/components/admin/support-channels-editor";
 import { YoutubeTrainingSettingsEditor } from "@/components/admin/youtube-training-settings-editor";
-import { LogoutButton } from "@/components/auth/logout-button";
-import { getUserRole, isAdminUser } from "@/lib/auth/admin-access";
-import { getClientSession } from "@/lib/auth/client-auth";
 import { getYoutubeTrainingSettings } from "@/lib/learn-youtube/settings";
 import { getMaintenanceModeState } from "@/lib/maintenance";
 import { normalizeSiteContent } from "@/lib/site-content";
@@ -165,22 +160,6 @@ function AdminSection({ eyebrow, title, note, items, kind }) {
 }
 
 export default async function AdminPage({ searchParams }) {
-  const session = await getClientSession();
-
-  if (!session?.user) {
-    redirect("/connexion");
-  }
-
-  const role = await getUserRole(session.user);
-
-  if (!(await isAdminUser(session.user))) {
-    if (role === "client") {
-      redirect("/espace-client");
-    }
-
-    redirect("/connexion");
-  }
-
   const adminClient = createSupabaseAdminClient();
   const result = await adminClient.applications.list();
   const globalMarketResult = await adminClient.globalMarketSettings.get();
@@ -205,26 +184,7 @@ export default async function AdminPage({ searchParams }) {
   const approvedApplications = applications.filter((application) => application.status === "approved");
 
   return (
-    <main className="admin-shell">
-      <section className="admin-frame">
-        <header className="admin-header">
-          <div>
-            <p className="eyebrow">Administration</p>
-            <h1>Demandes, clients et contenus</h1>
-            <p className="admin-lead">
-              Gérez les inscriptions, les clients actifs, le site public et le Zero Limit Market depuis
-              un seul espace.
-            </p>
-          </div>
-
-          <div className="admin-header-actions">
-            <Link className="button button-dark" href="/">
-              Retour au site
-            </Link>
-            <LogoutButton label="Se déconnecter" />
-          </div>
-        </header>
-
+    <>
         <section className="admin-overview-grid">
           <article className="admin-subpanel">
             <small>En attente</small>
@@ -324,7 +284,6 @@ export default async function AdminPage({ searchParams }) {
             />
           )}
         </div>
-      </section>
-    </main>
+    </>
   );
 }

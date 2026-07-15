@@ -1,12 +1,8 @@
-import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 import { ApplicationEditor } from "@/components/admin/application-editor";
 import { ApplicationReview } from "@/components/admin/application-review";
-import { LogoutButton } from "@/components/auth/logout-button";
 import { normalizeCollaborationMessage } from "@/lib/collaboration";
-import { getUserRole, isAdminUser } from "@/lib/auth/admin-access";
-import { getClientSession } from "@/lib/auth/client-auth";
 import { normalizeSiteContent } from "@/lib/site-content";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -46,22 +42,6 @@ function createEmptyCallReport() {
 }
 
 export default async function AdminApplicationPage({ params }) {
-  const session = await getClientSession();
-
-  if (!session?.user) {
-    redirect("/connexion");
-  }
-
-  const role = await getUserRole(session.user);
-
-  if (!(await isAdminUser(session.user))) {
-    if (role === "client") {
-      redirect("/espace-client");
-    }
-
-    redirect("/connexion");
-  }
-
   const adminClient = createSupabaseAdminClient();
   const applicationResult = await adminClient.applications.getById(params.applicationId);
 
@@ -118,33 +98,7 @@ export default async function AdminApplicationPage({ params }) {
 
   const isClientFolder = application.status === "approved";
 
-  return (
-    <main className="admin-shell">
-      <section className="admin-frame">
-        <header className="admin-header admin-header-compact">
-          <div>
-            <p className="eyebrow">{isClientFolder ? "Client" : "Requête"}</p>
-            <h1>
-              {[application.first_name, application.last_name].filter(Boolean).join(" ") ||
-                application.pseudo ||
-                application.email}
-            </h1>
-            <p className="admin-lead">
-              {isClientFolder
-                ? "Gérez le profil client, ses ressources utiles et la progression du dossier."
-                : "Relisez la demande, puis acceptez-la pour en faire un client ou refusez-la sans perdre l'historique."}
-            </p>
-          </div>
-
-          <div className="admin-header-actions">
-            <Link className="button button-dark" href="/admin">
-              Retour à l'administration
-            </Link>
-            <LogoutButton label="Se déconnecter" />
-          </div>
-        </header>
-
-        {isClientFolder ? (
+  return isClientFolder ? (
           <ApplicationEditor
             application={application}
             profile={profile}
@@ -157,10 +111,7 @@ export default async function AdminApplicationPage({ params }) {
             supportEmail={supportEmail}
             discordUrl={discordUrl}
           />
-        ) : (
-          <ApplicationReview application={application} />
-        )}
-      </section>
-    </main>
+  ) : (
+    <ApplicationReview application={application} />
   );
 }
