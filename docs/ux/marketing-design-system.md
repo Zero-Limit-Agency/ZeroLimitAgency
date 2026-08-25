@@ -78,3 +78,11 @@ Le workflow dédié `dependency-review.yml` a été supprimé : l'action GitHub 
 ## Finition du rythme
 
 Les sections produit et les zones de projection (`Espaces`, `Tools`, conférences, Team, Certified, résultats et offres) utilisent `zl-section--compact`, soit une réduction modérée du rythme vertical sans toucher aux sections signature, à Zero Limit AI ou au CTA final. Sous 390 px, le titre du hero utilise un clamp dédié afin de préserver son impact sans monopoliser le premier écran. Les cartes métier partagent leur structure mais disposent chacune d'un pictogramme outline issu de la bibliothèque existante ; cette différenciation n'ajoute aucune couleur.
+
+## Hiérarchie chromatique officielle
+
+**BORDEAUX = BRAND · IVOIRE = CONTRAST · ROSE = ACCENT · MAGENTA = SPARING HIGHLIGHT.** Les surfaces, bordures, icônes et textes informatifs privilégient le bordeaux profond, le prune, `#8F455A`, `#743246`, l'ivoire et les gris rosés atténués. Le magenta fort `#D01974` est réservé à un point focal ponctuel — progression de mockup, état actif important ou lumière de glow — et ne doit jamais devenir la couleur dominante d'une page. Les glows peuvent conserver une faible composante magenta, perçue comme une lumière issue du bordeaux.
+
+## Structure des offres
+
+La structure commerciale présentée sur la homepage est **Personal / Creator / Team**. Personal correspond à un espace spécialisé pour un métier — Coach, Manager / Agent, CEO / Dirigeant ou Community Manager — et un même Zero Limit ID pourra à terme posséder plusieurs espaces Personal distincts. Creator est l'espace séparé des métiers créatifs esport. Team est l'espace organisationnel destiné aux membres, staffs, joueurs, rôles, tâches, calendriers et outils communs. Aucun produit générique « Pro » ne doit être présenté sur la homepage.
