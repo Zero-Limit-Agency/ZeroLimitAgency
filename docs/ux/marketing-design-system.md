@@ -11,7 +11,7 @@ Les tokens publics sont centralisés dans `components/marketing/marketing.css` s
 | Famille | Tokens principaux | Usage |
 | --- | --- | --- |
 | Couleurs | `--zl-bg`, `--zl-bg-deep`, `--zl-ivory`, `--zl-ink` | fonds et contrastes structurants |
-| Accents | `--zl-soft`, `--zl-hot`, `--zl-gold` | hiérarchie, état actif et signature premium |
+| Accents | `--zl-soft`, `--zl-hot`, `--zl-strong`, `--zl-focus` | hiérarchie rose, magenta et focus |
 | Surfaces | `--zl-surface`, `--zl-surface-strong` | cartes translucides et navigation flottante |
 | Bordures | `--zl-border`, `--zl-border-bright` | séparation discrète des surfaces |
 | Rayons | `--zl-radius-sm` (18 px), `--zl-radius-md` (24 px), `--zl-radius-lg` (36 px), `--zl-pill` | cartes, previews et capsules |
@@ -19,6 +19,13 @@ Les tokens publics sont centralisés dans `components/marketing/marketing.css` s
 | Layout | `--zl-container`, `--zl-narrow`, `--zl-section`, `--zl-gap` | largeurs, rythme vertical et espacement fluide |
 
 Les tailles éditoriales utilisent `clamp()` et les grilles utilisent des unités fluides. Une valeur structurante nouvelle doit devenir un token avant d'être répétée.
+
+
+### Palette autorisée et interdite
+
+La hiérarchie marketing repose sur les fonds `#0C0507`, `#12090B` et `#16080D`, les surfaces prune `#2A0C16`, `#3D0E1B` et `#501126`, le rose doux `#B15F73`, le magenta `#D01974` et l’ivoire `#FFF8F5`. Les accents autorisés sont exclusivement **bordeaux, prune, rose, magenta et ivoire**. Le **gold, jaune, ambre, ocre et beige chaud comme accent de marque sont interdits** sur la surface marketing. Le token gold historique peut subsister ailleurs pour compatibilité, mais ne doit pas être appelé ici.
+
+Les textes principaux utilisent l’ivoire et les textes secondaires un ivoire à 70 % minimum sur les fonds sombres. Les bordures ne portent jamais seules une information.
 
 ## Composants
 
@@ -32,6 +39,11 @@ Les tailles éditoriales utilisent `clamp()` et les grilles utilisent des unité
 
 Les composants n'embarquent pas de logique métier, d'authentification ou de données distantes. Le contenu éditorial est fourni par dictionnaire.
 
+
+## Placeholders et données de démonstration
+
+Les previews peuvent montrer des états neutres (« Étape 3/5 », « En cours », « Cette semaine »), accompagnés de la mention « Données de démonstration ». Témoignages, études de cas et offres restent visuellement complets pour faciliter la projection, mais portent « Contenu de démonstration — à remplacer avant publication ». Aucun nom de personne, entreprise, résultat chiffré ou citation réaliste ne doit être inventé.
+
 ## Responsive
 
 - **Mobile (< 680 px)** : pile verticale, CTA pleine largeur, cartes sur une colonne, preview simplifiée et menu dans un panneau tactile. Les éléments secondaires du mockup sont masqués sans perte de contenu essentiel.
@@ -43,7 +55,7 @@ Les cibles interactives ont une hauteur minimale de 44 px. Aucun contenu ou cont
 ## Accessibilité et motion
 
 - Un lien d'évitement mène au contenu principal, les zones utilisent `header`, `nav`, `main`, `section` et `footer`, et les titres suivent une hiérarchie `h1` / `h2` / `h3`.
-- Les focus visibles emploient l'accent gold avec un décalage suffisant.
+- Les focus visibles emploient un rose clair dédié (`--zl-focus`) avec un décalage suffisant.
 - Les images décoratives ont un alt vide ; les aperçus complexes exposent un libellé accessible.
 - Les animations se limitent aux transitions d'élévation et de couleur. `prefers-reduced-motion` neutralise transitions et défilement animé.
 
@@ -56,7 +68,7 @@ Les textes de la homepage sont lus depuis `lib/i18n/dictionaries.js` et le compo
 1. Préfixer les styles marketing par `zl-` et limiter leur portée à `[data-surface="marketing"]` lorsque la règle concerne des éléments HTML globaux.
 2. Composer une page avec les primitives plutôt que dupliquer une carte ou un bouton.
 3. Ajouter la copie dans les dictionnaires avec des clés identiques pour `fr` et `en`.
-4. Ne jamais présenter une donnée de démonstration comme un résultat client. Les prix non finalisés restent « À définir » et les témoignages restent explicitement vides.
+4. Ne jamais présenter une donnée de démonstration comme un résultat client. Les prix non finalisés restent « Tarif à venir » et les témoignages de démonstration sont explicitement identifiés.
 5. Vérifier chaque évolution aux largeurs mobile, tablette et desktop, au clavier et avec réduction des animations.
 
 ## Workflow Dependency Review
