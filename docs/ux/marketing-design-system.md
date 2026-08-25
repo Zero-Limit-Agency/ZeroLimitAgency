@@ -74,3 +74,7 @@ Les textes de la homepage sont lus depuis `lib/i18n/dictionaries.js` et le compo
 ## Workflow Dependency Review
 
 Le workflow dédié `dependency-review.yml` a été supprimé : l'action GitHub Dependency Review échouait systématiquement car la fonctionnalité n'est pas disponible pour ce dépôt. Il n'existe pas de condition GitHub Actions fiable permettant de détecter cette disponibilité avant d'appeler l'action. Le workflow CI principal, son installation par `npm ci` et son build Next.js restent inchangés. Un contrôle de dépendances pourra être réintroduit dès qu'une fonctionnalité compatible sera activée.
+
+## Finition du rythme
+
+Les sections produit et les zones de projection (`Espaces`, `Tools`, conférences, Team, Certified, résultats et offres) utilisent `zl-section--compact`, soit une réduction modérée du rythme vertical sans toucher aux sections signature, à Zero Limit AI ou au CTA final. Sous 390 px, le titre du hero utilise un clamp dédié afin de préserver son impact sans monopoliser le premier écran. Les cartes métier partagent leur structure mais disposent chacune d'un pictogramme outline issu de la bibliothèque existante ; cette différenciation n'ajoute aucune couleur.
