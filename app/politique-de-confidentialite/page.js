@@ -1,7 +1,8 @@
 import { LegalPageTemplate } from "@/components/legal/legal-page-template";
 
 export const metadata = {
-  title: "Politique de confidentialité | Zero Limit Agency"
+  title: "Politique de confidentialité | Zero Limit Agency",
+  description: "Informations sur la collecte, l’utilisation et la protection des données personnelles par Zero Limit Agency."
 };
 
 const LAST_UPDATED = "8 mai 2026 à 19:22";

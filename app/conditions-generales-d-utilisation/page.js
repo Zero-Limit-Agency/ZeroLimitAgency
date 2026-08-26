@@ -1,7 +1,8 @@
 import { LegalPageTemplate } from "@/components/legal/legal-page-template";
 
 export const metadata = {
-  title: "Conditions générales d'utilisation | Zero Limit Agency"
+  title: "Conditions générales d'utilisation | Zero Limit Agency",
+  description: "Conditions générales encadrant l’utilisation du site et des services Zero Limit Agency."
 };
 
 const LAST_UPDATED = "8 mai 2026 à 19:24";

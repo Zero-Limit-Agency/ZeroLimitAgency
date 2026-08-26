@@ -1,24 +1,26 @@
-import Link from "next/link";
+import { Badge, Button } from "@/components/marketing/ui";
+import { MarketingShell } from "@/components/marketing/marketing-shell";
+import { PublicFooter, PublicNavbar } from "@/components/marketing/public-chrome";
+import "@/components/marketing/marketing.css";
 
 export const metadata = {
-  title: "Page introuvable - Zero Limit Agency"
+  title: "Page introuvable | Zero Limit Agency",
+  robots: { index: false, follow: false }
 };
 
 export default function NotFound() {
   return (
-    <main className="error-page-shell">
+    <MarketingShell><a className="zl-skip" href="#main">Aller au contenu</a><PublicNavbar /><main className="error-page-shell" id="main">
+      <div className="error-page-halo" aria-hidden="true">404</div>
       <section className="error-page-card" aria-labelledby="error-page-title">
-        <img className="error-page-logo" src="/assets/zero-limit-logo.png" alt="Zero Limit Agency" />
-        <p className="eyebrow">Erreur 404</p>
-        <h1 id="error-page-title">Cette page est introuvable.</h1>
+        <Badge>404</Badge>
+        <h1 id="error-page-title">Cette page n’existe pas.</h1>
         <p>
           Le lien demandé n&apos;existe pas ou n&apos;est plus disponible. Retournez sur le site Zero Limit Agency pour
           continuer votre navigation.
         </p>
-        <Link className="button button-primary error-page-button" href="/">
-          Revenir sur le site
-        </Link>
+        <div className="zl-actions"><Button href="/">Retour à l’accueil</Button><Button variant="secondary" href="/#contact">Nous contacter</Button></div>
       </section>
-    </main>
+    </main><PublicFooter /></MarketingShell>
   );
 }
