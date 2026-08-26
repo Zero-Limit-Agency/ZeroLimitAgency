@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function NotFound() {
   return (
-    <MarketingShell><a className="zl-skip" href="#main">Aller au contenu</a><PublicNavbar /><main className="error-page-shell" id="main">
+    <MarketingShell className="status-page"><a className="zl-skip" href="#main">Aller au contenu</a><PublicNavbar /><main className="error-page-shell" id="main">
       <div className="error-page-halo" aria-hidden="true">404</div>
       <section className="error-page-card" aria-labelledby="error-page-title">
         <Badge>404</Badge>

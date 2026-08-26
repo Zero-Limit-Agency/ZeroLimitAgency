@@ -1,3 +1,3 @@
-export function MarketingShell({ children }) {
-  return <div data-surface="marketing">{children}</div>;
+export function MarketingShell({ children, className = "" }) {
+  return <div data-surface="marketing" className={className}>{children}</div>;
 }

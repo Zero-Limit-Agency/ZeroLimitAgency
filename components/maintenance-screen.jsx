@@ -8,7 +8,7 @@ export function MaintenanceScreen({ settings = DEFAULT_MAINTENANCE_SETTINGS, adm
   const state = normalizeMaintenanceSettings(settings);
 
   return (
-    <MarketingShell><a className="zl-skip" href="#main">Aller au contenu</a><main className="maintenance-shell" id="main">
+    <MarketingShell className="status-page"><a className="zl-skip" href="#main">Aller au contenu</a><main className="maintenance-shell" id="main">
       <div className="maintenance-bg" aria-hidden="true" />
 
       <section className="maintenance-frame">
@@ -18,11 +18,10 @@ export function MaintenanceScreen({ settings = DEFAULT_MAINTENANCE_SETTINGS, adm
         <p className="maintenance-lead">{state.message}</p>
         <p className="maintenance-note">{state.note}</p>
         <Button href="mailto:contact@zerolimit.agency" variant="secondary">Nous contacter</Button>
+        <div className="maintenance-admin-entry">
+          <Button className="maintenance-admin-link" variant="ghost" size="sm" href={adminAccessHref}>Accès administrateur</Button>
+        </div>
       </section>
-
-      <div className="maintenance-admin-entry">
-        <Button className="maintenance-admin-link" variant="ghost" size="sm" href={adminAccessHref}>Accès administrateur</Button>
-      </div>
     </main><PublicFooter minimal /></MarketingShell>
   );
 }
