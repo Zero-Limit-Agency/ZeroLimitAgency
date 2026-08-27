@@ -11,7 +11,8 @@ export const metadata = {
 export default function NotFound() {
   return (
     <MarketingShell className="status-page"><a className="zl-skip" href="#main">Aller au contenu</a><PublicNavbar /><main className="error-page-shell" id="main">
-      <section className="error-page-card" aria-labelledby="error-page-title">
+      <div className="error-page-mark" aria-hidden="true">404</div>
+      <section className="error-page-content" aria-labelledby="error-page-title">
         <Badge>404</Badge>
         <h1 id="error-page-title">Cette page n’existe pas.</h1>
         <p>
@@ -20,6 +21,6 @@ export default function NotFound() {
         </p>
         <div className="zl-actions"><Button href="/">Retour à l’accueil</Button><Button variant="secondary" href="/#contact">Nous contacter</Button></div>
       </section>
-    </main><PublicFooter /></MarketingShell>
+    </main><PublicFooter minimal /></MarketingShell>
   );
 }

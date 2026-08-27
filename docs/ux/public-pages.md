@@ -10,13 +10,13 @@ Ces deux pages emploient `MarketingShell`, les tokens `--zl-*`, `Badge` et `Butt
 
 Leur shell d'état est une unique colonne flexible à hauteur minimale de viewport : le contenu principal absorbe seulement l'espace disponible et le footer suit immédiatement. Aucune hauteur de viewport supplémentaire n'est appliquée au `main`. Sur la maintenance, l'accès administrateur appartient à la carte, sous un séparateur discret, plutôt que de flotter sur la page.
 
-La 404 présente un message autonome, un retour prioritaire vers l'accueil et un accès secondaire au contact. Sa metadata interdit l'indexation et le suivi. Le grand « 404 » en arrière-plan est décoratif : la compréhension ne dépend pas de lui.
+La 404 adopte une composition éditoriale ouverte, sans carte fermée : message autonome, retour prioritaire vers l'accueil, accès secondaire au contact et grand « 404 » complet en arrière-plan. Sa metadata interdit l'indexation et le suivi ; la compréhension ne dépend pas du décor.
 
 ## Layout légal
 
 `LegalPageTemplate` est la source unique du shell légal. Le hero compact utilise Playfair Display pour le titre et Manrope pour le texte long. La date n'est affichée que si le document en fournit déjà une. Les articles originaux sont conservés sans reformulation et reçoivent uniquement des ancres stables pour le sommaire.
 
-La colonne éditoriale est limitée à 760 px. Les sections partagent une seule surface légère et des séparateurs fins pour former un document continu plutôt qu'une succession de cartes. Sur desktop, le sommaire de 250 px est sticky ; sous 960 px, il repasse dans le flux et devient une grille compacte ; sous 680 px, il tient sur une colonne. `overflow-wrap: anywhere` protège les emails et URL longues, et les cartes gardent une largeur minimale de zéro pour éviter tout débordement horizontal.
+La colonne éditoriale est limitée à 760 px. Les sections forment un document quasi transparent, guidé par un filet latéral, des séparateurs fins et le rythme typographique plutôt que par une succession de cartes. Sur desktop, le sommaire compact est sticky ; sous 960 px, il repasse dans le flux et devient une grille ; sous 680 px, il tient sur une colonne. `overflow-wrap: anywhere` protège les emails et URL longues, et les sections gardent une largeur minimale de zéro pour éviter tout débordement horizontal.
 
 ## Navigation, footer et réutilisation
 
