@@ -20,7 +20,7 @@ La colonne éditoriale est limitée à 760 px. Les sections partagent une seule 
 
 ## Navigation, footer et réutilisation
 
-Les pages secondaires réutilisent `PublicNavbar` et `PublicFooter`. Les ancres de homepage sont toujours préfixées par `/`, afin de fonctionner depuis toute route. Le footer regroupe Zero Limit, Produits, Ressources, Agence et Informations, affiche la locale `FR` et ne publie aucun lien social générique ou placeholder.
+Les pages secondaires réutilisent `PublicNavbar` et `PublicFooter`. `PublicNavbar` est volontairement la variante compacte des surfaces publiques secondaires ; elle complète la navbar marketing principale sans la remplacer sur la homepage. Les ancres de homepage sont toujours préfixées par `/`, afin de fonctionner depuis toute route. Le footer regroupe Zero Limit, Produits, Ressources, Agence et Informations, affiche la locale `FR` et ne publie aucun lien social générique ou placeholder.
 
 Avant de créer une primitive publique, privilégier `Button`, `Badge`, `Card`, `Container`, `MarketingShell`, `PublicNavbar`, `PublicFooter` et `LegalPageTemplate`. Les styles supplémentaires doivent rester dans `components/marketing/marketing.css` et employer les tokens marketing existants.
 

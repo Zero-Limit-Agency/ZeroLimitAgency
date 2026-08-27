@@ -17,7 +17,7 @@ export function MaintenanceScreen({ settings = DEFAULT_MAINTENANCE_SETTINGS, adm
         <h1>{state.title}</h1>
         <p className="maintenance-lead">{state.message}</p>
         <p className="maintenance-note">{state.note}</p>
-        <Button href="mailto:contact@zerolimit.agency" variant="secondary">Nous contacter</Button>
+        <Button href="mailto:contact@zerolimit.agency">Nous contacter</Button>
         <div className="maintenance-admin-entry">
           <Button className="maintenance-admin-link" variant="ghost" size="sm" href={adminAccessHref}>Accès administrateur</Button>
         </div>

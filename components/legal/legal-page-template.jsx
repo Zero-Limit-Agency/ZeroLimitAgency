@@ -17,7 +17,9 @@ export function LegalPageTemplate({
   const hasCustomContent = Boolean(children);
   const sections = Children.toArray(children).map((child, index) => {
     const heading = isValidElement(child) ? Children.toArray(child.props.children).find((item) => isValidElement(item) && item.type === "h2") : null;
-    const label = heading ? Children.toArray(heading.props.children).join("") : `Section ${index + 1}`;
+    const label = heading
+      ? Children.toArray(heading.props.children).join("").replace(/^\s*\d+\.\s*/, "")
+      : `Section ${index + 1}`;
     return { id: `section-${index + 1}`, label, child };
   });
 
