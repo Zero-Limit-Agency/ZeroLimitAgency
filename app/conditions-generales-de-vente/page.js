@@ -1,7 +1,8 @@
 import { LegalPageTemplate } from "@/components/legal/legal-page-template";
 
 export const metadata = {
-  title: "Conditions générales de vente | Zero Limit Agency"
+  title: "Conditions générales de vente | Zero Limit Agency",
+  description: "Conditions générales applicables aux prestations proposées par Zero Limit Agency."
 };
 
 const LAST_UPDATED = "8 mai 2026 à 19:26";

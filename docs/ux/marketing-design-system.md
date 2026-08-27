@@ -36,6 +36,8 @@ Les textes principaux utilisent l’ivoire et les textes secondaires un ivoire �
 - `FAQItem` repose sur `details/summary`, donc reste accessible au clavier sans JavaScript.
 - `MediaFrame` simule un aperçu produit sans intégrer de texte essentiel dans une image.
 - `Navbar` et le footer de la homepage forment la coque marketing. Les icônes SVG outline sont regroupées dans `icons.jsx`.
+- `PublicNavbar` et `PublicFooter` prolongent cette coque sur les pages secondaires. Le footer partagé ne contient que des routes publiques vérifiées et expose les groupes Produits, Ressources, Agence et Informations.
+- `LegalPageTemplate` compose automatiquement le hero, la date fournie par le document, le sommaire et la colonne de lecture sans modifier le texte juridique.
 
 Les composants n'embarquent pas de logique métier, d'authentification ou de données distantes. Le contenu éditorial est fourni par dictionnaire.
 
