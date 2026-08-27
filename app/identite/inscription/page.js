@@ -1,0 +1,2 @@
+import { IdentityAuthForm } from "@/components/identity/auth-form"; import { IdentityShell } from "@/components/identity/identity-shell";
+export const metadata={title:"Créer un Zero Limit ID"}; export default function Page(){return <IdentityShell title="Créer votre identité" subtitle="Un identifiant stable pour toutes vos futures expériences Zero Limit."><IdentityAuthForm mode="signup" /></IdentityShell>}
