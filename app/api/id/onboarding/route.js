@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getClientSession } from "@/lib/auth/client-auth";
 import { ensureProfileForSession, updateCurrentProfile } from "@/lib/zero-limit-id/profile";
+import { reportProfileDataAccessError } from "@/lib/zero-limit-id/diagnostics";
+import { profileAccessError } from "@/lib/zero-limit-id/profile-errors";
 import { validateDisplayName, validateIntent, validateLocale, validateUsername } from "@/lib/zero-limit-id/validation";
 
 export async function POST(request) {
@@ -14,6 +16,7 @@ export async function POST(request) {
   const result = await updateCurrentProfile(profile, session.accessToken, { username: username.value, display_name: display.value, preferred_locale: locale.value, onboarding_intent: intent.value, onboarding_completed_at: new Date().toISOString() });
   if (!result.ok) {
     const duplicate = result.status === 409 || String(result.data?.message || "").includes("profiles_username");
+    if (!duplicate) reportProfileDataAccessError(profileAccessError(result, "onboarding_update"), "/api/id/onboarding");
     return NextResponse.json({ success: false, error: duplicate ? "Ce nom d’utilisateur est déjà utilisé." : "Impossible d’enregistrer l’onboarding." }, { status: duplicate ? 409 : 400 });
   }
   return NextResponse.json({ success: true, redirectTo: "/identite" });
