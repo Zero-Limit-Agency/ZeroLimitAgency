@@ -1,0 +1,2 @@
+import { redirect } from "next/navigation"; import { IdentityAuthForm } from "@/components/identity/auth-form"; import { IdentityShell } from "@/components/identity/identity-shell"; import { getClientSession } from "@/lib/auth/client-auth";
+export const metadata={title:"Connexion Zero Limit ID"}; export default async function Page(){if((await getClientSession())?.user) redirect("/identite");return <IdentityShell title="Connexion" subtitle="Retrouvez votre Zero Limit ID."><IdentityAuthForm mode="login" /></IdentityShell>};

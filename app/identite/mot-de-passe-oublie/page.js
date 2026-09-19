@@ -1,0 +1,1 @@
+import { ForgotPasswordForm } from "@/components/identity/password-flow";import { IdentityShell } from "@/components/identity/identity-shell";export default function Page(){return <IdentityShell title="Mot de passe oublié" subtitle="La réponse reste volontairement générique."><ForgotPasswordForm/></IdentityShell>}
