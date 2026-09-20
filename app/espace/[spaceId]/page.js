@@ -3,14 +3,15 @@ import { PrivateShell } from "@/components/workspace/private-shell";
 import { SpaceLanding } from "@/components/workspace/space-landing";
 import { spaceDictionary } from "@/lib/i18n/spaces";
 import { AuthenticationRequiredError } from "@/lib/zero-limit-id/profile";
-import { reportSpaceDataAccessError, requireSpaceAccess } from "@/lib/zero-limit-id/spaces";
+import { reportSpaceDataAccessError } from "@/lib/zero-limit-id/spaces";
 import { SpaceAccessDeniedError } from "@/lib/zero-limit-id/space-model";
+import { getAccessibleModulesForCurrentProfile } from "@/lib/workspace/modules";
 
 export const dynamic = "force-dynamic";
 
 export default async function SpacePage({ params }) {
   let context;
-  try { context = await requireSpaceAccess(params.spaceId); }
+  try { context = await getAccessibleModulesForCurrentProfile(params.spaceId); }
   catch (error) {
     if (error instanceof AuthenticationRequiredError) redirect("/identite/connexion");
     if (error instanceof SpaceAccessDeniedError) notFound();
