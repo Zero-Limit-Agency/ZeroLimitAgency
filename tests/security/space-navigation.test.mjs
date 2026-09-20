@@ -44,3 +44,24 @@ test("the private shell replaces the switcher with a non-interactive zero-space 
   assert.match(shell, /spaces\.length > 0\s*\? <SpaceSwitcher/);
   assert.match(shell, /className="space-switcher-empty" role="status"/);
 });
+
+test("a populated space switcher keeps a distinct keyboard-accessible link to the creation hub", async () => {
+  const switcher = await readFile(new URL("../../components/workspace/space-switcher.jsx", import.meta.url), "utf8");
+  const dictionaries = await readFile(new URL("../../lib/i18n/spaces.js", import.meta.url), "utf8");
+  assert.match(switcher, /KINDS\.map[\s\S]*className="space-switcher-create"/);
+  assert.match(switcher, /<div role="separator" \/>/);
+  assert.match(switcher, /<Link role="menuitem" href="\/espace"/);
+  assert.match(switcher, /labels\.createOrJoinSpace/);
+  assert.match(dictionaries, /createOrJoinSpace: "Créer ou rejoindre un espace"/);
+  assert.match(dictionaries, /createOrJoinSpace: "Create or join a space"/);
+});
+
+test("the space hub remains available with active spaces and keeps creation choices", async () => {
+  const hub = await readFile(new URL("../../app/espace/page.js", import.meta.url), "utf8");
+  assert.doesNotMatch(hub, /lastActive.*redirect/s);
+  assert.match(hub, /context\.spaces\.length > 0[\s\S]*className="space-grid"/);
+  assert.match(hub, /className="space-add-section"/);
+  assert.match(hub, /href="\/espace\/preparation\/personal"/);
+  assert.match(hub, /creatorExists[\s\S]*labels\.alreadyActive[\s\S]*href="\/espace\/preparation\/creator"/);
+  assert.match(hub, /href="\/espace\/preparation\/team"/);
+});
