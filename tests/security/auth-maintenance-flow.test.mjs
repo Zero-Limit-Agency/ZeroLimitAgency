@@ -21,13 +21,32 @@ test("production Auth redirects keep the configured canonical origin", () => {
   assert.equal(resolveAuthRedirectOrigin(environment, "https://evil.example"), "https://zerolimit.agency");
 });
 
+test("production Auth redirects fall back to the trusted Vercel production domain", () => {
+  const environment = {
+    VERCEL_ENV: "production",
+    VERCEL_PROJECT_PRODUCTION_URL: "z0agency.vercel.app",
+    NODE_ENV: "production"
+  };
+  assert.equal(resolveAuthRedirectOrigin(environment, "https://evil.example"), "https://z0agency.vercel.app");
+});
+
+test("local Auth redirects only accept loopback request origins", () => {
+  const environment = { VERCEL_ENV: "development", NEXT_PUBLIC_APP_URL: "https://evil.example", NODE_ENV: "development" };
+  assert.equal(resolveAuthRedirectOrigin(environment, "http://localhost:4321/api/id/signup"), "http://localhost:4321");
+  assert.equal(resolveAuthRedirectOrigin(environment, "http://127.0.0.1:3000/api/id/signup"), "http://127.0.0.1:3000");
+  assert.equal(resolveAuthRedirectOrigin(environment, "http://[::1]:3000/api/id/signup"), "http://[::1]:3000");
+  assert.equal(resolveAuthRedirectOrigin(environment, "https://evil.example/api/id/signup"), "http://localhost:3000");
+});
+
 test("Auth redirect origin rejects host poisoning and unsafe internal destinations", () => {
   assert.throws(() => resolveAuthRedirectOrigin({ VERCEL_ENV: "preview", VERCEL_URL: "evil.example", NODE_ENV: "production" }, "https://evil.example"));
+  assert.throws(() => resolveAuthRedirectOrigin({ VERCEL_ENV: "preview", VERCEL_URL: "vercel.app", NODE_ENV: "production" }, "https://evil.example"));
   assert.throws(() => buildAuthRedirectUrl("//evil.example", { NEXT_PUBLIC_APP_URL: "https://zerolimit.agency", NODE_ENV: "production" }));
   assert.throws(() => buildAuthRedirectUrl("https://evil.example", { NEXT_PUBLIC_APP_URL: "https://zerolimit.agency", NODE_ENV: "production" }));
   assert.equal(teamInvitationReturnPath("https://evil.example"), "/identite");
   assert.equal(teamInvitationReturnPath("//evil.example"), "/identite");
   assert.equal(teamInvitationReturnPath("%2F%2Fevil.example"), "/identite");
+  assert.equal(teamInvitationReturnPath("/invitation/team/abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN"), "/invitation/team/abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN");
 });
 
 test("maintenance is page-local and does not intercept the required identity completion routes", () => {
@@ -45,8 +64,12 @@ test("confirmation and reset use the trusted URL resolver and required session e
   const signup = readFileSync("app/api/id/signup/route.js", "utf8");
   const confirmation = readFileSync("components/identity/confirmation-session.jsx", "utf8");
   const reset = readFileSync("app/api/id/forgot-password/route.js", "utf8");
+  const legacyReset = readFileSync("app/api/auth/forgot-password/route.js", "utf8");
+  const activation = readFileSync("lib/auth/client-activation.js", "utf8");
   assert.match(signup, /buildAuthRedirectUrl\(confirmationPath, process\.env, request\.url\)/);
   assert.match(confirmation, /fetch\("\/api\/id\/session"/);
   assert.match(confirmation, /teamInvitationReturnPath/);
   assert.match(reset, /buildAuthRedirectUrl\("\/identite\/nouveau-mot-de-passe"/);
+  assert.match(legacyReset, /buildAuthRedirectUrl\("\/connexion\/definir-mot-de-passe"/);
+  assert.match(activation, /buildAuthRedirectUrl\("\/connexion\/definir-mot-de-passe"\)/);
 });
