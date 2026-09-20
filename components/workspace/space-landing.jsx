@@ -1,0 +1,14 @@
+export function SpaceLanding({ space, labels }) {
+  const title = space.kind === "team" ? space.organization.name : space.name;
+  const moduleText = space.kind === "personal" ? labels.personalModules : space.kind === "creator" ? labels.creatorModules : labels.teamModules;
+  return <section className="space-landing">
+    <p className="space-kind">{labels.groups[space.kind]}</p>
+    <h1>{title}</h1>
+    <span className="space-status">● {labels.ready}</span>
+    <dl>
+      {space.kind === "personal" && <><div><dt>{labels.groups.personal}</dt><dd>{labels.professions[space.profession]}</dd></div><div><dt>{labels.owner}</dt><dd>{space.owner.name}</dd></div></>}
+      {space.kind === "team" && <><div><dt>{labels.organization}</dt><dd>{space.organization.name}</dd></div><div><dt>{labels.role}</dt><dd>{labels.roles[space.role]}{space.isOwner ? ` · ${labels.owner}` : ""}</dd></div></>}
+    </dl>
+    <div className="space-placeholder"><p>{moduleText}</p></div>
+  </section>;
+}
