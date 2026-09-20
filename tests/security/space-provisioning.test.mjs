@@ -19,6 +19,23 @@ test("Preview provisioning follows the session-checked backend-only service path
   assert.match(provisioningService, /actor_auth_user_id: session\.user\.id/);
   assert.doesNotMatch(provisioningService, /SUPABASE_SERVICE_ROLE_KEY/);
 });
+test("backend provisioning sends the exact post-migration RPC arguments", () => {
+  assert.match(provisioningService, /actor_auth_user_id: session\.user\.id/);
+  assert.match(provisioningService, /provision_personal_space", \{ profession_value: profession, entitlement_source: "system" \}/);
+  assert.match(provisioningService, /provision_creator_space", \{ entitlement_source: "system" \}/);
+  assert.match(provisioningService, /provision_team", \{ organization_name: String\(name \|\| ""\)\.trim\(\), organization_slug: cleanSlug, entitlement_source: "system" \}/);
+  assert.match(migration, /provision_personal_space\(actor_auth_user_id uuid, profession_value text, entitlement_source text/);
+  assert.match(migration, /provision_creator_space\(actor_auth_user_id uuid, entitlement_source text/);
+  assert.match(migration, /provision_team\(actor_auth_user_id uuid, organization_name text, organization_slug text, entitlement_source text/);
+});
+test("missing service-role and PostgREST failures produce safe correlated diagnostics", () => {
+  assert.match(provisioningService, /requireSupabaseServiceRoleConfig\(\)/);
+  assert.match(provisioningService, /service_role_configuration/);
+  assert.match(provisioningService, /PGRST202.*rpc_schema_cache/);
+  assert.match(provisioningService, /42501.*rpc_permission/);
+  assert.match(provisioningRoute, /correlationId, category: error\.category/);
+  assert.doesNotMatch(provisioningRoute, /upstreamMessage.*NextResponse\.json/);
+});
 test("team transaction includes organization, space and entitlement", () => { const body=migration.match(/create function public\.provision_team[\s\S]*?end \$\$;/)?.[0]||"";assert.match(body,/insert into public\.organizations/);assert.match(body,/insert into public\.spaces/);assert.match(body,/insert into public\.zero_limit_entitlements/); });
 test("invitation acceptance is locked, email-bound and idempotent", () => { assert.match(migration,/token_hash text not null unique/);assert.match(migration,/for update/);assert.match(migration,/invitation_row\.email <> auth_email/);assert.match(migration,/on conflict \(organization_id,profile_id\) do nothing/); });
 test("entitlement status and time are constrained", () => { assert.match(migration,/status in \('active', 'suspended', 'revoked'\)/);assert.match(migration,/expires_at is null or expires_at > starts_at/); });
