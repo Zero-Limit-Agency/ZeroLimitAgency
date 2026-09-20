@@ -38,7 +38,7 @@ export async function POST(request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     if (error instanceof TeamManagementError) {
-      return NextResponse.json({ success: false, code: error.code }, { status: error.status });
+      return NextResponse.json({ success: false, code: error.code, correlationId: error.correlationId }, { status: error.status });
     }
     console.error("[team-management] mutation failure", { correlationId, name: error?.name });
     return NextResponse.json({ success: false, code: "unexpected_error", correlationId }, { status: 500 });

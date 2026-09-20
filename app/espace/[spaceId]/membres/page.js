@@ -22,7 +22,7 @@ export default async function TeamMembersPage({ params }) {
     const correlationId = reportSpaceDataAccessError(error, "/espace/[spaceId]/membres");
     if (correlationId) return <main className="identity-shell"><section className="identity-card"><h1>Service indisponible</h1><p>Réessayez dans quelques instants.</p><code>{correlationId}</code></section></main>;
     if (error instanceof TeamManagementError) {
-      const teamCorrelationId = crypto.randomUUID();
+      const teamCorrelationId = error.correlationId || crypto.randomUUID();
       console.error("[team-management] read failure", { correlationId: teamCorrelationId, code: error.code });
       return <main className="identity-shell"><section className="identity-card"><h1>Service indisponible</h1><p>Réessayez dans quelques instants.</p><code>{teamCorrelationId}</code></section></main>;
     }

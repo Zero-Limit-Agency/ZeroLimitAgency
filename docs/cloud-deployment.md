@@ -39,6 +39,19 @@ GOOGLE_OAUTH_REDIRECT_URI=https://zerolimit.agency/api/google/oauth/callback
 GOOGLE_DRIVE_LEADS_ROOT_FOLDER_ID=
 ```
 
+## Redirects Supabase Auth en Preview
+
+Les emails de confirmation Zero Limit ID redirigent vers le domaine du déploiement Vercel courant en Preview, vers `NEXT_PUBLIC_APP_URL` en production, et vers localhost en développement. `VERCEL_URL` est fourni par Vercel : l'application n'accepte pas le header `Host` comme origine de confiance en production ou en Preview.
+
+Dans **Supabase Authentication > URL Configuration**, conserver le domaine canonique comme Site URL et ajouter aux Redirect URLs :
+
+- `https://zerolimit.agency/identite/confirmation` ;
+- `https://zerolimit.agency/identite/nouveau-mot-de-passe` ;
+- `https://zerolimit.agency/connexion/definir-mot-de-passe` ;
+- les mêmes chemins pour les domaines Preview Vercel approuvés du projet (ou un glob Supabase limité au préfixe et au scope Vercel de ce projet, jamais un wildcard global `*.vercel.app`).
+
+Si une URL Preview n'est pas autorisée dans Supabase, GoTrue confirme éventuellement l'email mais retombe sur la Site URL canonique. Lorsque le site canonique est en maintenance, cela ressemble à tort à un blocage du callback. Mettre à jour cette allowlist fait donc partie du déploiement Preview.
+
 ## GitHub Actions
 
 Le workflow `.github/workflows/ci.yml` utilise des valeurs factices pour les secrets afin de compiler l'application sans exposer de données sensibles.
