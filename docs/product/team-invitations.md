@@ -1,9 +1,19 @@
-# Invitations Team
+# Produit — Invitations Team
 
-Le serveur génère 32 octets aléatoires, transmet le secret dans le lien et ne conserve que son SHA-256. Le token n'est jamais journalisé. L'invitation expire après sept jours, est mono-usage, peut donner `admin` ou `member` (jamais owner) et seul le propriétaire canonique ou un admin peut l'émettre. Une invitation pending pour le même email normalisé et la même organisation est remplacée atomiquement.
+## Cycle de vie
 
-À l'acceptation, la RPC verrouille la ligne, charge l'email canonique depuis `auth.users`, exige `email_confirmed_at`, puis vérifie hash, expiration, révocation, usage et égalité après `trim + lowercase` avec l'email de transport. Aucun traitement Gmail des points ou `+alias` n'est effectué. Ce contrôle sécurise uniquement l'acceptation initiale: le membership durable référence `profile.id`, jamais l'email. L'insertion membership est unique/idempotente, l'invitation est marquée acceptée et le Team Space est retourné dans la même transaction.
+Un propriétaire ou admin invite une adresse email avec le rôle `admin` ou `member`. Le serveur génère un token aléatoire, n’en stocke que le hash et limite le lien à sept jours. L’acceptation exige une session dont l’email vérifié correspond, verrouille l’invitation, crée la membership de la bonne organisation et conserve les audits `team_invitation_created` / `team_invitation_accepted`.
 
-Un utilisateur déconnecté reçoit des liens connexion/inscription conservant uniquement une URL `/invitation/team/<token>` validée; toute autre destination retombe sur `/identite`. Resend est utilisé si `RESEND_API_KEY` et `ZERO_LIMIT_EMAIL_FROM` existent. Le lien brut est retourné si `VERCEL_ENV=preview`, ou en local sans `VERCEL_ENV` quand `NODE_ENV!=production`; il ne l'est jamais si `VERCEL_ENV=production`. Aucun token n'est écrit dans les logs.
+Seuls owner/admin voient les invitations actives (email de transport, rôle, création, expiration et éventuel nom public de l’invitant). Un membre simple ne voit pas ces emails. La table source n’est jamais rendue librement sélectionnable et les read models n’exposent ni token, ni `token_hash`.
 
-Les cas invalide, expiré, révoqué, déjà utilisé, email différent et accès interdit ont des messages dédiés. La révocation UI, le transfert de propriété et la suppression complète seront des workflows futurs.
+## Renvoyer et révoquer
+
+Renvoyer génère un nouveau token côté serveur, verrouille la même invitation pending, remplace atomiquement l’ancien hash et l’expiration, puis envoie le nouveau lien. L’ancien lien devient immédiatement inutilisable et il n’existe jamais deux tokens valides concurrents pour cette invitation. L’événement `team_invitation_resent` ne contient aucun token.
+
+Révoquer renseigne `revoked_at` sous verrou. L’opération répétée est idempotente, l’acceptation ultérieure échoue et `team_invitation_revoked` est audité. Une invitation déjà acceptée ne peut être révoquée ou renvoyée.
+
+Les mutations accept/revoke/resend se sérialisent sur la ligne d’invitation. La première transaction validée détermine l’état que la suivante revalide. Les confirmations protègent la révocation accidentelle.
+
+## Évolutions futures
+
+Le nombre d’invitations ou membres pourra alimenter un futur calcul de sièges au niveau de l’abonnement Organization. Aucun modèle de siège, abonnement, paiement ou Stripe n’est introduit ici.

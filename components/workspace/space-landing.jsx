@@ -1,4 +1,4 @@
-import { TeamInvitationForm } from "@/components/workspace/team-invitation-form";
+import Link from "next/link";
 
 export function SpaceLanding({ space, labels }) {
   const title = space.kind === "team" ? space.organization.name : space.name;
@@ -12,6 +12,6 @@ export function SpaceLanding({ space, labels }) {
       {space.kind === "team" && <><div><dt>{labels.organization}</dt><dd>{space.organization.name}</dd></div><div><dt>{labels.role}</dt><dd>{labels.roles[space.role]}{space.isOwner ? ` · ${labels.owner}` : ""}</dd></div></>}
     </dl>
     <div className="space-placeholder"><p>{moduleText}</p></div>
-    {space.kind === "team" && (space.isOwner || space.role === "admin") && <TeamInvitationForm organizationId={space.organization.id} labels={labels} />}
+    {space.kind === "team" && <Link className="team-management-link" href={`/espace/${space.id}/membres`}>{labels.teamManagement.manageMembers}</Link>}
   </section>;
 }
