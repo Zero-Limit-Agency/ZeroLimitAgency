@@ -9,3 +9,5 @@ Personal est unique par `(owner_profile_id, personal_profession)`; Creator par p
 L'API fixe le dernier Space dans un cookie seulement après succès. Le switcher recharge ses données serveur; `requireSpaceAccess` revalide toujours l'accès. Les erreurs attendues deviennent des messages produit; les erreurs inconnues obtiennent un correlation ID sans SQL, réponse PostgREST ou stack côté client.
 
 Une organisation n'a qu'un Team Space principal aujourd'hui. Une évolution multi-Space exigera une migration supprimant/remplaçant consciemment cet index. Suppression, transfert de propriété, rétention, révocation et billing restent hors périmètre.
+
+Preview validation checkpoint — provisioning recette
