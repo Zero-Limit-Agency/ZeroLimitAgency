@@ -6,10 +6,27 @@ import { canReturnPreviewInvitationToken, isInteractiveProvisioningEnabled } fro
 import { teamInvitationReturnPath } from "../../lib/security/internal-return-url.js";
 
 const migration = await readFile(new URL("../../supabase/migrations/20260920_space_provisioning_entitlements.sql", import.meta.url), "utf8");
+const auditMigration = await readFile(new URL("../../supabase/migrations/20260703_security_policies_and_entitlements.sql", import.meta.url), "utf8");
 const provisioningService = await readFile(new URL("../../lib/zero-limit-id/provisioning.js", import.meta.url), "utf8");
 const provisioningRoute = await readFile(new URL("../../app/api/spaces/provision/route.js", import.meta.url), "utf8");
 
 test("Zero Limit entitlements are separate and exactly one-scoped", () => { assert.match(migration,/create table public\.zero_limit_entitlements/);assert.match(migration,/num_nonnulls\(profile_id, space_id, organization_id\) = 1/);assert.doesNotMatch(migration,/alter table public\.entitlements/); });
+test("provisioning fails early when the historical audit foundation is absent or incompatible", () => {
+  assert.match(auditMigration, /create table if not exists public\.audit_logs/);
+  assert.match(migration, /pg_catalog\.to_regclass\('public\.audit_logs'\) is null/);
+  assert.match(migration, /missing prerequisite migration: 20260703_security_policies_and_entitlements\.sql/);
+  for (const [column, type] of [
+    ["actor_user_id", "uuid"],
+    ["actor_role", "text"],
+    ["action", "text"],
+    ["resource_type", "text"],
+    ["resource_id", "text"],
+    ["metadata", "jsonb"],
+  ]) {
+    assert.match(migration, new RegExp(`\\('${column}', '${type}'\\)`));
+  }
+  assert.ok(migration.indexOf("pg_catalog.to_regclass('public.audit_logs')") < migration.indexOf("create table public.zero_limit_entitlements"));
+});
 test("database enforces Personal, Creator and Team uniqueness", () => { assert.match(migration,/spaces_one_personal_profession_per_profile/);assert.match(migration,/spaces_one_creator_per_profile/);assert.match(migration,/spaces_one_team_per_organization/); });
 test("provisioning is backend-only and derives a profile from the server-authenticated Auth user", () => { assert.match(migration,/auth\.role\(\) <> 'service_role'.*backend_only/);assert.match(migration,/where auth_user_id=actor_auth_user_id/);assert.match(migration,/grant execute on function public\.provision_personal_space\(uuid,text,text\)[^;]*to service_role/);assert.doesNotMatch(migration,/grant execute on function public\.provision_personal_space[^;]*to authenticated/); });
 test("Preview provisioning follows the session-checked backend-only service path", () => {
