@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { findAccessibleSpace, normalizeAccessibleSpaces, resolveLastActiveSpace } from "../../lib/zero-limit-id/space-model.js";
 
 const profile = { id: "profile-a", display_name: "Ada" };
@@ -24,4 +25,10 @@ test("platform roles cannot enter normalized switcher data", () => {
   const spaces = normalize({ ownedSpaces: [personal("p1", "coach")], platform_roles: [{ role: "platform_owner" }] });
   assert.equal(spaces.length, 1);
   assert.equal("platformRole" in spaces[0], false);
+});
+
+test("the private shell replaces the switcher with a non-interactive zero-space status", async () => {
+  const shell = await readFile(new URL("../../components/workspace/private-shell.jsx", import.meta.url), "utf8");
+  assert.match(shell, /spaces\.length > 0\s*\? <SpaceSwitcher/);
+  assert.match(shell, /className="space-switcher-empty" role="status"/);
 });
