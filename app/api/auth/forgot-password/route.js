@@ -3,13 +3,9 @@ import { NextResponse } from "next/server";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import { isValidEmailAddress, normalizeEmailAddress } from "@/lib/security/uploads";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { buildAuthRedirectUrl } from "@/lib/auth/deployment-url";
 
 export const runtime = "nodejs";
-
-function buildPasswordResetRedirectUrl() {
-  const appUrl = String(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/$/, "");
-  return `${appUrl}/connexion/definir-mot-de-passe`;
-}
 
 export async function POST(request) {
   try {
@@ -41,7 +37,7 @@ export async function POST(request) {
     }
 
     const adminClient = createSupabaseAdminClient();
-    await adminClient.auth.sendPasswordRecovery(email, buildPasswordResetRedirectUrl());
+    await adminClient.auth.sendPasswordRecovery(email, buildAuthRedirectUrl("/connexion/definir-mot-de-passe", process.env, request.url));
 
     return NextResponse.json({
       success: true,
