@@ -2,7 +2,7 @@ import Link from "next/link";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { SpaceSwitcher } from "@/components/workspace/space-switcher";
 
-export function PrivateShell({ children, profile, spaces, currentSpace, labels }) {
+export function PrivateShell({ children, profile, spaces, currentSpace, modules = [], labels }) {
   return <div className="private-shell">
     <header className="private-topbar">
       <Link className="private-brand" href="/espace" aria-label="Zero Limit — espaces">ZERO LIMIT</Link>
@@ -15,6 +15,9 @@ export function PrivateShell({ children, profile, spaces, currentSpace, labels }
         <LogoutButton className="private-logout" label={labels.logout} />
       </nav>
     </header>
+    {currentSpace && modules.length > 0 && <nav className="module-navigation" aria-label={labels.modules || "Modules"}>
+      {modules.map((module) => <Link key={module.key} href={module.href.replace("[spaceId]", currentSpace.id)}>{labels[module.labelKey] || module.labelKey}</Link>)}
+    </nav>}
     <main className="private-content">{children}</main>
   </div>;
 }
