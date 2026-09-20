@@ -37,6 +37,13 @@ export function SpaceSwitcher({ spaces, currentSpace, labels }) {
           <small>{space.kind === "personal" ? labels.professions[space.profession] : space.kind === "team" ? labels.roles[space.role] : labels.groups.creator}</small>
         </Link>)}</section>;
       })}
+      <div className="space-switcher-create" role="group" aria-label={labels.createOrJoinSpace}>
+        <div role="separator" />
+        <Link role="menuitem" href="/espace" onClick={() => setOpen(false)}>
+          <span aria-hidden="true">＋</span>
+          <span>{labels.createOrJoinSpace}</span>
+        </Link>
+      </div>
     </div>}
   </div>;
 }

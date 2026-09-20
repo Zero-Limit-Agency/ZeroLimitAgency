@@ -1,5 +1,7 @@
 # Provisioning des espaces
 
+La migration `20260920_space_provisioning_entitlements.sql` dépend explicitement de la table d'audit legacy `public.audit_logs` et vérifie avant toute création d'objet que les six colonnes écrites ont les types historiques attendus. Pour les environnements Preview désynchronisés où les migrations Zero Limit sont déjà marquées comme appliquées mais où cette table manque, `20260921_repair_preview_audit_logs.sql` restaure uniquement la table, ses index, sa RLS et, si son prédicat existe déjà, sa policy admin canonique. Cette réparation additive ne rejoue pas la migration de sécurité legacy complète, ne crée aucune autre table et ne contourne jamais l'audit.
+
 Les RPC `provision_personal_space`, `provision_creator_space` et `provision_team` sont la couche transactionnelle réutilisable backend-only. `authenticated` et `anon` n'ont aucun droit EXECUTE; seul `service_role` peut les appeler. La route Next.js vérifie d'abord la session, puis transmet côté serveur l'`auth.users.id` vérifié afin que la RPC dérive le profil correspondant. La clé service-role reste exclusivement serveur. Les RPC ont un `search_path = pg_catalog, public`, tous les objets applicatifs sont qualifiés et `CREATE` sur le schéma `public` est révoqué à `PUBLIC`.
 
 La route interactive gratuite est active en développement/Preview. Elle est fermée si `VERCEL_ENV=production`, ou si `VERCEL_ENV` est absent avec `NODE_ENV=production`, sauf opt-in exact `ZERO_LIMIT_INTERACTIVE_PROVISIONING=enabled`. Un appel Supabase direct ne contourne pas cette frontière puisque `authenticated` ne peut pas exécuter les RPC de provisioning. À terme, un webhook billing signé pourra appeler la même couche backend avec une source `subscription`, sans dépendre de l'UI.
@@ -9,3 +11,5 @@ Personal est unique par `(owner_profile_id, personal_profession)`; Creator par p
 L'API fixe le dernier Space dans un cookie seulement après succès. Le switcher recharge ses données serveur; `requireSpaceAccess` revalide toujours l'accès. Les erreurs attendues deviennent des messages produit; les erreurs inconnues obtiennent un correlation ID sans SQL, réponse PostgREST ou stack côté client.
 
 Une organisation n'a qu'un Team Space principal aujourd'hui. Une évolution multi-Space exigera une migration supprimant/remplaçant consciemment cet index. Suppression, transfert de propriété, rétention, révocation et billing restent hors périmètre.
+
+Preview validation checkpoint — provisioning recette

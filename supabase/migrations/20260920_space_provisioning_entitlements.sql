@@ -6,6 +6,46 @@
 -- application objects. Untrusted roles cannot create shadowing objects in public.
 revoke create on schema public from public;
 
+-- Provisioning deliberately reuses the legacy audit foundation. Fail before
+-- creating any provisioning objects when migration history is incomplete,
+-- rather than leaving functions that only fail later when first executed.
+do $$
+declare
+  missing_or_incompatible_columns text;
+begin
+  if pg_catalog.to_regclass('public.audit_logs') is null then
+    raise exception using
+      errcode = '42P01',
+      message = 'missing prerequisite migration: 20260703_security_policies_and_entitlements.sql';
+  end if;
+
+  select pg_catalog.string_agg(required.column_name, ', ' order by required.column_name)
+    into missing_or_incompatible_columns
+  from (
+    values
+      ('actor_user_id', 'uuid'),
+      ('actor_role', 'text'),
+      ('action', 'text'),
+      ('resource_type', 'text'),
+      ('resource_id', 'text'),
+      ('metadata', 'jsonb')
+  ) as required(column_name, data_type)
+  left join pg_catalog.pg_attribute attribute
+    on attribute.attrelid = 'public.audit_logs'::pg_catalog.regclass
+   and attribute.attname = required.column_name
+   and not attribute.attisdropped
+   and pg_catalog.format_type(attribute.atttypid, attribute.atttypmod) = required.data_type
+  where attribute.attname is null;
+
+  if missing_or_incompatible_columns is not null then
+    raise exception using
+      errcode = '42804',
+      message = 'public.audit_logs is incompatible with provisioning; missing or incompatible columns: '
+        || missing_or_incompatible_columns;
+  end if;
+end
+$$;
+
 create table public.zero_limit_entitlements (
   id uuid primary key default gen_random_uuid(),
   key text not null,
