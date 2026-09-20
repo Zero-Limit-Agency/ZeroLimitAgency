@@ -1,0 +1,7 @@
+"use client";
+import { useState } from "react";
+export function TeamInvitationForm({ organizationId, labels }) {
+  const [state,setState]=useState({status:"idle",message:"",url:""});
+  async function submit(event){event.preventDefault();const data=new FormData(event.currentTarget);setState({status:"loading",message:labels.processing,url:""});const response=await fetch("/api/team/invitations",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({organizationId,email:data.get("email"),role:data.get("role")})});const result=await response.json().catch(()=>null);if(!response.ok)return setState({status:"error",message:result?.error||labels.genericError,url:""});setState({status:"success",message:result.delivery==="sent"?labels.invitationSent:labels.invitationCreated,url:result.previewUrl||""});event.currentTarget.reset();}
+  return <form className="invite-form" onSubmit={submit} aria-busy={state.status==="loading"}><h2>{labels.inviteMember}</h2><label>{labels.email}<input name="email" type="email" required /></label><label>{labels.role}<select name="role"><option value="member">{labels.roles.member}</option><option value="admin">{labels.roles.admin}</option></select></label><button className="button button-primary" disabled={state.status==="loading"}>{labels.sendInvitation}</button><p role={state.status==="error"?"alert":"status"} className={`identity-feedback ${state.status}`}>{state.message}</p>{state.url&&<a href={state.url}>{labels.previewInvitation}</a>}</form>;
+}

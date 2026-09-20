@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function IdentityAuthForm({ mode }) {
+export function IdentityAuthForm({ mode, redirectTo = "/identite" }) {
   const router = useRouter();
   const [state, setState] = useState({ status: "idle", message: "" });
   async function submit(event) {
@@ -12,11 +12,11 @@ export function IdentityAuthForm({ mode }) {
     const password = String(data.get("password") || "");
     if (mode === "signup" && password !== data.get("confirmPassword")) return setState({ status: "error", message: "Les mots de passe ne correspondent pas." });
     setState({ status: "loading", message: "Traitement en cours…" });
-    const response = await fetch(`/api/id/${mode === "signup" ? "signup" : "login"}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: data.get("email"), password, acceptedTerms: data.get("terms") === "on" }) });
+    const response = await fetch(`/api/id/${mode === "signup" ? "signup" : "login"}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: data.get("email"), password, acceptedTerms: data.get("terms") === "on", redirectTo }) });
     const result = await response.json().catch(() => null);
     if (!response.ok) return setState({ status: "error", message: result?.error || "Une erreur est survenue." });
     setState({ status: "success", message: result.message || "Connexion réussie." });
-    if (mode === "login" || result.hasSession) { router.replace("/identite"); router.refresh(); }
+    if (mode === "login" || result.hasSession) { router.replace(redirectTo); router.refresh(); }
   }
   const signup = mode === "signup";
   return <form className="identity-form" onSubmit={submit} aria-busy={state.status === "loading"}>
