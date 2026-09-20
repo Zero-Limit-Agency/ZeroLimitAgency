@@ -17,9 +17,9 @@ const registry = createModuleRegistry([
   fixture("fixture_creator", { supportedSpaceKinds: ["creator"], order: 30 }),
   fixture("fixture_team", { supportedSpaceKinds: ["team"], order: 40 })
 ]);
-const personal = (profession) => ({ id: `personal-${profession}`, kind: "personal", profession });
-const creator = { id: "creator", kind: "creator" };
-const team = (role = "member", isOwner = false) => ({ id: "team", kind: "team", role, isOwner, organization: { id: "org" } });
+const personal = (profession) => ({ id: `personal-${profession}`, kind: "personal", status: "active", profession });
+const creator = { id: "creator", kind: "creator", status: "active" };
+const team = (role = "member", isOwner = false) => ({ id: "team", kind: "team", status: "active", role, isOwner, organization: { id: "org" } });
 const yes = () => true;
 
 // Fixtures remain test-only; the production registry is deliberately empty.

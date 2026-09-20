@@ -4,11 +4,11 @@ import { readFile } from "node:fs/promises";
 import { findAccessibleSpace, normalizeAccessibleSpaces, resolveLastActiveSpace } from "../../lib/zero-limit-id/space-model.js";
 
 const profile = { id: "profile-a", display_name: "Ada" };
-const personal = (id, profession) => ({ id, kind: "personal", name: `Personal ${profession}`, owner_profile_id: "profile-a", organization_id: null, personal_profession: profession });
-const creator = { id: "creator-a", kind: "creator", name: "Creator Ada", owner_profile_id: "profile-a", organization_id: null, personal_profession: null };
+const personal = (id, profession) => ({ id, kind: "personal", status: "active", name: `Personal ${profession}`, owner_profile_id: "profile-a", organization_id: null, personal_profession: profession });
+const creator = { id: "creator-a", kind: "creator", status: "active", name: "Creator Ada", owner_profile_id: "profile-a", organization_id: null, personal_profession: null };
 const membership = (organization_id, role = "member") => ({ organization_id, profile_id: "profile-a", role });
 const organization = (id, owner_profile_id = "someone-else") => ({ id, name: `Team ${id}`, owner_profile_id });
-const team = (id, organization_id) => ({ id, kind: "team", name: `Space ${id}`, owner_profile_id: null, organization_id, personal_profession: null });
+const team = (id, organization_id) => ({ id, kind: "team", status: "active", name: `Space ${id}`, owner_profile_id: null, organization_id, personal_profession: null });
 const active = (values) => ({ status: "active", starts_at: "2020-01-01T00:00:00Z", expires_at: null, profile_id: null, space_id: null, organization_id: null, ...values });
 const normalize = (values = {}) => {
   const ownedSpaces = values.ownedSpaces || [];
@@ -32,6 +32,10 @@ test("a Team in another organization is rejected", () => assert.equal(findAccess
 test("organization owner flag comes only from owner_profile_id", () => assert.equal(normalize({ memberships: [membership("a", "admin")], organizations: [organization("a", "profile-a")], teamSpaces: [team("ta", "a")] })[0].isOwner, true));
 test("revoked personal entitlement hides an owned Personal space", () => assert.deepEqual(normalize({ ownedSpaces: [personal("p1", "coach")], entitlements: [active({ key: "personal_access", space_id: "p1", status: "revoked" })] }), []));
 test("suspended creator entitlement hides an owned Creator space", () => assert.deepEqual(normalize({ ownedSpaces: [creator], entitlements: [active({ key: "creator_access", space_id: creator.id, status: "suspended" })] }), []));
+test("archived and suspended spaces are excluded even with active entitlements", () => {
+  assert.deepEqual(normalize({ ownedSpaces: [{ ...personal("p1", "coach"), status: "archived" }] }), []);
+  assert.deepEqual(normalize({ ownedSpaces: [{ ...creator, status: "suspended" }] }), []);
+});
 test("expired Team entitlement hides a Team despite membership", () => assert.deepEqual(normalize({ memberships: [membership("a")], organizations: [organization("a")], teamSpaces: [team("ta", "a")], entitlements: [active({ key: "team_access", organization_id: "a", expires_at: "2020-01-02T00:00:00Z" })] }), []));
 test("platform roles cannot enter normalized switcher data", () => {
   const spaces = normalize({ ownedSpaces: [personal("p1", "coach")], platform_roles: [{ role: "platform_owner" }] });

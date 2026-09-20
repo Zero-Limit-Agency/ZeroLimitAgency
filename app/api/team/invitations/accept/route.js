@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { acceptTeamInvitation, ProvisioningError } from "@/lib/zero-limit-id/provisioning";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 
-const messages = { invitation_invalid: "Cette invitation est invalide.", invitation_expired: "Cette invitation a expiré.", invitation_revoked: "Cette invitation a été révoquée.", invitation_email_mismatch: "Connectez-vous avec l’adresse email qui a reçu l’invitation.", invitation_email_unverified: "Confirmez votre adresse email avant d’accepter cette invitation.", invitation_used: "Cette invitation a déjà été utilisée.", authentication_required: "Connectez-vous pour accepter l’invitation." };
+const messages = { invitation_invalid: "Cette invitation est invalide.", invitation_expired: "Cette invitation a expiré.", invitation_revoked: "Cette invitation a été révoquée.", invitation_email_mismatch: "Connectez-vous avec l’adresse email qui a reçu l’invitation.", invitation_email_unverified: "Confirmez votre adresse email avant d’accepter cette invitation.", invitation_used: "Cette invitation a déjà été utilisée.", team_space_inactive: "Cette Team est inactive ; l’invitation ne peut pas être acceptée.", authentication_required: "Connectez-vous pour accepter l’invitation." };
 export async function POST(request) {
   const limited = await checkRateLimit(request, { key: "team-invitation-accept", limit: 15, windowMs: 60000 });
   if (limited) return limited;

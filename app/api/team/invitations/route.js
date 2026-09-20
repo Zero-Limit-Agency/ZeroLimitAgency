@@ -24,7 +24,7 @@ export async function POST(request) {
     return NextResponse.json({ success: true, delivery: delivery.ok ? "sent" : "pending", previewUrl: canReturnPreviewInvitationToken() ? url : undefined });
   } catch (error) {
     if (error instanceof ProvisioningError) {
-      const messages = { invalid_email: "Adresse email invalide.", invalid_role: "Rôle invalide.", invitation_forbidden: "Vous ne pouvez pas inviter dans cette Team.", authentication_required: "Reconnectez-vous pour continuer." };
+      const messages = { invalid_email: "Adresse email invalide.", invalid_role: "Rôle invalide.", invitation_forbidden: "Vous ne pouvez pas inviter dans cette Team.", team_space_inactive: "Les invitations sont indisponibles tant que cette Team est inactive.", authentication_required: "Reconnectez-vous pour continuer." };
       return NextResponse.json({ success: false, error: messages[error.code] || "Invitation impossible." }, { status: error.status });
     }
     console.error("[team-invitation] creation failure", { correlationId, name: error?.name });
