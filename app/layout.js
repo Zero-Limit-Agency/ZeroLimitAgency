@@ -5,6 +5,7 @@ export const metadata = {
 };
 
 import "./globals.css";
+import { Analytics } from '@vercel/analytics/next';
 
 export default function RootLayout({ children }) {
   return (
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className="site-root">
         <div className="app-root">{children}</div>
+        <Analytics />
       </body>
     </html>
   );
