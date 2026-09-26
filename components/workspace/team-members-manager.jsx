@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { TeamInvitationForm } from "@/components/workspace/team-invitation-form";
+import { PageHeader } from "@/components/workspace/page-header";
 
 export function TeamMembersManager({ organizationId, spaceId, currentProfileId, actor, initialData, labels }) {
   const router = useRouter();
@@ -62,10 +63,7 @@ export function TeamMembersManager({ organizationId, spaceId, currentProfileId, 
   }
 
   return <section className="team-management" aria-labelledby="team-members-title">
-    <header className="team-management-heading">
-      <div><p className="space-kind">{labels.groups.team}</p><h1 id="team-members-title">{labels.teamManagement.members}</h1><p>{labels.teamManagement.visibility}</p></div>
-      <Link className="team-back-link" href={`/espace/${spaceId}`}>{labels.teamManagement.backToTeam}</Link>
-    </header>
+    <PageHeader titleId="team-members-title" eyebrow={labels.groups.team} title={labels.teamManagement.members} description={labels.teamManagement.visibility} actions={<Link className="workspace-button workspace-button-secondary" href={`/espace/${spaceId}`}>{labels.teamManagement.backToTeam}</Link>} />
     <p className={`team-feedback ${feedback.type}`} role={feedback.type === "error" ? "alert" : "status"} aria-live="polite">{feedback.message}</p>
 
     {[["owner", labels.owner], ["admin", labels.teamManagement.admins], ["member", labels.teamManagement.membersGroup]].map(([key, title]) => <section className="team-group" key={key}>
