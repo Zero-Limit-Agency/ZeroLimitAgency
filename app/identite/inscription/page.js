@@ -1,2 +1,3 @@
-import { IdentityAuthForm } from "@/components/identity/auth-form"; import { IdentityShell } from "@/components/identity/identity-shell"; import { teamInvitationReturnPath } from "@/lib/security/internal-return-url";
-export const metadata={title:"Créer un Zero Limit ID"}; export default function Page({searchParams}){const next=teamInvitationReturnPath(searchParams?.next);return <IdentityShell title="Créer votre identité" subtitle="Un identifiant stable pour toutes vos futures expériences Zero Limit."><IdentityAuthForm mode="signup" redirectTo={next} /></IdentityShell>}
+import { redirect } from "next/navigation";
+import { buildLegacyAuthRedirect } from "@/lib/auth/public-routes";
+export default function Page({ searchParams }) { redirect(buildLegacyAuthRedirect("/inscription", searchParams)); }

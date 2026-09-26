@@ -17,7 +17,7 @@ export default async function TeamMembersPage({ params }) {
     const canManageInvitations = context.space.isOwner || context.space.role === "admin";
     context.management = await getTeamManagement(context.space.organization.id, canManageInvitations);
   } catch (error) {
-    if (error instanceof AuthenticationRequiredError || error instanceof TeamManagementError && error.code === "authentication_required") redirect("/identite/connexion");
+    if (error instanceof AuthenticationRequiredError || error instanceof TeamManagementError && error.code === "authentication_required") redirect("/connexion");
     if (error instanceof SpaceAccessDeniedError) notFound();
     const correlationId = reportSpaceDataAccessError(error, "/espace/[spaceId]/membres");
     if (correlationId) return <main className="identity-shell"><section className="identity-card"><h1>Service indisponible</h1><p>Réessayez dans quelques instants.</p><code>{correlationId}</code></section></main>;

@@ -11,7 +11,7 @@ export default async function SpacesPage() {
   let context;
   try { context = await getAccessibleSpacesForCurrentProfile(); }
   catch (error) {
-    if (error instanceof AuthenticationRequiredError) redirect("/identite/connexion");
+    if (error instanceof AuthenticationRequiredError) redirect("/connexion");
     const correlationId = reportSpaceDataAccessError(error, "/espace");
     if (correlationId) return <main className="identity-shell"><section className="identity-card"><h1>Service indisponible</h1><p>Réessayez dans quelques instants.</p><code>{correlationId}</code></section></main>;
     throw error;

@@ -45,8 +45,8 @@ Les emails de confirmation Zero Limit ID redirigent vers le domaine du déploiem
 
 Dans **Supabase Authentication > URL Configuration**, conserver le domaine canonique comme Site URL et ajouter aux Redirect URLs :
 
-- `https://zerolimit.agency/identite/confirmation` ;
-- `https://zerolimit.agency/identite/nouveau-mot-de-passe` ;
+- `https://zerolimit.agency/confirmation` ;
+- `https://zerolimit.agency/nouveau-mot-de-passe` ;
 - `https://zerolimit.agency/connexion/definir-mot-de-passe` ;
 - les mêmes chemins pour les domaines Preview Vercel approuvés du projet (ou un glob Supabase limité au préfixe et au scope Vercel de ce projet, jamais un wildcard global `*.vercel.app`).
 

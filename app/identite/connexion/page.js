@@ -1,2 +1,3 @@
-import { redirect } from "next/navigation"; import { IdentityAuthForm } from "@/components/identity/auth-form"; import { IdentityShell } from "@/components/identity/identity-shell"; import { getClientSession } from "@/lib/auth/client-auth"; import { teamInvitationReturnPath } from "@/lib/security/internal-return-url";
-export const metadata={title:"Connexion Zero Limit ID"}; export default async function Page({searchParams}){const next=teamInvitationReturnPath(searchParams?.next);if((await getClientSession())?.user) redirect(next);return <IdentityShell title="Connexion" subtitle="Retrouvez votre Zero Limit ID."><IdentityAuthForm mode="login" redirectTo={next} /></IdentityShell>};
+import { redirect } from "next/navigation";
+import { buildLegacyAuthRedirect } from "@/lib/auth/public-routes";
+export default function Page({ searchParams }) { redirect(buildLegacyAuthRedirect("/identite/connexion", searchParams)); }

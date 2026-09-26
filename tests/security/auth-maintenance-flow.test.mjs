@@ -13,7 +13,7 @@ test("Preview Auth redirects use the trusted Vercel deployment URL without hardc
     NODE_ENV: "production"
   };
   assert.equal(resolveAuthRedirectOrigin(environment, "https://evil.example"), "https://z0agency-git-fix-acme.vercel.app");
-  assert.equal(buildAuthRedirectUrl("/identite/confirmation?next=%2Fidentite", environment), "https://z0agency-git-fix-acme.vercel.app/identite/confirmation?next=%2Fidentite");
+  assert.equal(buildAuthRedirectUrl("/confirmation?next=%2Fidentite", environment), "https://z0agency-git-fix-acme.vercel.app/confirmation?next=%2Fidentite");
 });
 
 test("production Auth redirects keep the configured canonical origin", () => {
@@ -51,8 +51,7 @@ test("Auth redirect origin rejects host poisoning and unsafe internal destinatio
 
 test("maintenance is page-local and does not intercept the required identity completion routes", () => {
   assert.match(readFileSync("app/page.js", "utf8"), /maintenanceSettings\.enabled/);
-  assert.match(readFileSync("app/connexion/page.js", "utf8"), /maintenanceSettings\.enabled/);
-  for (const path of ["app/identite/confirmation/page.js", "app/identite/nouveau-mot-de-passe/page.js", "app/invitation/team/[token]/page.js"]) {
+  for (const path of ["app/connexion/page.js", "app/inscription/page.js", "app/mot-de-passe-oublie/page.js", "app/confirmation/page.js", "app/nouveau-mot-de-passe/page.js", "app/invitation/team/[token]/page.js"]) {
     assert.doesNotMatch(readFileSync(path, "utf8"), /MaintenanceScreen|getMaintenanceModeState/);
   }
   const middleware = readFileSync("middleware.js", "utf8");
@@ -69,7 +68,7 @@ test("confirmation and reset use the trusted URL resolver and required session e
   assert.match(signup, /buildAuthRedirectUrl\(confirmationPath, process\.env, request\.url\)/);
   assert.match(confirmation, /fetch\("\/api\/id\/session"/);
   assert.match(confirmation, /teamInvitationReturnPath/);
-  assert.match(reset, /buildAuthRedirectUrl\("\/identite\/nouveau-mot-de-passe"/);
+  assert.match(reset, /buildAuthRedirectUrl\("\/nouveau-mot-de-passe"/);
   assert.match(legacyReset, /buildAuthRedirectUrl\("\/connexion\/definir-mot-de-passe"/);
   assert.match(activation, /buildAuthRedirectUrl\("\/connexion\/definir-mot-de-passe"\)/);
 });

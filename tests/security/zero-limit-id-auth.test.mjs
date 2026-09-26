@@ -31,7 +31,7 @@ test("profile creation is caller-derived, idempotent, and independent from legac
 
 test("private pages reject missing sessions and logout revokes upstream session", () => {
   assert.match(fs.readFileSync("app/identite/page.js", "utf8"), /AuthenticationRequiredError/);
-  assert.match(fs.readFileSync("app/identite/onboarding/page.js", "utf8"), /redirect\("\/identite\/connexion"\)/);
+  assert.match(fs.readFileSync("app/identite/onboarding/page.js", "utf8"), /redirect\("\/connexion"\)/);
   assert.match(fs.readFileSync("app/api/auth/logout/route.js", "utf8"), /revokeSupabaseSession/);
   assert.match(fs.readFileSync("app/api/auth/logout/route.js", "utf8"), /clearClientAuthCookies/);
 });

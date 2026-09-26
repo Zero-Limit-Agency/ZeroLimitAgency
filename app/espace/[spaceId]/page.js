@@ -13,7 +13,7 @@ export default async function SpacePage({ params }) {
   let context;
   try { context = await getAccessibleModulesForCurrentProfile(params.spaceId); }
   catch (error) {
-    if (error instanceof AuthenticationRequiredError) redirect("/identite/connexion");
+    if (error instanceof AuthenticationRequiredError) redirect("/connexion");
     if (error instanceof SpaceAccessDeniedError) notFound();
     const correlationId = reportSpaceDataAccessError(error, "/espace/[spaceId]");
     if (correlationId) return <main className="identity-shell"><section className="identity-card"><h1>Service indisponible</h1><p>Réessayez dans quelques instants.</p><code>{correlationId}</code></section></main>;

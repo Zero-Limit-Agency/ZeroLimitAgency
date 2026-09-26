@@ -15,7 +15,7 @@ export async function POST(request) {
     return NextResponse.json({ success: false, error: "Vérifiez les informations et acceptez les documents requis." }, { status: 400 });
   }
   const redirectTo = teamInvitationReturnPath(body.redirectTo);
-  const confirmationPath = `/identite/confirmation?next=${encodeURIComponent(redirectTo)}`;
+  const confirmationPath = `/confirmation?next=${encodeURIComponent(redirectTo)}`;
   const result = await signUpWithPassword({ email, password, emailRedirectTo: buildAuthRedirectUrl(confirmationPath, process.env, request.url) });
   if (!result.ok) return NextResponse.json({ success: false, error: "Impossible de créer le compte avec ces informations." }, { status: 400 });
   const response = NextResponse.json({ success: true, hasSession: Boolean(result.data?.access_token), message: result.data?.access_token ? "Compte créé." : "Consultez votre boîte email pour confirmer votre inscription." });

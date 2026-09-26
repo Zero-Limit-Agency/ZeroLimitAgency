@@ -12,7 +12,7 @@ export default async function Page() {
   try {
     profile = await ensureCurrentProfile();
   } catch (error) {
-    if (error instanceof AuthenticationRequiredError) redirect("/identite/connexion");
+    if (error instanceof AuthenticationRequiredError) redirect("/connexion");
     const correlationId = reportProfileDataAccessError(error, "/identite");
     if (correlationId) return <IdentityUnavailable correlationId={correlationId} />;
     throw error;

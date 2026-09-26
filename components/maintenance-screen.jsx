@@ -4,7 +4,7 @@ import { MarketingShell } from "@/components/marketing/marketing-shell";
 import { PublicFooter } from "@/components/marketing/public-chrome";
 import "@/components/marketing/marketing.css";
 
-export function MaintenanceScreen({ settings = DEFAULT_MAINTENANCE_SETTINGS, adminAccessHref = "/connexion?admin_access=1" }) {
+export function MaintenanceScreen({ settings = DEFAULT_MAINTENANCE_SETTINGS }) {
   const state = normalizeMaintenanceSettings(settings);
 
   return (
@@ -18,9 +18,6 @@ export function MaintenanceScreen({ settings = DEFAULT_MAINTENANCE_SETTINGS, adm
         <p className="maintenance-lead">{state.message}</p>
         <p className="maintenance-note">{state.note}</p>
         <Button href="mailto:contact@zerolimit.agency">Nous contacter</Button>
-        <div className="maintenance-admin-entry">
-          <Button className="maintenance-admin-link" variant="ghost" size="sm" href={adminAccessHref}>Accès administrateur</Button>
-        </div>
       </section>
     </main><PublicFooter minimal /></MarketingShell>
   );
