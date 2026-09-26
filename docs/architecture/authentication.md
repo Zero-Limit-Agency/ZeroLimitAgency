@@ -12,7 +12,7 @@ Les cookies existants sont réutilisés : HTTP-only, `SameSite=Lax`, `Secure` en
 
 | État | Destination |
 | --- | --- |
-| non authentifié | `/identite/connexion` ou inscription |
+| non authentifié | `/connexion` ou `/inscription` |
 | authentifié, profil absent | création idempotente serveur |
 | onboarding incomplet | `/identite/onboarding` |
 | onboarding terminé | `/identite` |
@@ -23,7 +23,7 @@ La zone privée et l'onboarding prennent leur décision dans des Server Componen
 
 Les endpoints ont validation serveur, erreurs de login/reset génériques et conservent les protections Supabase. Le rate limiting existant est utilisé, sans prétendre remplacer un limiteur distribué ; Turnstile et une protection distribuée restent à prévoir. Aucun mot de passe/token n'est journalisé. Les événements sensibles futurs à auditer sont les changements d'email, mot de passe et langue, fermeture de compte, liaison provider et actions OWNER.
 
-La route historique `/connexion`, l'admin, `applications`, `client_access`, l'activation client et leur démonstration restent en place. Le nouveau parcours est isolé sous `/identite`; il ne dépend pas de ces tables. OAuth, MFA et passkeys restent futurs.
+`/connexion` est désormais l’entrée publique Zero Limit ID. L’ancien portail client est migré par compatibilité : les comptes reliés à `client_access` sont orientés côté serveur vers `/espace-client`, et `/connexion/definir-mot-de-passe` reste réservée aux activations historiques. Voir `public-auth-routes.md`. OAuth, MFA et passkeys restent futurs.
 
 ## Diagnostic Preview
 

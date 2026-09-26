@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export default async function SettingsPage({ params }) {
   let context, space;
   try { [context, space] = await Promise.all([getAccessibleSpacesForCurrentProfile(), getWorkspaceSettings(params.spaceId)]); }
-  catch (error) { if (error instanceof AuthenticationRequiredError) redirect("/identite/connexion"); if (error instanceof WorkspaceSettingsError && error.status === 404) notFound(); throw error; }
+  catch (error) { if (error instanceof AuthenticationRequiredError) redirect("/connexion"); if (error instanceof WorkspaceSettingsError && error.status === 404) notFound(); throw error; }
   const labels = spaceDictionary(context.profile.preferred_locale);
   return <PrivateShell {...context} currentSpace={space.status === "active" ? space : null} labels={labels}>
     <section className="workspace-settings">

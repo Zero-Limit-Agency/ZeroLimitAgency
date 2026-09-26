@@ -51,7 +51,7 @@ npm run dev
 ## Structure posée
 
 - `app/page.js` : landing publique
-- `app/connexion/page.js` : point d'entrée simple pour connecter Google Drive
+- `app/connexion/page.js` : connexion publique canonique Zero Limit ID (`/connexion/definir-mot-de-passe` reste le flow d’activation client legacy)
 - `app/espace-client/page.js` : base future pour l'espace client
 - `app/api/contact/route.js` : point d'entrée backend du formulaire
 - `app/api/google/oauth/start/route.js` : démarrage OAuth Google

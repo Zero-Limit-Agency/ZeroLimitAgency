@@ -12,12 +12,12 @@ L'intention ne crée ni workspace, organisation, permission, entitlement ou abon
 
 Pré-requis : variables Supabase Preview, migration appliquée sur la base Preview, URL Preview autorisée dans les Redirect URLs Supabase et template email configuré pour conserver le redirect demandé.
 
-1. Ouvrir `/identite/inscription`, saisir email, mot de passe/confirmation et accepter les documents.
-2. Si la confirmation email est active, ouvrir l'email : `/identite/confirmation` établit les cookies. Sinon la session immédiate redirige directement.
+1. Ouvrir `/inscription`, saisir email, mot de passe/confirmation et accepter les documents.
+2. Si la confirmation email est active, ouvrir l'email : `/confirmation` établit les cookies. Sinon la session immédiate redirige directement.
 3. Compléter identité, langue et orientation ; vérifier l'arrivée sur `/identite`.
 4. Vérifier les valeurs affichées et l'absence de workspace/abonnement créé.
 5. Se déconnecter, puis vérifier que `/identite` renvoie vers la connexion.
-6. Se reconnecter sur `/identite/connexion` et vérifier l'accès direct à la zone privée.
+6. Se reconnecter sur `/connexion` et vérifier l'accès direct à la zone privée.
 7. Tester « mot de passe oublié », puis le lien et le nouveau mot de passe.
 
 Le parcours ne peut pas être validé réellement sur une Preview sans base Supabase migrée et Redirect URL autorisée. Les tests Node couvrent les invariants applicatifs ; les politiques DB/RLS restent couvertes séparément par `supabase/tests/zero_limit_id_rls.sql`.

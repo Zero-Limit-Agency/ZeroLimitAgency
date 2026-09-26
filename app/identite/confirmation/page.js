@@ -1,1 +1,3 @@
-import { ConfirmationSession } from "@/components/identity/confirmation-session"; import { IdentityShell } from "@/components/identity/identity-shell"; export default function Page(){return <IdentityShell title="Confirmation" subtitle="Nous finalisons votre connexion sécurisée."><ConfirmationSession/></IdentityShell>}
+import { redirect } from "next/navigation";
+import { buildLegacyAuthRedirect } from "@/lib/auth/public-routes";
+export default function Page({ searchParams }) { redirect(buildLegacyAuthRedirect("/identite/confirmation", searchParams)); }

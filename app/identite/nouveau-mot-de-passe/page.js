@@ -1,1 +1,3 @@
-import { NewPasswordForm } from "@/components/identity/password-flow";import { IdentityShell } from "@/components/identity/identity-shell";export default function Page(){return <IdentityShell title="Nouveau mot de passe" subtitle="Choisissez au moins huit caractères."><NewPasswordForm/></IdentityShell>}
+import { redirect } from "next/navigation";
+import { buildLegacyAuthRedirect } from "@/lib/auth/public-routes";
+export default function Page({ searchParams }) { redirect(buildLegacyAuthRedirect("/identite/nouveau-mot-de-passe", searchParams)); }
