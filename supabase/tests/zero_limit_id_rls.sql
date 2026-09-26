@@ -30,7 +30,7 @@ values ('team', 'Team A', '30000000-0000-0000-0000-000000000001'),
 insert into public.linked_accounts (profile_id, provider, provider_user_id)
 values ('20000000-0000-0000-0000-000000000002', 'discord', 'discord-b');
 insert into public.platform_roles (profile_id, role)
-values ('20000000-0000-0000-0000-000000000002', 'platform_owner');
+values ('20000000-0000-0000-0000-000000000002', 'owner');
 
 set local role authenticated;
 select set_config('request.jwt.claim.role', 'authenticated', true);
@@ -66,7 +66,7 @@ begin
 
   begin
     insert into public.platform_roles (profile_id, role)
-    values ('20000000-0000-0000-0000-000000000001', 'platform_owner');
+    values ('20000000-0000-0000-0000-000000000001', 'owner');
     raise exception 'platform owner escalation unexpectedly succeeded';
   exception when insufficient_privilege then null;
   end;

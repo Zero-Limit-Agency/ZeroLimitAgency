@@ -1,0 +1,1 @@
+export default function OwnerPage() { return <section className="owner-panel owner-intro"><p className="eyebrow">Platform authority</p><h2>OWNER Core</h2><p>Cette zone confirme une autorité plateforme explicite. Elle ne dépend ni d’une profession, ni d’une Team, ni de l’administration historique.</p></section>; }
