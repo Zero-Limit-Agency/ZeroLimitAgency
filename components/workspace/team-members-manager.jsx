@@ -66,12 +66,12 @@ export function TeamMembersManager({ organizationId, spaceId, currentProfileId, 
     <PageHeader titleId="team-members-title" eyebrow={labels.groups.team} title={labels.teamManagement.members} description={labels.teamManagement.visibility} actions={<Link className="workspace-button workspace-button-secondary" href={`/espace/${spaceId}`}>{labels.teamManagement.backToTeam}</Link>} />
     <p className={`team-feedback ${feedback.type}`} role={feedback.type === "error" ? "alert" : "status"} aria-live="polite">{feedback.message}</p>
 
-    {[["owner", labels.owner], ["admin", labels.teamManagement.admins], ["member", labels.teamManagement.membersGroup]].map(([key, title]) => <section className="team-group" key={key}>
+    {[["owner", labels.owner], ["admin", labels.teamManagement.admins], ["member", labels.teamManagement.membersGroup]].map(([key, title]) => <section className={`team-group${groups[key].length ? "" : " is-empty"}`} key={key}>
       <h2>{title} <span>{groups[key].length}</span></h2>
       {groups[key].length ? <ul className="team-people-list">{groups[key].map((member) => <MemberRow member={member} key={member.membershipId} />)}</ul> : <p className="team-empty">{labels.teamManagement.empty[key]}</p>}
     </section>)}
 
-    {(actor.isOwner || actor.role === "admin") && <section className="team-invitations" aria-labelledby="pending-invitations-title">
+    {(actor.isOwner || actor.role === "admin") && <section className={`team-invitations${initialData.invitations.length ? "" : " is-empty"}`} aria-labelledby="pending-invitations-title">
       <h2 id="pending-invitations-title">{labels.teamManagement.pendingInvitations} <span>{initialData.invitations.length}</span></h2>
       {initialData.invitations.length ? <ul className="team-people-list">{initialData.invitations.map((invitation) => <li className="team-person-row" key={invitation.id}>
         <div className="team-person-identity"><strong>{invitation.email}</strong><span>{labels.roles[invitation.role]}</span><small>{labels.teamManagement.expires} {new Intl.DateTimeFormat(labels.locale, { dateStyle: "medium" }).format(new Date(invitation.expiresAt))}</small></div>

@@ -35,6 +35,16 @@ Le switcher conserve sa logique et ses URLs. Il expose désormais visuellement l
 
 Les settings sont organisés en résumé, sections de champs et zone dangereuse isolée. Les membres sont présentés en lignes plutôt qu'en mosaïque de cards ; Owner, admin, member et « vous » restent lisibles sans changer leurs permissions. Les états vides gardent un message réel et ne créent aucune fausse donnée.
 
+### Polish Preview
+
+- les métadonnées Settings forment une bande légère avec dividers, sans card par propriété ;
+- les formulaires restent dans un seul panel et utilisent spacing et séparateurs pour leurs sections ;
+- le type visible est toujours écrit au singulier « Team » ;
+- le slug est présenté comme un « Identifiant d’URL », avec une aide compréhensible ;
+- les groupes membres vides sont compactés, tandis que les groupes remplis conservent leurs lignes ;
+- les cartes de l’index affichent type, nom, profession éventuelle et statut sans couleur propre par Space ;
+- le CTA Settings du contenu a été retiré puisque la navigation du Space fournit déjà exactement cette destination.
+
 ## Responsive et accessibilité
 
 - large desktop : shell aligné sur le container produit ;

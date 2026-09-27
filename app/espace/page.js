@@ -24,7 +24,11 @@ export default async function SpacesPage() {
   return <PrivateShell {...context} currentSpace={null} labels={labels}>
     <section className="space-selector-page">
       <PageHeader eyebrow="Zero Limit ID" title={context.spaces.length ? labels.activeSpaces : labels.emptyTitle} description={!context.spaces.length ? labels.emptyText : undefined} />
-      {context.spaces.length > 0 && <div className="space-grid">{context.spaces.map((space) => <Link key={space.id} href={`/espace/${encodeURIComponent(space.id)}/activer`}><strong>{space.kind === "team" ? space.organization.name : space.name}</strong><span>{space.kind === "personal" ? labels.professions[space.profession] : labels.groups[space.kind]} · {labels.alreadyActive}</span></Link>)}</div>}
+      {context.spaces.length > 0 && <div className="space-grid">{context.spaces.map((space) => <Link key={space.id} href={`/espace/${encodeURIComponent(space.id)}/activer`}>
+        <span className={`space-card-icon ${space.kind}`} aria-hidden="true">{space.kind === "team" ? "T" : space.kind === "creator" ? "C" : "P"}</span>
+        <span className="space-card-copy"><small>{labels.groups[space.kind]}</small><strong>{space.kind === "team" ? space.organization.name : space.name}</strong>{space.kind === "personal" && <span>{labels.professions[space.profession]}</span>}</span>
+        <span className="space-card-status"><i aria-hidden="true" />{labels.alreadyActive}</span>
+      </Link>)}</div>}
       <div className="space-add-section">
         <h2>{labels.addSpace}</h2>
         <div className="space-empty-actions">
