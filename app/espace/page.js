@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { PrivateShell } from "@/components/workspace/private-shell";
+import { PageHeader } from "@/components/workspace/page-header";
 import { spaceDictionary } from "@/lib/i18n/spaces";
 import { AuthenticationRequiredError } from "@/lib/zero-limit-id/profile";
 import { getAccessibleSpacesForCurrentProfile, reportSpaceDataAccessError } from "@/lib/zero-limit-id/spaces";
@@ -22,10 +23,12 @@ export default async function SpacesPage() {
 
   return <PrivateShell {...context} currentSpace={null} labels={labels}>
     <section className="space-selector-page">
-      <p className="space-kind">Zero Limit ID</p>
-      <h1>{context.spaces.length ? labels.activeSpaces : labels.emptyTitle}</h1>
-      {!context.spaces.length && <p>{labels.emptyText}</p>}
-      {context.spaces.length > 0 && <div className="space-grid">{context.spaces.map((space) => <Link key={space.id} href={`/espace/${encodeURIComponent(space.id)}/activer`}><strong>{space.kind === "team" ? space.organization.name : space.name}</strong><span>{space.kind === "personal" ? labels.professions[space.profession] : labels.groups[space.kind]} · {labels.alreadyActive}</span></Link>)}</div>}
+      <PageHeader eyebrow="Zero Limit ID" title={context.spaces.length ? labels.activeSpaces : labels.emptyTitle} description={!context.spaces.length ? labels.emptyText : undefined} />
+      {context.spaces.length > 0 && <div className="space-grid">{context.spaces.map((space) => <Link key={space.id} href={`/espace/${encodeURIComponent(space.id)}/activer`}>
+        <span className={`space-card-icon ${space.kind}`} aria-hidden="true">{space.kind === "team" ? "T" : space.kind === "creator" ? "C" : "P"}</span>
+        <span className="space-card-copy"><small>{labels.groups[space.kind]}</small><strong>{space.kind === "team" ? space.organization.name : space.name}</strong>{space.kind === "personal" && <span>{labels.professions[space.profession]}</span>}</span>
+        <span className="space-card-status"><i aria-hidden="true" />{labels.alreadyActive}</span>
+      </Link>)}</div>}
       <div className="space-add-section">
         <h2>{labels.addSpace}</h2>
         <div className="space-empty-actions">
