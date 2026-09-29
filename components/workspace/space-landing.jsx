@@ -10,7 +10,10 @@ export function SpaceLanding({ space, labels }) {
       {space.kind === "personal" && <><div><dt>{labels.groups.personal}</dt><dd>{labels.professions[space.profession]}</dd></div><div><dt>{labels.owner}</dt><dd>{space.owner.name}</dd></div></>}
       {space.kind === "team" && <><div><dt>{labels.organization}</dt><dd>{space.organization.name}</dd></div><div><dt>{labels.role}</dt><dd>{labels.roles[space.role]}{space.isOwner ? ` · ${labels.owner}` : ""}</dd></div></>}
     </dl>
-    <div className="space-placeholder"><p>{moduleText}</p></div>
-    {space.kind === "team" && <Link className="team-management-link" href={`/espace/${space.id}/membres`}>{labels.teamManagement.manageMembers}</Link>}
+    <section className="space-dashboard" aria-labelledby="dashboard-next">
+      <div className="space-dashboard-primary"><h2 id="dashboard-next">{labels.dashboard?.next || "À traiter"}</h2><p>{moduleText}</p></div>
+      <div className="space-dashboard-secondary"><h2>{labels.dashboard?.activity || "Activité récente"}</h2><p>{labels.dashboard?.emptyActivity || "L’activité de vos futurs modules apparaîtra ici."}</p></div>
+    </section>
+    {space.kind === "team" && <Link className="team-management-link workspace-button workspace-button-secondary" href={`/espace/${space.id}/membres`}>{labels.teamManagement.manageMembers}</Link>}
   </section>;
 }

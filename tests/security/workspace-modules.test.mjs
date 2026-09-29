@@ -33,4 +33,9 @@ test("missing required entitlement is refused", () => { const gated = createModu
 test("insufficient member capability is refused", () => { const managed = createModuleRegistry([fixture("fixture_manage", { supportedSpaceKinds: ["team"], requiredCapabilities: ["manage_modules"] })]); assert.equal(resolveModulesForSpace({ space: team(), registry: managed, isEnabled: yes, hasEntitlement: yes })[0].denialReason, "permission_required"); });
 test("owner and admin capabilities preserve canonical ownership", () => { assert.equal(getTeamCapabilities(team("admin", true)).has("manage_modules"), true); assert.equal(getTeamCapabilities(team("admin")).has("manage_members_limited"), true); assert.equal(getTeamCapabilities(team("admin")).has("manage_modules"), false); });
 test("registry keys are unique and stable", () => assert.throws(() => createModuleRegistry([fixture("duplicate"), fixture("duplicate")]), /Duplicate module key/));
+test("registry owns shell navigation metadata", () => {
+  const shellRegistry = createModuleRegistry([fixture("fixture_shell", { navigation: { labelKey: "modules.fixture_shell", icon: "calendar", section: "work", priority: "overflow" } })]);
+  const [manifest] = shellRegistry.list();
+  assert.deepEqual(manifest.navigation, { labelKey: "modules.fixture_shell", icon: "calendar", section: "work", priority: "overflow" });
+});
 test("server access checks the requested space before resolving a module", async () => { const source = await readFile(new URL("../../lib/workspace/modules.js", import.meta.url), "utf8"); const body = source.match(/export async function requireModuleAccess[\s\S]*?\n}/)?.[0] || ""; assert.ok(body.indexOf("requireSpaceAccess(spaceId") < body.indexOf("moduleRegistry.get(moduleKey)")); });
