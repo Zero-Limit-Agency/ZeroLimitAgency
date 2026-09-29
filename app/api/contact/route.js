@@ -117,7 +117,6 @@ function normalizeSignupPayload(formData) {
     birthDate: normalizeBirthDate(formData.get("birthDate")?.toString() || ""),
     username: clampText(formData.get("username")?.toString() || "", 80),
     email: normalizeEmailAddress(formData.get("email")?.toString() || ""),
-    password: formData.get("password")?.toString() || "",
     company: clampText(formData.get("company")?.toString() || "", 120),
     country: clampText(formData.get("country")?.toString() || "", 120) || "Non renseigne",
     language: clampText(formData.get("language")?.toString() || "", 40),
@@ -126,31 +125,6 @@ function normalizeSignupPayload(formData) {
     newsletter: parseBoolean(formData.get("newsletter")?.toString() || ""),
     files: formData.getAll("files").filter((file) => file instanceof File && file.size > 0)
   };
-}
-
-function buildCreateUserErrorMessage(error) {
-  const rawError = String(error?.message || "").toLowerCase();
-
-  if (
-    rawError.includes("already") ||
-    rawError.includes("exists") ||
-    rawError.includes("registered") ||
-    rawError.includes("duplicate")
-  ) {
-    return "Cette adresse email est deja utilisee.";
-  }
-
-  return "Impossible de creer le compte pour le moment.";
-}
-
-async function rollbackSignup(supabase, userId, applicationId) {
-  if (applicationId) {
-    await supabase.from("applications").delete().eq("id", applicationId).catch(() => null);
-  }
-
-  if (userId) {
-    await supabase.auth.admin.deleteUser(userId).catch(() => null);
-  }
 }
 
 async function persistDriveWarning(supabase, applicationId, message) {
@@ -206,7 +180,6 @@ export async function POST(request) {
       !payload.fullName ||
       !payload.birthDate ||
       !payload.email ||
-      !payload.password ||
       !payload.language ||
       !payload.requestType ||
       !payload.message
@@ -225,16 +198,6 @@ export async function POST(request) {
         {
           success: false,
           error: "La date de naissance doit etre valide et au format jour/mois/annee."
-        },
-        { status: 400 }
-      );
-    }
-
-    if (payload.password.length < 8) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Le mot de passe doit contenir au moins 8 caracteres."
         },
         { status: 400 }
       );
@@ -272,32 +235,6 @@ export async function POST(request) {
 
     const { firstName, lastName } = splitFullName(payload.fullName);
 
-    const authResult = await supabase.auth.admin.createUser({
-      email: payload.email,
-      password: payload.password,
-      email_confirm: true,
-      user_metadata: {
-        first_name: firstName,
-        last_name: lastName,
-        pseudo: payload.username || null
-      },
-      app_metadata: {
-        role: "client"
-      }
-    });
-
-    if (authResult.error || !authResult.data?.user?.id) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: buildCreateUserErrorMessage(authResult.error)
-        },
-        { status: 400 }
-      );
-    }
-
-    const userId = authResult.data.user.id;
-
     const { data: application, error: insertError } = await supabase
       .from("applications")
       .insert([
@@ -320,8 +257,6 @@ export async function POST(request) {
       .single();
 
     if (insertError || !application?.id) {
-      await rollbackSignup(supabase, userId, null);
-
       return NextResponse.json(
         {
           success: false,

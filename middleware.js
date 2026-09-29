@@ -1,25 +1,28 @@
 import { NextResponse } from "next/server";
+import { hasTrustedMutationOrigin } from "@/lib/security/csrf-origin";
 
 const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 function isSameOrigin(request) {
-  const origin = request.headers.get("origin");
+  return hasTrustedMutationOrigin({
+    origin: request.headers.get("origin"),
+    referer: request.headers.get("referer")
+  });
+}
 
-  if (!origin) {
-    return true;
-  }
+function requiresBrowserOriginCheck(request) {
+  if (!request.nextUrl.pathname.startsWith("/api/")) return false;
+  if (!MUTATING_METHODS.has(request.method)) return false;
 
-  try {
-    return new URL(origin).origin === request.nextUrl.origin;
-  } catch {
-    return false;
-  }
+  // Stripe authenticates the exact raw body and is not a cookie-authenticated
+  // browser endpoint. Requiring browser headers would reject legitimate hooks.
+  return request.nextUrl.pathname !== "/api/billing/stripe/webhook";
 }
 
 export function middleware(request) {
   const path = request.nextUrl.pathname;
 
-  if (path.startsWith("/api/") && MUTATING_METHODS.has(request.method) && !isSameOrigin(request)) {
+  if (requiresBrowserOriginCheck(request) && !isSameOrigin(request)) {
     return NextResponse.json(
       {
         success: false,

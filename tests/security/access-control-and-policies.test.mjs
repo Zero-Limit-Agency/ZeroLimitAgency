@@ -21,6 +21,8 @@ test("middleware enforces same-origin mutations and no-store on private APIs", (
 
   assert.match(middlewareSource, /MUTATING_METHODS/);
   assert.match(middlewareSource, /Origine de requête non autorisée/);
+  assert.match(middlewareSource, /request\.headers\.get\("referer"\)/);
+  assert.match(middlewareSource, /\/api\/billing\/stripe\/webhook/);
   assert.match(middlewareSource, /Cache-Control/);
   assert.match(middlewareSource, /private, no-store/);
 });
@@ -38,4 +40,13 @@ test("RLS migration creates executable policies and entitlement foundation", () 
 
 test("Supabase verification SQL script exists", () => {
   assert.equal(existsSync("scripts/security/verify-supabase-security.sql"), true);
+  const verification = readFileSync("scripts/security/verify-supabase-security.sql", "utf8");
+  const executableSql = verification.replace(/--.*$/gm, "").trim();
+  const statements = executableSql.split(";").map(statement => statement.trim()).filter(Boolean);
+  assert.ok(statements.length > 0);
+  for (const statement of statements) assert.match(statement, /^select\b/i);
+  assert.doesNotMatch(executableSql, /\b(create|alter|drop|grant|revoke|insert|update|delete|truncate|call)\b/i);
+  assert.match(verification, /relrowsecurity/);
+  assert.match(verification, /has_function_privilege\('authenticated'/);
+  assert.match(verification, /acl\.grantee = 0/);
 });
