@@ -35,16 +35,11 @@ npm install -g @playwright/cli@latest
 playwright-cli install --skills=agents -g
 
 Step "Installing focused global Codex skills"
-npx --yes skills add vercel-labs/agent-skills \
-  --skill web-design-guidelines \
-  --skill vercel-react-best-practices \
-  -g -a codex -y
+npx --yes skills add vercel-labs/agent-skills --skill web-design-guidelines --skill vercel-react-best-practices -g -a codex -y
 
 if ($WithVideo) {
   Step "Installing Remotion skill for video/motion tasks"
-  npx --yes skills add remotion-dev/skills \
-    --skill remotion-best-practices \
-    -g -a codex -y
+  npx --yes skills add remotion-dev/skills --skill remotion-best-practices -g -a codex -y
 }
 
 Step "Preflighting ECC for Codex (no writes)"
