@@ -17,7 +17,7 @@ The production registry is code-first and intentionally empty. `createModuleRegi
 - `requiredEntitlements`, `requiredCapabilities`;
 - canonical `route` (`/espace/[spaceId]/modules/<key>`);
 - `status`, `order`, `visibility`;
-- `navigation.labelKey`;
+- `navigation.labelKey`, plus optional shell `icon`, `section` and `priority`;
 - `defaultEnabled` (explicit bootstrap activation).
 
 Labels are i18n keys, never identifiers. The core does not import module implementations.

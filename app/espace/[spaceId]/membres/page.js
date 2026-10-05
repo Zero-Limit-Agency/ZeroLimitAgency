@@ -3,7 +3,8 @@ import { PrivateShell } from "@/components/workspace/private-shell";
 import { TeamMembersManager } from "@/components/workspace/team-members-manager";
 import { spaceDictionary } from "@/lib/i18n/spaces";
 import { AuthenticationRequiredError } from "@/lib/zero-limit-id/profile";
-import { reportSpaceDataAccessError, requireSpaceAccess } from "@/lib/zero-limit-id/spaces";
+import { reportSpaceDataAccessError } from "@/lib/zero-limit-id/spaces";
+import { getAccessibleModulesForCurrentProfile } from "@/lib/workspace/modules";
 import { SpaceAccessDeniedError } from "@/lib/zero-limit-id/space-model";
 import { getTeamManagement, TeamManagementError } from "@/lib/zero-limit-id/team-management";
 
@@ -12,7 +13,7 @@ export const dynamic = "force-dynamic";
 export default async function TeamMembersPage({ params }) {
   let context;
   try {
-    context = await requireSpaceAccess(params.spaceId);
+    context = await getAccessibleModulesForCurrentProfile(params.spaceId);
     if (context.space.kind !== "team") notFound();
     const canManageInvitations = context.space.isOwner || context.space.role === "admin";
     context.management = await getTeamManagement(context.space.organization.id, canManageInvitations);
