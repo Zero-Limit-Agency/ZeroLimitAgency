@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PasswordField } from "@/components/identity/password-field";
 
-export function IdentityAuthForm({ mode, redirectTo = "/identite" }) {
+export function IdentityAuthForm({ mode, redirectTo = "/espace?entree=1" }) {
   const router = useRouter();
   const [state, setState] = useState({ status: "idle", message: "" });
   async function submit(event) {
@@ -17,7 +17,7 @@ export function IdentityAuthForm({ mode, redirectTo = "/identite" }) {
     const result = await response.json().catch(() => null);
     if (!response.ok) return setState({ status: "error", message: result?.error || "Une erreur est survenue." });
     setState({ status: "success", message: result.message || "Connexion réussie." });
-    if (mode === "login" || result.hasSession) { router.replace(redirectTo !== "/identite" ? redirectTo : result.redirectTo || redirectTo); router.refresh(); }
+    if (mode === "login" || result.hasSession) { router.replace(redirectTo !== "/espace?entree=1" ? redirectTo : result.redirectTo || redirectTo); router.refresh(); }
   }
   const signup = mode === "signup";
   return <form className="identity-form" onSubmit={submit} aria-busy={state.status === "loading"}>
@@ -27,6 +27,6 @@ export function IdentityAuthForm({ mode, redirectTo = "/identite" }) {
     <button className="button button-primary" disabled={state.status === "loading"}>{state.status === "loading" ? "Patientez…" : signup ? "Créer mon Zero Limit ID" : "Se connecter"}</button>
     <p className={`identity-feedback ${state.status}`} role="status">{state.message}</p>
     {!signup && <Link className="auth-inline-link" href="/mot-de-passe-oublie">Mot de passe oublié ?</Link>}
-    <Link className="auth-inline-link" href={signup ? "/connexion" : "/inscription"}>{signup ? "Déjà inscrit ? Se connecter" : "Créer un Zero Limit ID"}</Link>
+    <Link className="auth-inline-link" href={`${signup ? "/connexion" : "/inscription"}${redirectTo.startsWith("/invitation/team/") ? `?next=${encodeURIComponent(redirectTo)}` : ""}`}>{signup ? "Déjà inscrit ? Se connecter" : "Créer un Zero Limit ID"}</Link>
   </form>;
 }

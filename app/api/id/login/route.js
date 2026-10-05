@@ -12,7 +12,7 @@ export async function POST(request) {
   // Compatibility bridge: historical client accounts use the same Supabase
   // identity but still land in the unchanged legacy client workspace.
   const legacyClient = await getClientWorkspaceContext(result.data.user);
-  const response = NextResponse.json({ success: true, redirectTo: legacyClient.access?.application_id ? "/espace-client" : "/identite" });
+  const response = NextResponse.json({ success: true, redirectTo: legacyClient.access?.application_id ? "/espace-client" : "/espace?entree=1" });
   setClientAuthCookies(response, result.data);
   return response;
 }

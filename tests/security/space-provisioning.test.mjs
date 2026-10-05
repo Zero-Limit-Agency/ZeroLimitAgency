@@ -112,9 +112,9 @@ test("invitation acceptance requires a confirmed Supabase Auth email", () => {
 test("invitation return URL only permits expected internal token paths", () => {
   const valid = "/invitation/team/abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN123456";
   assert.equal(teamInvitationReturnPath(valid), valid);
-  assert.equal(teamInvitationReturnPath("https://evil.example"), "/identite");
-  assert.equal(teamInvitationReturnPath("//evil.example"), "/identite");
-  assert.equal(teamInvitationReturnPath("/admin"), "/identite");
+  assert.equal(teamInvitationReturnPath("https://evil.example"), "/espace?entree=1");
+  assert.equal(teamInvitationReturnPath("//evil.example"), "/espace?entree=1");
+  assert.equal(teamInvitationReturnPath("/admin"), "/espace?entree=1");
 });
 test("raw token is returned in Vercel Preview/local dev but never Vercel Production", () => {
   assert.equal(canReturnPreviewInvitationToken({ VERCEL_ENV:"preview", NODE_ENV:"production" }), true);

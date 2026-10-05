@@ -1,3 +1,4 @@
+import { teamInvitationReturnPath } from "@/lib/security/internal-return-url";
 import { NextResponse } from "next/server";
 import { getClientSession } from "@/lib/auth/client-auth";
 import { ensureProfileForSession, updateCurrentProfile } from "@/lib/zero-limit-id/profile";
@@ -19,5 +20,5 @@ export async function POST(request) {
     if (!duplicate) reportProfileDataAccessError(profileAccessError(result, "onboarding_update"), "/api/id/onboarding");
     return NextResponse.json({ success: false, error: duplicate ? "Ce nom d’utilisateur est déjà utilisé." : "Impossible d’enregistrer l’onboarding." }, { status: duplicate ? 409 : 400 });
   }
-  return NextResponse.json({ success: true, redirectTo: "/identite" });
+  return NextResponse.json({ success: true, redirectTo: teamInvitationReturnPath(body.next) });
 }

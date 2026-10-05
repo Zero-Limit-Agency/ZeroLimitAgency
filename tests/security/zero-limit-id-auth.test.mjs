@@ -19,7 +19,7 @@ test("username, display name, locale and intent are validated server-side", () =
 
 test("onboarding state controls the private destination explicitly", () => {
   assert.equal(privateDestination({ onboarding_completed_at: null }), "/identite/onboarding");
-  assert.equal(privateDestination({ onboarding_completed_at: "2026-08-27T00:00:00Z" }), "/identite");
+  assert.equal(privateDestination({ onboarding_completed_at: "2026-08-27T00:00:00Z" }), "/espace?entree=1");
 });
 
 test("profile creation is caller-derived, idempotent, and independent from legacy applications", () => {

@@ -43,9 +43,9 @@ test("Auth redirect origin rejects host poisoning and unsafe internal destinatio
   assert.throws(() => resolveAuthRedirectOrigin({ VERCEL_ENV: "preview", VERCEL_URL: "vercel.app", NODE_ENV: "production" }, "https://evil.example"));
   assert.throws(() => buildAuthRedirectUrl("//evil.example", { NEXT_PUBLIC_APP_URL: "https://zerolimit.agency", NODE_ENV: "production" }));
   assert.throws(() => buildAuthRedirectUrl("https://evil.example", { NEXT_PUBLIC_APP_URL: "https://zerolimit.agency", NODE_ENV: "production" }));
-  assert.equal(teamInvitationReturnPath("https://evil.example"), "/identite");
-  assert.equal(teamInvitationReturnPath("//evil.example"), "/identite");
-  assert.equal(teamInvitationReturnPath("%2F%2Fevil.example"), "/identite");
+  assert.equal(teamInvitationReturnPath("https://evil.example"), "/espace?entree=1");
+  assert.equal(teamInvitationReturnPath("//evil.example"), "/espace?entree=1");
+  assert.equal(teamInvitationReturnPath("%2F%2Fevil.example"), "/espace?entree=1");
   assert.equal(teamInvitationReturnPath("/invitation/team/abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN"), "/invitation/team/abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN");
 });
 
