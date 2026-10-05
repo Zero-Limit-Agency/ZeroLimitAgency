@@ -21,7 +21,9 @@ export function WorkspaceNavigation({ currentSpace, modules, labels, account }) 
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
+  const [mobileViewport, setMobileViewport] = useState(false);
   const sidebarRef = useRef(null);
+  const mobileTriggerRef = useRef(null);
   const moduleItems = modules.map((module) => ({
     key: module.key,
     href: module.href.replace("[spaceId]", encodeURIComponent(currentSpace.id)),
@@ -36,20 +38,58 @@ export function WorkspaceNavigation({ currentSpace, modules, labels, account }) 
   ];
 
   useEffect(() => {
-    if (!mobileOpen) return undefined;
-    sidebarRef.current?.querySelector("a")?.focus();
-    const close = (event) => event.key === "Escape" && setMobileOpen(false);
-    document.addEventListener("keydown", close);
-    return () => document.removeEventListener("keydown", close);
-  }, [mobileOpen]);
+    const media = window.matchMedia("(max-width: 900px)");
+    const updateViewport = () => {
+      setMobileViewport(media.matches);
+      if (!media.matches) setMobileOpen(false);
+    };
+    updateViewport();
+    media.addEventListener("change", updateViewport);
+    return () => media.removeEventListener("change", updateViewport);
+  }, []);
+
+  useEffect(() => {
+    sidebarRef.current.inert = mobileViewport && !mobileOpen;
+  }, [mobileViewport, mobileOpen]);
+
+  useEffect(() => {
+    if (!mobileViewport || !mobileOpen) return undefined;
+    const sidebar = sidebarRef.current;
+    const previousOverflow = document.body.style.overflow;
+    const previousRootOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    sidebar.querySelector("a")?.focus();
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") setMobileOpen(false);
+      if (event.key !== "Tab") return;
+      const targets = [...sidebar.querySelectorAll("a[href], button:not(:disabled)")];
+      const first = targets[0];
+      const last = targets[targets.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.documentElement.style.overflow = previousRootOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+      mobileTriggerRef.current?.focus();
+    };
+  }, [mobileViewport, mobileOpen]);
 
   const closeMobile = () => setMobileOpen(false);
   return <>
-    <button className="workspace-mobile-nav-trigger" type="button" aria-expanded={mobileOpen} aria-controls="workspace-sidebar" onClick={() => setMobileOpen((value) => !value)}>
+    <button ref={mobileTriggerRef} className="workspace-mobile-nav-trigger" type="button" aria-expanded={mobileOpen} aria-controls="workspace-sidebar" onClick={() => setMobileOpen((value) => !value)}>
       <span aria-hidden="true">☰</span>{labels.navigation?.open || "Navigation"}
     </button>
     {mobileOpen && <button className="workspace-nav-scrim" type="button" aria-label={labels.navigation?.close || "Fermer la navigation"} onClick={closeMobile} />}
-    <aside ref={sidebarRef} id="workspace-sidebar" className={`workspace-sidebar${mobileOpen ? " is-open" : ""}`} aria-label={labels.modules || "Navigation de l’espace"}>
+    <aside ref={sidebarRef} id="workspace-sidebar" className={`workspace-sidebar${mobileOpen ? " is-open" : ""}`} role={mobileViewport && mobileOpen ? "dialog" : undefined} aria-modal={mobileViewport && mobileOpen ? true : undefined} aria-hidden={mobileViewport && !mobileOpen ? true : undefined} aria-label={labels.modules || "Navigation de l’espace"}>
       <div className="workspace-sidebar-context">
         <small>{labels.groups[currentSpace.kind]}</small>
         <strong>{currentSpace.kind === "team" ? currentSpace.organization.name : currentSpace.name}</strong>
