@@ -133,13 +133,17 @@ try {
     await page.getByRole('button', { name: 'Vérifier avant de créer' }).click();
     await page.getByRole('button', { name: 'Activer mon espace Creator' }).click();
     await url('/espace/creator-a'); await page.getByRole('heading', { name: 'Creator creator-a', exact: true }).waitFor(); await layout('workspace');
-    await goto('/identite'); await page.getByRole('heading', { name: 'Mon compte' }).waitFor(); await layout('account');
+    if (viewport.width < 960) await page.getByRole('button', { name: 'Navigation', exact: true }).click();
+    await page.getByRole('navigation', { name: 'Compte', exact: true }).getByRole('link').click();
+    await url('/identite'); await page.getByRole('heading', { name: 'Mon compte' }).waitFor(); await layout('account');
     await page.getByRole('link', { name: 'Accéder au Workspace' }).click(); await url('/espace/creator-a');
     await goto('/espace'); await page.getByRole('heading', { name: 'Vos espaces actifs' }).waitFor();
     // Reconnect with multiple Spaces: preference is checked against current grants.
     reset({ spaces: [creator('a'), creator('b')] });
     await context.addCookies([{ name: 'zla_last_space', value: 'b', url: origin }]);
-    await context.clearCookies({ name: 'zla_client_access_token' });
+    await page.getByRole('button', { name: 'Se déconnecter', exact: true }).click();
+    await url('/connexion');
+    assert.equal((await context.cookies()).some(c => c.name === 'zla_client_access_token'), false);
     await goto('/connexion'); await page.getByLabel('Adresse email').fill(user.email);
     await page.getByLabel('Mot de passe', { exact: true }).fill('fixture-password');
     await page.getByRole('button', { name: 'Se connecter', exact: true }).click(); await url('/espace/b');

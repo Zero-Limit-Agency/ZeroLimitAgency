@@ -61,7 +61,7 @@ page/snapshot/screenshot/overlay check. Screenshots and Next logs are written to
 `/tmp/account-space-entry` (override with `QA_OUTPUT_DIR`).
 
 Coverage: signup and confirmation; incomplete onboarding; zero-Space activation;
-account → Workspace; selection hub; reconnect with last-Space preference; invalid
+Workspace Compte link → account → Workspace; logout; selection hub; reconnect with last-Space preference; invalid
 preference; revoked entitlements and foreign Space denial; invitation through
 authentication/onboarding/acceptance; historical-client login/reconnect; forgot
 password, password update and subsequent login. Screenshots check account,
