@@ -1,3 +1,6 @@
+import { isInteractiveProvisioningEnabled } from "@/lib/zero-limit-id/environment";
+import { cookies } from "next/headers";
+import { workspaceEntryDestination } from "@/lib/zero-limit-id/redirects";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { PrivateShell } from "@/components/workspace/private-shell";
@@ -8,7 +11,7 @@ import { getAccessibleSpacesForCurrentProfile, reportSpaceDataAccessError } from
 
 export const dynamic = "force-dynamic";
 
-export default async function SpacesPage() {
+export default async function SpacesPage({ searchParams }) {
   let context;
   try { context = await getAccessibleSpacesForCurrentProfile(); }
   catch (error) {
@@ -18,17 +21,22 @@ export default async function SpacesPage() {
     throw error;
   }
   if (!context.profile.onboarding_completed_at) redirect("/identite/onboarding");
+  if (searchParams?.entree === "1") {
+    const destination = workspaceEntryDestination(context.spaces, cookies().get("zla_last_space")?.value);
+    if (destination) redirect(destination);
+  }
   const labels = spaceDictionary(context.profile.preferred_locale);
   const creatorExists = context.spaces.some((space) => space.kind === "creator");
 
   return <PrivateShell {...context} currentSpace={null} labels={labels}>
     <section className="space-selector-page">
       <PageHeader eyebrow="Zero Limit ID" title={context.spaces.length ? labels.activeSpaces : labels.emptyTitle} description={!context.spaces.length ? labels.emptyText : undefined} />
-      {context.spaces.length > 0 && <div className="space-grid">{context.spaces.map((space) => <Link key={space.id} href={`/espace/${encodeURIComponent(space.id)}/activer`}>
+      {context.spaces.length > 0 && <div className="space-grid">{context.spaces.map((space) => <Link prefetch={false} key={space.id} href={`/espace/${encodeURIComponent(space.id)}/activer`}>
         <span className={`space-card-icon ${space.kind}`} aria-hidden="true">{space.kind === "team" ? "T" : space.kind === "creator" ? "C" : "P"}</span>
         <span className="space-card-copy"><small>{labels.groups[space.kind]}</small><strong>{space.kind === "team" ? space.organization.name : space.name}</strong>{space.kind === "personal" && <span>{labels.professions[space.profession]}</span>}</span>
         <span className="space-card-status"><i aria-hidden="true" />{labels.alreadyActive}</span>
       </Link>)}</div>}
+      {!isInteractiveProvisioningEnabled() && <p className="identity-hint" role="status">{labels.provisioningUnavailable}</p>}
       <div className="space-add-section">
         <h2>{labels.addSpace}</h2>
         <div className="space-empty-actions">
