@@ -14,6 +14,8 @@ const origin = `https://127.0.0.2:${port + 2}`;
 const invitation = `/invitation/team/${'a'.repeat(43)}`;
 const user = { id: 'fixture-user', email: 'qa@example.test', email_confirmed_at: '2026-10-05T00:00:00Z' };
 const profileId = 'fixture-profile';
+// The fixture ingress overwrites the IP; each viewport represents a separate client.
+let fixtureClientIp = "192.0.2.1";
 let state;
 function space(kind = 'creator', status = 'active') { return { id: `${kind}-a`, kind, name: `QA ${kind}`, status, owner_profile_id: kind === 'team' ? null : profileId, organization_id: kind === 'team' ? 'team-org' : null, personal_profession: kind === 'personal' ? 'coach' : null }; }
 function reset({ spaces = [], completed = true, actor = 'owner', revoked = false } = {}) {
@@ -68,7 +70,7 @@ const backend = createServer(async (req, res) => {
   res.writeHead(status, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(data));
 });
 reset(); await new Promise(resolve => backend.listen(backendPort, '127.0.0.1', resolve));
-const env = { ...process.env, NODE_ENV: 'production', NEXT_PUBLIC_APP_URL: origin, NEXT_PUBLIC_SUPABASE_URL: `http://127.0.0.1:${backendPort}`, NEXT_PUBLIC_SUPABASE_ANON_KEY: 'fixture-anon', SUPABASE_SERVICE_ROLE_KEY: 'fixture-service', RESEND_API_KEY: '', ZERO_LIMIT_EMAIL_FROM: '', VERCEL_ENV: 'development', ZERO_LIMIT_INTERACTIVE_PROVISIONING: 'enabled' };
+const env = { ...process.env, NODE_ENV: 'production', VERCEL: '', TRUST_PROXY_IP_HEADERS: 'true', RATE_LIMIT_PROVIDER: 'local', NEXT_PUBLIC_APP_URL: origin, NEXT_PUBLIC_SUPABASE_URL: `http://127.0.0.1:${backendPort}`, NEXT_PUBLIC_SUPABASE_ANON_KEY: 'fixture-anon', SUPABASE_SERVICE_ROLE_KEY: 'fixture-service', RESEND_API_KEY: '', ZERO_LIMIT_EMAIL_FROM: '', VERCEL_ENV: 'development', ZERO_LIMIT_INTERACTIVE_PROVISIONING: 'enabled' };
 if (process.env.QA_SKIP_BUILD !== '1') await new Promise((resolve, reject) => {
   const build = spawn('npm', ['run', 'build'], { env, stdio: 'inherit' });
   build.on('exit', code => { if (code === 0) resolve(); else { backend.closeAllConnections(); backend.close(); reject(new Error(`Build failed: ${code}`)); } });
@@ -76,7 +78,7 @@ if (process.env.QA_SKIP_BUILD !== '1') await new Promise((resolve, reject) => {
 const tlsDir = await mkdtemp('/tmp/core-reliability-tls-');
 execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', `${tlsDir}/key.pem`, '-out', `${tlsDir}/cert.pem`, '-days', '1', '-subj', '/CN=Account Space QA', '-addext', 'subjectAltName=IP:127.0.0.2'], { stdio: 'ignore' });
 const frontend = createHttpsServer({ key: await readFile(`${tlsDir}/key.pem`), cert: await readFile(`${tlsDir}/cert.pem`) }, (req, res) => {
-  const upstream = httpRequest({ hostname: '127.0.0.1', port, path: req.url, method: req.method, headers: { ...req.headers, 'x-forwarded-proto': 'https', 'x-forwarded-host': new URL(origin).host } }, incoming => {
+  const upstream = httpRequest({ hostname: '127.0.0.1', port, path: req.url, method: req.method, headers: { ...req.headers, 'x-forwarded-for': fixtureClientIp, 'x-forwarded-proto': 'https', 'x-forwarded-host': new URL(origin).host } }, incoming => {
     const headers = { ...incoming.headers };
     if (headers.location) {
       const target = new URL(headers.location, origin);
@@ -101,6 +103,7 @@ try {
 
   browser = await chromium.launch({ ...(process.env.QA_CHROMIUM_PATH ? { executablePath: process.env.QA_CHROMIUM_PATH } : {}), args: ['--no-sandbox'] });
   for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
+    fixtureClientIp = viewport.width === 1440 ? '192.0.2.1' : '192.0.2.2';
     const context = await browser.newContext({ viewport, ignoreHTTPSErrors: true, userAgent: `Core-QA-${viewport.width}` });
     await context.route('**/_vercel/insights/script.js', route => route.fulfill({ contentType: 'application/javascript', body: '' }));
     const page = await context.newPage();
