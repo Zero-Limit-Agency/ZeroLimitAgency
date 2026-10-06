@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { checkRateLimit, resetRateLimitForTests } from "../../lib/security/rate-limit.js";
 
 // Same import-substitution approach as core-reliability.test.mjs: the real
 // functions/handler run unchanged; only framework imports and unused services
@@ -22,6 +23,7 @@ const auth = await loadSource("lib/auth/client-auth.js", {
 });
 const admin = await loadSource("lib/supabase/admin.js", { supabaseServerRequest: server.supabaseServerRequest });
 const route = await loadSource("app/api/id/update-password/route.js", {
+  checkRateLimit,
   getSupabaseUserFromAccessToken: auth.getSupabaseUserFromAccessToken,
   updateSupabasePassword: auth.updateSupabasePassword,
   NextResponse: { json: (body, init = {}) => Response.json(body, init) }
@@ -30,6 +32,9 @@ const route = await loadSource("app/api/id/update-password/route.js", {
 function isolatedAuth(t, handler = async () => Response.json({})) {
   const previous = { ...process.env }, originalFetch = globalThis.fetch;
   t.after(() => { process.env = previous; globalThis.fetch = originalFetch; });
+  resetRateLimitForTests();
+  process.env.VERCEL_ENV = "development";
+  process.env.RATE_LIMIT_PROVIDER = "local";
   process.env.NEXT_PUBLIC_SUPABASE_URL = "https://supabase.example";
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "fixture-anon";
   process.env.SUPABASE_SERVICE_ROLE_KEY = "fixture-service";
@@ -118,4 +123,43 @@ test("password update uses the verified user's bearer authority and reports upst
     }
     assert.deepEqual(calls[1].body, { password: "fixture-new-password" });
   }
+});
+
+
+test("password update quota prevents further Auth calls, including with rotating bearer tokens", async (t) => {
+  const calls = isolatedAuth(t, async () => Response.json({ id: "authenticated-user" }));
+  for (let i = 0; i < 5; i++) assert.equal((await route.POST(passwordRequest(`bearer-${i}`))).status, 200);
+  assert.equal(calls.length, 10);
+  assert.equal((await route.POST(passwordRequest("another-bearer"))).status, 429);
+  assert.equal(calls.length, 10);
+});
+
+test("password update stops before Auth when production Redis is absent", async (t) => {
+  const calls = isolatedAuth(t);
+  process.env.VERCEL_ENV = "production";
+  delete process.env.RATE_LIMIT_REDIS_URL;
+  delete process.env.RATE_LIMIT_REDIS_TOKEN;
+  assert.equal((await route.POST(passwordRequest("bearer"))).status, 503);
+  assert.equal(calls.length, 0);
+});
+
+
+test("password update with healthy production Redis retains the normal Auth flow", async (t) => {
+  const calls = isolatedAuth(t, async () => Response.json({ id: "authenticated-user" }));
+  process.env.VERCEL_ENV = "production";
+  process.env.RATE_LIMIT_REDIS_URL = "https://redis.example.test";
+  process.env.RATE_LIMIT_REDIS_TOKEN = "fixture-token";
+  const authFetch = globalThis.fetch;
+  let quotaChecks = 0;
+  globalThis.fetch = async (url, init) => {
+    if (url === process.env.RATE_LIMIT_REDIS_URL) {
+      quotaChecks++;
+      return Response.json({ result: [1, 60000] });
+    }
+    return authFetch(url, init);
+  };
+  assert.equal((await route.POST(passwordRequest("verified-bearer"))).status, 200);
+  assert.equal(quotaChecks, 1);
+  assert.deepEqual(calls.map(c => c.method), ["GET", "PUT"]);
+  for (const call of calls) assert.equal(call.headers.Authorization, "Bearer verified-bearer");
 });

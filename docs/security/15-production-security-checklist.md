@@ -5,7 +5,7 @@
 - [ ] `OAUTH_TOKEN_ENCRYPTION_KEY` défini uniquement côté serveur.
 - [ ] `RATE_LIMIT_PROVIDER=redis`.
 - [ ] `RATE_LIMIT_REDIS_URL` et `RATE_LIMIT_REDIS_TOKEN` configurés.
-- [ ] `RATE_LIMIT_FAIL_CLOSED=true` après validation.
+- [ ] Politique et scénarios Redis validés selon [le runbook rate limiting](18-rate-limiting-launch.md) : panne = 503 en production, repli mémoire en Preview.
 - [ ] Previews protégées et ne recevant pas automatiquement les secrets production.
 - [ ] Aucun ancien déploiement ne sert `/api/supabase/test`.
 - [ ] Headers vérifiés dans le navigateur : CSP, HSTS, nosniff, referrer, permissions.

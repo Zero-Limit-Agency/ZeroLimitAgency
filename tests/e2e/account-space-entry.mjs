@@ -12,6 +12,8 @@ const backendPort = port + 1;
 const origin = `https://127.0.0.2:${port + 2}`;
 const invitation = `/invitation/team/${'a'.repeat(43)}`;
 const user = { id: 'fixture-user', email: 'qa@example.test', email_confirmed_at: '2026-10-05T00:00:00Z' };
+// The fixture ingress overwrites the IP; each viewport represents a separate client.
+let fixtureClientIp = "192.0.2.1";
 let state;
 function reset({ completed = true, spaces = [], legacy = false, revoked = false } = {}) {
   state = { profile: { id: 'fixture-profile', auth_user_id: user.id, username: 'qa_user', display_name: 'QA Member', preferred_locale: 'fr', onboarding_completed_at: completed ? '2026-10-05T00:00:00Z' : null, onboarding_intent: 'creator' }, spaces, legacy, revoked, calls: [] };
@@ -50,7 +52,7 @@ const backend = createServer(async (req, res) => {
 });
 reset(); await new Promise(resolve => backend.listen(backendPort, '127.0.0.1', resolve));
 const trustedOrigin = origin;
-const env = { ...process.env, NODE_ENV: 'production', NEXT_PUBLIC_APP_URL: trustedOrigin, NEXT_PUBLIC_SUPABASE_URL: `http://127.0.0.1:${backendPort}`, NEXT_PUBLIC_SUPABASE_ANON_KEY: 'fixture-anon', SUPABASE_SERVICE_ROLE_KEY: 'fixture-service', VERCEL_ENV: 'development', ZERO_LIMIT_INTERACTIVE_PROVISIONING: 'enabled' };
+const env = { ...process.env, NODE_ENV: 'production', VERCEL: '', TRUST_PROXY_IP_HEADERS: 'true', RATE_LIMIT_PROVIDER: 'local', NEXT_PUBLIC_APP_URL: trustedOrigin, NEXT_PUBLIC_SUPABASE_URL: `http://127.0.0.1:${backendPort}`, NEXT_PUBLIC_SUPABASE_ANON_KEY: 'fixture-anon', SUPABASE_SERVICE_ROLE_KEY: 'fixture-service', VERCEL_ENV: 'development', ZERO_LIMIT_INTERACTIVE_PROVISIONING: 'enabled' };
 if (process.env.QA_SKIP_BUILD !== '1') await new Promise((resolve, reject) => {
   const build = spawn('npm', ['run', 'build'], { env, stdio: 'inherit' });
   build.on('exit', code => { if (code === 0) resolve(); else { backend.closeAllConnections(); backend.close(); reject(new Error(`Build failed: ${code}`)); } });
@@ -58,7 +60,7 @@ if (process.env.QA_SKIP_BUILD !== '1') await new Promise((resolve, reject) => {
 const tlsDir = await mkdtemp('/tmp/account-space-tls-');
 execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', `${tlsDir}/key.pem`, '-out', `${tlsDir}/cert.pem`, '-days', '1', '-subj', '/CN=Account Space QA', '-addext', 'subjectAltName=IP:127.0.0.2'], { stdio: 'ignore' });
 const frontend = createHttpsServer({ key: await readFile(`${tlsDir}/key.pem`), cert: await readFile(`${tlsDir}/cert.pem`) }, (req, res) => {
-  const upstream = httpRequest({ hostname: '127.0.0.1', port, path: req.url, method: req.method, headers: { ...req.headers, 'x-forwarded-proto': 'https', 'x-forwarded-host': new URL(origin).host } }, incoming => {
+  const upstream = httpRequest({ hostname: '127.0.0.1', port, path: req.url, method: req.method, headers: { ...req.headers, 'x-forwarded-for': fixtureClientIp, 'x-forwarded-proto': 'https', 'x-forwarded-host': new URL(origin).host } }, incoming => {
     const headers = { ...incoming.headers };
     if (headers.location) {
       const target = new URL(headers.location, origin);
@@ -92,6 +94,7 @@ try {
   }
   browser = await chromium.launch({ ...(process.env.QA_CHROMIUM_PATH ? { executablePath: process.env.QA_CHROMIUM_PATH } : {}), args: ['--no-sandbox'] });
   for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
+    fixtureClientIp = viewport.width === 1440 ? '192.0.2.1' : '192.0.2.2';
     const context = await browser.newContext({ viewport, ignoreHTTPSErrors: true });
     await context.route('**/_vercel/insights/script.js', route => route.fulfill({ contentType: 'application/javascript', body: '' }));
     const page = await context.newPage();
@@ -190,7 +193,7 @@ try {
     console.log(`PASS ${viewport.width}px: signup/confirmation/onboarding/activation/account/reconnect/invitation/legacy/recovery/denied access`);
   }
   await new Promise(resolve => { app.once('exit', resolve); app.kill('SIGTERM'); });
-  app = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '-p', String(port)], { env: { ...env, VERCEL_ENV: 'production', ZERO_LIMIT_INTERACTIVE_PROVISIONING: '' }, stdio: ['ignore', 'pipe', 'pipe'] });
+  app = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '-p', String(port)], { env: { ...env, VERCEL_ENV: 'production', RATE_LIMIT_REDIS_URL: '', RATE_LIMIT_REDIS_TOKEN: '', ZERO_LIMIT_INTERACTIVE_PROVISIONING: '' }, stdio: ['ignore', 'pipe', 'pipe'] });
   app.stdout.on('data', d => log += d); app.stderr.on('data', d => log += d);
   for (let n = 0; n < 60; n++) {
     try { if ((await fetch(`http://localhost:${port}/connexion`)).ok) break; } catch {}
@@ -206,12 +209,14 @@ try {
   await page.getByRole('status').filter({ hasText: 'L’activation de nouveaux Spaces' }).waitFor();
   assert.equal(await page.getByRole('button', { name: 'Vérifier avant de créer' }).count(), 0);
   const deniedActivation = await context.request.post(`${origin}/api/spaces/provision`, { headers: { origin }, data: { kind: 'creator' } });
-  assert.equal(deniedActivation.status(), 503); assert.equal(state.spaces.length, 0);
+  assert.equal(deniedActivation.status(), 503);
+  assert.match((await deniedActivation.json()).error, /Service temporairement indisponible/);
+  assert.equal(state.spaces.length, 0);
   state.spaces = [creator()];
   await page.goto(`${origin}/espace?entree=1`);
   await page.waitForURL(`${origin}/espace/creator-a`);
   await context.close();
-  console.log('PASS disabled activation: clear hub/preparation state, server denial, existing Space still accessible');
+  console.log('PASS production without Redis: mutation denied, disabled activation UI clear, existing Space still accessible');
 } finally {
   await browser?.close(); app.kill('SIGTERM'); frontend.closeAllConnections(); await new Promise(resolve => frontend.close(resolve)); await rm(tlsDir, { recursive: true, force: true }); backend.closeAllConnections(); await new Promise(resolve => backend.close(resolve));
   await writeFile(`${evidence}/next.log`, log);
