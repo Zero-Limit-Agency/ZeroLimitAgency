@@ -1,5 +1,7 @@
 "use client";
 
+import { requestCoreJson } from "@/lib/http/core-request";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -10,11 +12,12 @@ export function WorkspaceSettingsForm({ space, labels }) {
   const settings = labels.settings;
   async function submit(operation, value) {
     setPending(true); setFeedback("");
-    const response = await fetch(`/api/spaces/${encodeURIComponent(space.id)}/settings`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ operation, value }) });
-    const result = await response.json().catch(() => ({}));
-    setPending(false);
-    if (!response.ok) { setFeedback(settings.errors[result.code] || settings.errors.unexpected_error); return; }
-    setFeedback(settings.saved); router.refresh();
+    try {
+      await requestCoreJson(`/api/spaces/${encodeURIComponent(space.id)}/settings`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ operation, value }) });
+      setFeedback(settings.saved); router.refresh();
+    } catch (error) {
+      setFeedback(settings.errors[error.result?.code] || settings.errors.unexpected_error);
+    } finally { setPending(false); }
   }
   if (!space.isOwner) return <p className="settings-notice workspace-inset" role="status">{settings.readOnly}</p>;
   const renameOperation = space.kind === "team" ? "rename_team" : space.kind === "creator" ? "rename_creator" : "rename_personal";

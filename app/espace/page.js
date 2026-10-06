@@ -36,6 +36,10 @@ export default async function SpacesPage({ searchParams }) {
         <span className="space-card-copy"><small>{labels.groups[space.kind]}</small><strong>{space.kind === "team" ? space.organization.name : space.name}</strong>{space.kind === "personal" && <span>{labels.professions[space.profession]}</span>}</span>
         <span className="space-card-status"><i aria-hidden="true" />{labels.alreadyActive}</span>
       </Link>)}</div>}
+      {context.archivedSpaces.length > 0 && <section className="space-add-section">
+        <h2>{labels.settings.statuses.archived}</h2>
+        <div className="space-empty-actions">{context.archivedSpaces.map((space) => <Link prefetch={false} key={space.id} href={`/espace/${encodeURIComponent(space.id)}/settings`}><strong>{space.name}</strong><span>{labels.settings.restore}</span></Link>)}</div>
+      </section>}
       {!isInteractiveProvisioningEnabled() && <p className="identity-hint" role="status">{labels.provisioningUnavailable}</p>}
       <div className="space-add-section">
         <h2>{labels.addSpace}</h2>

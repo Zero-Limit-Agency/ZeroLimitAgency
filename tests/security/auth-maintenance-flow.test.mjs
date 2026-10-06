@@ -66,7 +66,7 @@ test("confirmation and reset use the trusted URL resolver and required session e
   const legacyReset = readFileSync("app/api/auth/forgot-password/route.js", "utf8");
   const activation = readFileSync("lib/auth/client-activation.js", "utf8");
   assert.match(signup, /buildAuthRedirectUrl\(confirmationPath, process\.env, request\.url\)/);
-  assert.match(confirmation, /fetch\("\/api\/id\/session"/);
+  assert.match(confirmation, /requestCoreJson\("\/api\/id\/session"/);
   assert.match(confirmation, /teamInvitationReturnPath/);
   assert.match(reset, /buildAuthRedirectUrl\("\/nouveau-mot-de-passe"/);
   assert.match(legacyReset, /buildAuthRedirectUrl\("\/connexion\/definir-mot-de-passe"/);

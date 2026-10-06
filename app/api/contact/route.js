@@ -27,15 +27,15 @@ function getSupabaseClient() {
 }
 
 function summarizeEmailFailure(result, label) {
-  if (!result || result.ok || result.skipped) {
+  if (result?.ok) {
     return null;
   }
 
   return {
     target: label,
-    provider: result.provider || "unknown",
-    transient: Boolean(result.transient),
-    reason: String(result.error || "Email delivery failed")
+    provider: result?.provider || "unknown",
+    transient: Boolean(result?.transient),
+    reason: String(result?.error || "Email delivery failed")
   };
 }
 

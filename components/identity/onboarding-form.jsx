@@ -1,10 +1,22 @@
 "use client";
+
+import { requestCoreJson } from "@/lib/http/core-request";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function OnboardingForm({ profile, next }) {
   const router = useRouter(); const [step, setStep] = useState(1); const [error, setError] = useState(""); const [loading, setLoading] = useState(false);
-  async function submit(event) { event.preventDefault(); setLoading(true); setError(""); const data = new FormData(event.currentTarget); const response = await fetch("/api/id/onboarding", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(Object.fromEntries(data)) }); const result = await response.json().catch(() => null); setLoading(false); if (!response.ok) return setError(result?.error || "Enregistrement impossible."); router.replace(result.redirectTo); router.refresh(); }
+  async function submit(event) {
+    event.preventDefault(); setLoading(true); setError("");
+    const data = new FormData(event.currentTarget);
+    try {
+      const result = await requestCoreJson("/api/id/onboarding", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(Object.fromEntries(data)) });
+      if (!result.redirectTo) throw new Error("Missing destination");
+      router.replace(result.redirectTo); router.refresh();
+    } catch (error) {
+      setError(error.result?.error || "Enregistrement impossible. Réessayez dans quelques instants.");
+    } finally { setLoading(false); }
+  }
   return <form className="identity-form" onSubmit={submit}>
     <input type="hidden" name="next" value={next || ""} />
     <p className="identity-progress">Étape {step} sur 3</p>

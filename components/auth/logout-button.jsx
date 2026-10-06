@@ -6,6 +6,7 @@ import { useState } from "react";
 export function LogoutButton({ className = "button button-dark", label = "Se déconnecter" }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleLogout() {
     if (loading) {
@@ -13,20 +14,25 @@ export function LogoutButton({ className = "button button-dark", label = "Se dé
     }
 
     setLoading(true);
+    setError("");
 
     try {
-      await fetch("/api/auth/logout", {
+      const response = await fetch("/api/auth/logout", {
         method: "POST"
       });
-    } finally {
+      if (!response.ok) throw new Error("Logout failed");
       router.push("/connexion");
       router.refresh();
+    } catch {
+      setError("Déconnexion impossible. Réessayez.");
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <button className={className} type="button" onClick={handleLogout} disabled={loading}>
+    <><button className={className} type="button" onClick={handleLogout} disabled={loading}>
       {loading ? "Déconnexion..." : label}
-    </button>
+    </button>{error && <span role="alert">{error}</span>}</>
   );
 }

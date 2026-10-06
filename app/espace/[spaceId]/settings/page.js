@@ -6,16 +6,20 @@ import { PageHeader, StatusBadge } from "@/components/workspace/page-header";
 import { spaceDictionary } from "@/lib/i18n/spaces";
 import { AuthenticationRequiredError } from "@/lib/zero-limit-id/profile";
 import { getAccessibleModulesForCurrentProfile } from "@/lib/workspace/modules";
+import { getAccessibleSpacesForCurrentProfile } from "@/lib/zero-limit-id/spaces";
 import { getWorkspaceSettings, WorkspaceSettingsError } from "@/lib/zero-limit-id/workspace-settings";
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage({ params }) {
   let context, space;
-  try { [context, space] = await Promise.all([getAccessibleModulesForCurrentProfile(params.spaceId), getWorkspaceSettings(params.spaceId)]); }
+  try {
+    [context, space] = await Promise.all([getAccessibleSpacesForCurrentProfile(), getWorkspaceSettings(params.spaceId)]);
+    if (context.spaces.some((accessible) => accessible.id === space.id)) context = await getAccessibleModulesForCurrentProfile(space.id);
+  }
   catch (error) { if (error instanceof AuthenticationRequiredError) redirect("/connexion"); if (error instanceof WorkspaceSettingsError && error.status === 404) notFound(); throw error; }
   const labels = spaceDictionary(context.profile.preferred_locale);
-  return <PrivateShell {...context} currentSpace={space.status === "active" ? space : null} labels={labels}>
+  return <PrivateShell {...context} currentSpace={context.spaces.some((accessible) => accessible.id === space.id) ? space : null} labels={labels}>
     <section className="workspace-settings">
       <PageHeader eyebrow={labels.settings.title} title={space.name} status={<StatusBadge tone={space.status === "active" ? "active" : space.status === "suspended" ? "danger" : "neutral"}>{labels.settings.statuses[space.status]}</StatusBadge>} />
       <section className="workspace-settings-summary" aria-label={labels.settings.title}>

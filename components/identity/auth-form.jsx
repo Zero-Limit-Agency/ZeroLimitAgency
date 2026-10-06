@@ -1,4 +1,6 @@
 "use client";
+
+import { requestCoreJson } from "@/lib/http/core-request";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -13,11 +15,13 @@ export function IdentityAuthForm({ mode, redirectTo = "/espace?entree=1" }) {
     const password = String(data.get("password") || "");
     if (mode === "signup" && password !== data.get("confirmPassword")) return setState({ status: "error", message: "Les mots de passe ne correspondent pas." });
     setState({ status: "loading", message: "Traitement en cours…" });
-    const response = await fetch(`/api/id/${mode === "signup" ? "signup" : "login"}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: data.get("email"), password, acceptedTerms: data.get("terms") === "on", redirectTo }) });
-    const result = await response.json().catch(() => null);
-    if (!response.ok) return setState({ status: "error", message: result?.error || "Une erreur est survenue." });
-    setState({ status: "success", message: result.message || "Connexion réussie." });
-    if (mode === "login" || result.hasSession) { router.replace(redirectTo !== "/espace?entree=1" ? redirectTo : result.redirectTo || redirectTo); router.refresh(); }
+    try {
+      const result = await requestCoreJson(`/api/id/${mode === "signup" ? "signup" : "login"}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: data.get("email"), password, acceptedTerms: data.get("terms") === "on", redirectTo }) });
+      setState({ status: "success", message: result.message || "Connexion réussie." });
+      if (mode === "login" || result.hasSession) { router.replace(redirectTo !== "/espace?entree=1" ? redirectTo : result.redirectTo || redirectTo); router.refresh(); }
+    } catch (error) {
+      setState({ status: "error", message: error.result?.error || "Traitement impossible. Réessayez dans quelques instants." });
+    }
   }
   const signup = mode === "signup";
   return <form className="identity-form" onSubmit={submit} aria-busy={state.status === "loading"}>

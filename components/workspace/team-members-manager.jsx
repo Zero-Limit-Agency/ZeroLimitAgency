@@ -1,5 +1,7 @@
 "use client";
 
+import { requestCoreJson } from "@/lib/http/core-request";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -21,21 +23,19 @@ export function TeamMembersManager({ organizationId, spaceId, currentProfileId, 
     setPending(`${action}:${values.membershipId || values.invitationId || organizationId}`);
     setFeedback({ type: "", message: "" });
     try {
-      const response = await fetch("/api/team/management", {
+      const result = await requestCoreJson("/api/team/management", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action, organizationId, ...values })
       });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        const message = labels.teamManagement.errors[result.code] || labels.teamManagement.errors.unexpected_error;
-        setFeedback({ type: "error", message: result.correlationId ? `${message} (${result.correlationId})` : message });
-        return;
-      }
+      if (action === "resendInvitation" && result.delivery !== "sent") throw new Error("Email not sent");
       setFeedback({ type: "success", message: success });
       if (action === "leaveTeam") router.push("/espace");
       else router.refresh();
-    } catch {
-      setFeedback({ type: "error", message: labels.teamManagement.errors.unexpected_error });
+    } catch (error) {
+      const result = error.result;
+      const message = labels.teamManagement.errors[result?.code] || labels.teamManagement.errors.unexpected_error;
+      setFeedback({ type: "error", message: result?.correlationId ? `${message} (${result.correlationId})` : message });
+      if (result?.mutationApplied) router.refresh();
     } finally {
       setPending("");
     }
