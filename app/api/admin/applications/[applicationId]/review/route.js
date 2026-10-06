@@ -137,7 +137,7 @@ export async function POST(request, { params }) {
         action,
         application: statusUpdate.data?.[0] || null,
         message:
-          !approvalEmailResult.ok && !approvalEmailResult.skipped
+          !approvalEmailResult.ok
             ? application.status === "approved"
               ? "Le client etait deja valide. Le dossier reste disponible dans la section clients, mais l'email n'a pas pu etre renvoye automatiquement."
               : "La demande a ete acceptee. Le client peut maintenant se connecter, mais l'email d'acceptation n'a pas pu etre envoye automatiquement."

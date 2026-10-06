@@ -30,7 +30,8 @@ export async function POST(request) {
         text: `Votre invitation Team a été renouvelée. Ce nouveau lien est valable 7 jours : ${url}`,
         html: `<div style="font-family:Arial,sans-serif;color:#24151b"><h1>Invitation Team</h1><p>Votre invitation a été renouvelée.</p><p><a href="${url}">Consulter et accepter l’invitation</a></p><p>Ce nouveau lien personnel expire dans 7 jours. L’ancien lien n’est plus valide.</p></div>`
       });
-      return NextResponse.json({ success: true, delivery: delivery.ok ? "sent" : "pending", previewUrl: canReturnPreviewInvitationToken() ? url : undefined });
+      if (!delivery.ok) return NextResponse.json({ success: false, code: "email_delivery_failed", delivery: "failed", mutationApplied: true, previewUrl: canReturnPreviewInvitationToken() ? url : undefined }, { status: 502 });
+      return NextResponse.json({ success: true, delivery: "sent", previewUrl: canReturnPreviewInvitationToken() ? url : undefined });
     }
     const action = actions[body.action];
     if (!action) throw new TeamManagementError("invalid_action");

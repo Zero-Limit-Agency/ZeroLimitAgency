@@ -1,5 +1,7 @@
 "use client";
 
+import { requestCoreJson } from "@/lib/http/core-request";
+
 import Link from "next/link";
 import { useState } from "react";
 import { PasswordField } from "@/components/identity/password-field";
@@ -10,9 +12,12 @@ export function ForgotPasswordForm() {
     event.preventDefault();
     setState({ status: "loading", message: "Envoi en cours…" });
     const email = new FormData(event.currentTarget).get("email");
-    const response = await fetch("/api/id/forgot-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
-    const data = await response.json().catch(() => null);
-    setState({ status: response.ok ? "success" : "error", message: response.ok ? data?.message : "Impossible d’envoyer le lien pour le moment." });
+    try {
+      const data = await requestCoreJson("/api/id/forgot-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
+      setState({ status: "success", message: data.message });
+    } catch (error) {
+      setState({ status: "error", message: error.result?.error || "Impossible d’envoyer le lien pour le moment. Réessayez." });
+    }
   }
   return <form className="identity-form" onSubmit={submit} aria-busy={state.status === "loading"}>
     <div className="identity-field"><label htmlFor="reset-email">Adresse email</label><input id="reset-email" name="email" type="email" autoComplete="email" required /></div>
@@ -33,9 +38,12 @@ export function NewPasswordForm() {
     setMismatch(false);
     const hash = new URLSearchParams(location.hash.slice(1));
     setState({ status: "loading", message: "Modification en cours…" });
-    const response = await fetch("/api/id/update-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ accessToken: hash.get("access_token"), password }) });
-    const data = await response.json().catch(() => null);
-    setState({ status: response.ok ? "success" : "error", message: response.ok ? "Mot de passe modifié. Vous pouvez vous connecter." : data?.error || "Ce lien est invalide ou expiré." });
+    try {
+      await requestCoreJson("/api/id/update-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ accessToken: hash.get("access_token"), password }) });
+      setState({ status: "success", message: "Mot de passe modifié. Vous pouvez vous connecter." });
+    } catch (error) {
+      setState({ status: "error", message: error.result?.error || "Impossible de modifier le mot de passe pour le moment. Réessayez." });
+    }
   }
   return <form className="identity-form" onSubmit={submit} aria-busy={state.status === "loading"}>
     <PasswordField label="Nouveau mot de passe" name="password" minLength={8} autoComplete="new-password" required />

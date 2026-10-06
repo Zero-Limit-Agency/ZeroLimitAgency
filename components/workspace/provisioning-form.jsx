@@ -1,4 +1,6 @@
 "use client";
+
+import { requestCoreJson } from "@/lib/http/core-request";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -12,10 +14,13 @@ export function ProvisioningForm({ kind, labels, existingProfessions = [], creat
   const derivedSlug = useMemo(() => name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 63), [name]);
   async function submit(event) {
     event.preventDefault(); setState({ status: "loading", message: labels.processing });
-    const response = await fetch("/api/spaces/provision", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind, profession, name, slug: slug || derivedSlug }) });
-    const result = await response.json().catch(() => null);
-    if (!response.ok) return setState({ status: "error", message: result?.error || labels.genericError });
-    setState({ status: "success", message: labels.ready }); router.push(`/espace/${result.spaceId}`); router.refresh();
+    try {
+      const result = await requestCoreJson("/api/spaces/provision", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind, profession, name, slug: slug || derivedSlug }) });
+      if (!result.spaceId) throw new Error("Missing space ID");
+      setState({ status: "success", message: labels.ready }); router.push(`/espace/${result.spaceId}`); router.refresh();
+    } catch (error) {
+      setState({ status: "error", message: error.result?.error || labels.genericError });
+    }
   }
   if (kind === "creator" && creatorExists) return <p role="status" className="provision-notice">{labels.alreadyActive}</p>;
   return <form className="provision-form" onSubmit={submit} aria-busy={state.status === "loading"}>

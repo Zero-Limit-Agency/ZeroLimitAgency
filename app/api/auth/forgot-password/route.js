@@ -37,7 +37,8 @@ export async function POST(request) {
     }
 
     const adminClient = createSupabaseAdminClient();
-    await adminClient.auth.sendPasswordRecovery(email, buildAuthRedirectUrl("/connexion/definir-mot-de-passe", process.env, request.url));
+    const delivery = await adminClient.auth.sendPasswordRecovery(email, buildAuthRedirectUrl("/connexion/definir-mot-de-passe", process.env, request.url));
+    if (!delivery.ok) throw new Error("Password recovery provider rejected request");
 
     return NextResponse.json({
       success: true,

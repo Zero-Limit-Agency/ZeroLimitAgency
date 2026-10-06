@@ -13,7 +13,8 @@
     "verify:dropmap": "node scripts/verify-dropmap-visibility.mjs",
     "test:security": "mkdir -p node_modules/server-only && printf '{\"type\":\"module\",\"exports\":\"./index.js\"}\\n' > node_modules/server-only/package.json && printf 'export {};\\n' > node_modules/server-only/index.js && printf 'exports.NextResponse = { json(body, init = {}) { return new Response(JSON.stringify(body), init); } };\\n' > node_modules/next/server && node --experimental-default-type=module --test tests/security/*.test.mjs; status=$?; rm -f node_modules/next/server; exit $status",
     "test": "npm run test:security",
-    "test:e2e:entry": "node tests/e2e/account-space-entry.mjs"
+    "test:e2e:entry": "node tests/e2e/account-space-entry.mjs",
+    "test:e2e:core": "node tests/e2e/core-reliability.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.104.0",
