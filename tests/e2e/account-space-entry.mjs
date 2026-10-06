@@ -22,7 +22,7 @@ const backend = createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
   let raw = ''; for await (const chunk of req) raw += chunk;
   const body = raw ? JSON.parse(raw) : {};
-  state.calls.push({ path: url.pathname, method: req.method, body, authorization: req.headers.authorization });
+  state.calls.push({ redirectTo: url.searchParams.get('redirect_to'), path: url.pathname, method: req.method, body, authorization: req.headers.authorization });
   let data = [], status = 200;
   if (url.pathname === '/auth/v1/user') {
     if (req.headers.authorization !== 'Bearer fixture-access') { status = 401; data = { message: 'Invalid token' }; }
@@ -124,7 +124,7 @@ try {
     await page.getByRole('button', { name: 'Créer mon Zero Limit ID' }).click();
     await page.getByRole('status').filter({ hasText: 'Consultez votre boîte email' }).waitFor();
     const signup = state.calls.find(c => c.path === '/auth/v1/signup');
-    assert.equal(new URL(signup.body.email_redirect_to).searchParams.get('next'), '/espace?entree=1');
+    assert.equal(new URL(signup.redirectTo).searchParams.get('next'), '/espace?entree=1');
     await goto('/confirmation#access_token=fixture-access&refresh_token=fixture-refresh');
     await url('/identite/onboarding'); await layout('onboarding'); await onboard();
     await url('/espace?entree=1'); await page.getByRole('heading', { name: 'Votre Zero Limit ID est prêt.' }).waitFor();
@@ -177,7 +177,7 @@ try {
     await goto('/mot-de-passe-oublie'); await page.getByLabel('Adresse email').fill(user.email);
     await page.getByRole('button', { name: 'Envoyer le lien' }).click();
     await page.getByRole('status').filter({ hasText: 'Si un compte correspond' }).waitFor();
-    assert.equal(new URL(state.calls.find(c => c.path === '/auth/v1/recover').body.redirect_to).pathname, '/nouveau-mot-de-passe');
+    assert.equal(new URL(state.calls.find(c => c.path === '/auth/v1/recover').redirectTo).pathname, '/nouveau-mot-de-passe');
     await goto('/nouveau-mot-de-passe#access_token=fixture-access');
     await page.getByLabel('Nouveau mot de passe', { exact: true }).fill('fixture-password');
     await page.getByLabel('Confirmer le mot de passe').fill('fixture-password');
