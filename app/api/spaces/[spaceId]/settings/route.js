@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { AuthenticationRequiredError } from "@/lib/zero-limit-id/profile";
 import { archiveSpace, renameCreatorSpace, renamePersonalSpace, restoreSpace, updateTeamOrganizationName, updateTeamSlug, WorkspaceSettingsError } from "@/lib/zero-limit-id/workspace-settings";
 
 const handlers = { rename_personal: renamePersonalSpace, rename_creator: renameCreatorSpace, rename_team: updateTeamOrganizationName, change_slug: updateTeamSlug, archive: archiveSpace, restore: restoreSpace };
 
-export async function POST(request, { params }) {
+export async function POST(request, props) {
+  const params = await props.params;
   try {
     const body = await request.json().catch(() => ({}));
     const handler = handlers[body.operation];
     if (!handler) throw new WorkspaceSettingsError("invalid_operation");
     await handler(params.spaceId, body.value);
+    revalidatePath(`/espace/${params.spaceId}/settings`);
+    revalidatePath("/espace");
     return NextResponse.json({ success: true });
   } catch (error) {
     if (error instanceof AuthenticationRequiredError) return NextResponse.json({ success: false, code: "authentication_required" }, { status: 401 });

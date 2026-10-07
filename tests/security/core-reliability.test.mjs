@@ -118,6 +118,7 @@ async function loadRoute(path, fixtures) {
   const source = (await readFile(path, "utf8")).replace(/import[\s\S]*?from "[^"]+";\n/g, "");
   globalThis.coreRouteFixtures = {
     NextResponse: { json: (body, init = {}) => json(body, init.status || 200) },
+    revalidatePath() {},
     checkRateLimit: async () => null,
     buildAbsoluteUrl: path => `https://core.example${path}`,
     canReturnPreviewInvitationToken: () => false,

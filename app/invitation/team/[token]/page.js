@@ -7,7 +7,8 @@ import { InvitationAcceptance } from "@/components/workspace/invitation-acceptan
 import { spaceDictionary } from "@/lib/i18n/spaces";
 
 export const dynamic = "force-dynamic";
-export default async function TeamInvitationPage({ params }) {
+export default async function TeamInvitationPage(props) {
+  const params = await props.params;
   const labels = spaceDictionary("fr");
   const session = await getClientSession();
   const returnTo = `/invitation/team/${encodeURIComponent(params.token)}`;

@@ -10,7 +10,8 @@ import { getTeamManagement, TeamManagementError } from "@/lib/zero-limit-id/team
 
 export const dynamic = "force-dynamic";
 
-export default async function TeamMembersPage({ params }) {
+export default async function TeamMembersPage(props) {
+  const params = await props.params;
   let context;
   try {
     context = await getAccessibleModulesForCurrentProfile(params.spaceId);

@@ -3,7 +3,8 @@ import { AuthenticationRequiredError } from "@/lib/zero-limit-id/profile";
 import { reportSpaceDataAccessError, requireSpaceAccess } from "@/lib/zero-limit-id/spaces";
 import { SpaceAccessDeniedError } from "@/lib/zero-limit-id/space-model";
 
-export async function GET(request, { params }) {
+export async function GET(request, props) {
+  const params = await props.params;
   try {
     const { space } = await requireSpaceAccess(params.spaceId);
     const response = NextResponse.redirect(new URL(`/espace/${encodeURIComponent(space.id)}`, request.url));

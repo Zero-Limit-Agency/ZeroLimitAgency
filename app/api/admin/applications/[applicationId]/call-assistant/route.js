@@ -92,7 +92,8 @@ function mergeTimelineEvents(existingEvents, suggestedEvents) {
   }));
 }
 
-export async function PATCH(request, { params }) {
+export async function PATCH(request, props) {
+  const params = await props.params;
   try {
     const guard = await requireAdminApiSession();
 
@@ -150,7 +151,8 @@ export async function PATCH(request, { params }) {
   }
 }
 
-export async function POST(request, { params }) {
+export async function POST(request, props) {
+  const params = await props.params;
   try {
     const guard = await requireAdminApiSession();
 

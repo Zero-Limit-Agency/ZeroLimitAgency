@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { buildAbsoluteUrl, sendZeroLimitEmail } from "@/lib/emails/zero-limit";
 import { createTeamInvitation, ProvisioningError } from "@/lib/zero-limit-id/provisioning";
 import { checkRateLimit } from "@/lib/security/rate-limit";
@@ -13,6 +14,8 @@ export async function POST(request) {
     const email = String(body.email || "").trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new ProvisioningError("invalid_email");
     const invitation = await createTeamInvitation({ organizationId: body.organizationId, email, role: body.role });
+    revalidatePath(`/espace/${encodeURIComponent(String(body.spaceId || ""))}/membres`);
+    const invitationRecord = { id: invitation.id, email: invitation.email, role: invitation.role, expiresAt: invitation.expiresAt };
     const url = buildAbsoluteUrl(`/invitation/team/${encodeURIComponent(invitation.token)}`);
     const delivery = await sendZeroLimitEmail({
       to: email,
@@ -21,8 +24,8 @@ export async function POST(request) {
       text: `Vous êtes invité(e) à rejoindre une Team Zero Limit. Lien valable 7 jours : ${url}`,
       html: `<div style="font-family:Arial,sans-serif;color:#24151b"><h1>Invitation Team</h1><p>Vous êtes invité(e) à rejoindre une Team Zero Limit.</p><p><a href="${url}">Consulter et accepter l’invitation</a></p><p>Ce lien personnel expire dans 7 jours.</p></div>`
     });
-    if (!delivery.ok) return NextResponse.json({ success: false, code: "email_delivery_failed", delivery: "failed", mutationApplied: true, error: "Invitation enregistrée, mais l’email n’a pas été envoyé. Réessayez l’envoi ou utilisez le renvoi dans la liste des invitations.", previewUrl: canReturnPreviewInvitationToken() ? url : undefined }, { status: 502 });
-    return NextResponse.json({ success: true, delivery: "sent", previewUrl: canReturnPreviewInvitationToken() ? url : undefined });
+    if (!delivery.ok) return NextResponse.json({ success: false, code: "email_delivery_failed", delivery: "failed", mutationApplied: true, invitation: invitationRecord, error: "Invitation enregistrée, mais l’email n’a pas été envoyé. Réessayez l’envoi ou utilisez le renvoi dans la liste des invitations.", previewUrl: canReturnPreviewInvitationToken() ? url : undefined }, { status: 502 });
+    return NextResponse.json({ success: true, delivery: "sent", invitation: invitationRecord, previewUrl: canReturnPreviewInvitationToken() ? url : undefined });
   } catch (error) {
     if (error instanceof ProvisioningError) {
       const messages = { invalid_email: "Adresse email invalide.", invalid_role: "Rôle invalide.", invitation_forbidden: "Vous ne pouvez pas inviter dans cette Team.", team_space_inactive: "Les invitations sont indisponibles tant que cette Team est inactive.", authentication_required: "Reconnectez-vous pour continuer." };

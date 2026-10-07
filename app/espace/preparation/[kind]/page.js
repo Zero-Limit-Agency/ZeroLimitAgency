@@ -9,7 +9,8 @@ import { spaceDictionary } from "@/lib/i18n/spaces";
 import { AuthenticationRequiredError } from "@/lib/zero-limit-id/profile";
 import { getAccessibleSpacesForCurrentProfile } from "@/lib/zero-limit-id/spaces";
 
-export default async function PreparationPage({ params }) {
+export default async function PreparationPage(props) {
+  const params = await props.params;
   if (!["personal", "creator", "team"].includes(params.kind)) notFound();
   let context;
   try { context = await getAccessibleSpacesForCurrentProfile(); }

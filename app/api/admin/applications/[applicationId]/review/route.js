@@ -16,7 +16,8 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 
-export async function POST(request, { params }) {
+export async function POST(request, props) {
+  const params = await props.params;
   try {
     const rateLimitResponse = await checkRateLimit(request, {
       key: "admin-application-review",

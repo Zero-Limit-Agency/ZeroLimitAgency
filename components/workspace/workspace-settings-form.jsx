@@ -5,7 +5,7 @@ import { requestCoreJson } from "@/lib/http/core-request";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function WorkspaceSettingsForm({ space, labels }) {
+export function WorkspaceSettingsForm({ space, labels, onSpaceChange }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -14,7 +14,15 @@ export function WorkspaceSettingsForm({ space, labels }) {
     setPending(true); setFeedback("");
     try {
       await requestCoreJson(`/api/spaces/${encodeURIComponent(space.id)}/settings`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ operation, value }) });
-      setFeedback(settings.saved); router.refresh();
+      onSpaceChange(operation === "archive"
+        ? { ...space, status: "archived" }
+        : operation === "restore"
+          ? { ...space, status: "active" }
+          : operation === "change_slug"
+            ? { ...space, organization: { ...space.organization, slug: value } }
+            : { ...space, name: value });
+      setFeedback(settings.saved);
+      router.refresh();
     } catch (error) {
       setFeedback(settings.errors[error.result?.code] || settings.errors.unexpected_error);
     } finally { setPending(false); }

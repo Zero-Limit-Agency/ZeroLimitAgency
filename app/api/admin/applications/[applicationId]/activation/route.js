@@ -9,7 +9,8 @@ import { revokeClientAccess, triggerClientActivation } from "@/lib/auth/client-a
 
 export const runtime = "nodejs";
 
-export async function POST(request, { params }) {
+export async function POST(request, props) {
+  const params = await props.params;
   try {
     const guard = await requireAdminApiSession();
 

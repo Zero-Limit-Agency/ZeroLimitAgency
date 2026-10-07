@@ -29,7 +29,8 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return {
     title: `Dossier ${params.applicationId} | Zero Limit Agency`
   };
@@ -63,7 +64,9 @@ function buildContextLine(application) {
   return requestType || company || "Suivi personnalisé du dossier client";
 }
 
-export default async function ClientApplicationPage({ params, searchParams }) {
+export default async function ClientApplicationPage(props) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const session = await getClientSession();
   const isDemoSpace = params.applicationId === DEMO_CLIENT_APPLICATION_ID;
   const adminClient = createSupabaseAdminClient();

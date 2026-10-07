@@ -107,7 +107,8 @@ async function uploadPacketDocument(applicationId, document, file, existingPacke
   };
 }
 
-export async function PATCH(request, { params }) {
+export async function PATCH(request, props) {
+  const params = await props.params;
   try {
     const rateLimitResponse = await checkRateLimit(request, {
       key: "admin-post-call-zero-save",

@@ -68,7 +68,8 @@ async function loadAuthorizedApplication(sessionUser, applicationId) {
   };
 }
 
-export async function GET(_request, { params }) {
+export async function GET(_request, props) {
+  const params = await props.params;
   try {
     const guard = await requireAuthenticatedApiSession();
 
@@ -111,7 +112,8 @@ export async function GET(_request, { params }) {
   }
 }
 
-export async function POST(request, { params }) {
+export async function POST(request, props) {
+  const params = await props.params;
   try {
     const rateLimitResponse = await checkRateLimit(request, {
       key: "client-collaboration-send",

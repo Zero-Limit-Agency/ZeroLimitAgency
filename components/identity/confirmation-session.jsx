@@ -18,7 +18,8 @@ export function ConfirmationSession() {
         body: JSON.stringify({ accessToken: hash.get("access_token"), refreshToken: hash.get("refresh_token"), expiresIn: hash.get("expires_in") })
       });
       setState({ status: "success", message: "Votre adresse est confirmée. Redirection…" });
-      history.replaceState(null, "", location.pathname);
+      // The destination has no fragment, so the router navigation clears the
+      // tokens without replacing Next.js' managed history state first.
       router.replace(next); router.refresh();
     } catch (error) {
       setState({ status: "error", message: error.result?.error || "Confirmation impossible pour le moment. Réessayez." });

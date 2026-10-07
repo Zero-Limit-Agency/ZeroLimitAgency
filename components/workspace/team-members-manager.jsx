@@ -12,6 +12,7 @@ export function TeamMembersManager({ organizationId, spaceId, currentProfileId, 
   const router = useRouter();
   const [feedback, setFeedback] = useState({ type: "", message: "" });
   const [pending, setPending] = useState("");
+  const [invitations, setInvitations] = useState(initialData.invitations);
   const groups = {
     owner: initialData.members.filter((member) => member.isOwner),
     admin: initialData.members.filter((member) => !member.isOwner && member.role === "admin"),
@@ -25,10 +26,11 @@ export function TeamMembersManager({ organizationId, spaceId, currentProfileId, 
     try {
       const result = await requestCoreJson("/api/team/management", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action, organizationId, ...values })
+        body: JSON.stringify({ action, organizationId, spaceId, ...values })
       });
       if (action === "resendInvitation" && result.delivery !== "sent") throw new Error("Email not sent");
       setFeedback({ type: "success", message: success });
+      if (action === "revokeInvitation") setInvitations((current) => current.filter((invitation) => invitation.id !== values.invitationId));
       if (action === "leaveTeam") router.push("/espace");
       else router.refresh();
     } catch (error) {
@@ -71,16 +73,16 @@ export function TeamMembersManager({ organizationId, spaceId, currentProfileId, 
       {groups[key].length ? <ul className="team-people-list">{groups[key].map((member) => <MemberRow member={member} key={member.membershipId} />)}</ul> : <p className="team-empty">{labels.teamManagement.empty[key]}</p>}
     </section>)}
 
-    {(actor.isOwner || actor.role === "admin") && <section className={`team-invitations${initialData.invitations.length ? "" : " is-empty"}`} aria-labelledby="pending-invitations-title">
-      <h2 id="pending-invitations-title">{labels.teamManagement.pendingInvitations} <span>{initialData.invitations.length}</span></h2>
-      {initialData.invitations.length ? <ul className="team-people-list">{initialData.invitations.map((invitation) => <li className="team-person-row" key={invitation.id}>
+    {(actor.isOwner || actor.role === "admin") && <section className={`team-invitations${invitations.length ? "" : " is-empty"}`} aria-labelledby="pending-invitations-title">
+      <h2 id="pending-invitations-title">{labels.teamManagement.pendingInvitations} <span>{invitations.length}</span></h2>
+      {invitations.length ? <ul className="team-people-list">{invitations.map((invitation) => <li className="team-person-row" key={invitation.id}>
         <div className="team-person-identity"><strong>{invitation.email}</strong><span>{labels.roles[invitation.role]}</span><small>{labels.teamManagement.expires} {new Intl.DateTimeFormat(labels.locale, { dateStyle: "medium" }).format(new Date(invitation.expiresAt))}</small></div>
         <div className="team-row-actions" aria-label={`${labels.teamManagement.actionsFor} ${invitation.email}`}>
           <button disabled={Boolean(pending)} onClick={() => mutate("resendInvitation", { invitationId: invitation.id }, "", labels.teamManagement.resent)}>{labels.teamManagement.resend}</button>
           <button className="danger" disabled={Boolean(pending)} onClick={() => mutate("revokeInvitation", { invitationId: invitation.id }, labels.teamManagement.confirmRevoke.replace("{email}", invitation.email), labels.teamManagement.revoked)}>{labels.teamManagement.revoke}</button>
         </div>
       </li>)}</ul> : <p className="team-empty">{labels.teamManagement.emptyInvitations}</p>}
-      <TeamInvitationForm organizationId={organizationId} labels={labels} onSuccess={() => router.refresh()} />
+      <TeamInvitationForm organizationId={organizationId} spaceId={spaceId} labels={labels} onSuccess={(invitation) => { if (invitation) setInvitations((current) => [...current.filter((item) => item.id !== invitation.id), invitation]); router.refresh(); }} />
     </section>}
 
     <section className="team-leave" aria-labelledby="leave-team-title">

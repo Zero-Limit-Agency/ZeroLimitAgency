@@ -42,7 +42,8 @@ async function loadAuthorizedApplication(sessionUser, applicationId) {
   };
 }
 
-export async function PATCH(request, { params }) {
+export async function PATCH(request, props) {
+  const params = await props.params;
   try {
     const rateLimitResponse = await checkRateLimit(request, {
       key: "client-newsletter-toggle",

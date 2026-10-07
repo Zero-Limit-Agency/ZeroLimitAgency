@@ -6,7 +6,8 @@ import { OnboardingForm } from "@/components/identity/onboarding-form";
 import { reportProfileDataAccessError } from "@/lib/zero-limit-id/diagnostics";
 import { AuthenticationRequiredError, ensureCurrentProfile } from "@/lib/zero-limit-id/profile";
 
-export default async function Page({ searchParams }) {
+export default async function Page(props) {
+  const searchParams = await props.searchParams;
   let profile;
   try {
     profile = await ensureCurrentProfile();
