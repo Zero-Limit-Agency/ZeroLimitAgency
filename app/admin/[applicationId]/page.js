@@ -8,7 +8,8 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return {
     title: `Administration dossier ${params.applicationId} | Zero Limit Agency`
   };
@@ -41,7 +42,8 @@ function createEmptyCallReport() {
   };
 }
 
-export default async function AdminApplicationPage({ params }) {
+export default async function AdminApplicationPage(props) {
+  const params = await props.params;
   const adminClient = createSupabaseAdminClient();
   const applicationResult = await adminClient.applications.getById(params.applicationId);
 

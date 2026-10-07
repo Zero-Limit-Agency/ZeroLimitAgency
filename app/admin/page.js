@@ -159,7 +159,8 @@ function AdminSection({ eyebrow, title, note, items, kind }) {
   );
 }
 
-export default async function AdminPage({ searchParams }) {
+export default async function AdminPage(props) {
+  const searchParams = await props.searchParams;
   const adminClient = createSupabaseAdminClient();
   const result = await adminClient.applications.list();
   const globalMarketResult = await adminClient.globalMarketSettings.get();

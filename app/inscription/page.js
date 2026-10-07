@@ -4,7 +4,8 @@ import { teamInvitationReturnPath } from "@/lib/security/internal-return-url";
 
 export const metadata = { title: "Créer un Zero Limit ID | Zero Limit Agency" };
 
-export default function InscriptionPage({ searchParams }) {
+export default async function InscriptionPage(props) {
+  const searchParams = await props.searchParams;
   const next = teamInvitationReturnPath(searchParams?.next);
   return <IdentityShell title="Créez votre identité." subtitle="Un identifiant unique et durable pour toutes vos expériences Zero Limit.">
     <IdentityAuthForm mode="signup" redirectTo={next} />

@@ -131,7 +131,8 @@ async function buildAttachments(packet) {
   return attachments;
 }
 
-export async function POST(_request, { params }) {
+export async function POST(_request, props) {
+  const params = await props.params;
   try {
     const rateLimitResponse = await checkRateLimit(request, {
       key: "admin-post-call-zero-send",

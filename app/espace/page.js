@@ -11,7 +11,8 @@ import { getAccessibleSpacesForCurrentProfile, reportSpaceDataAccessError } from
 
 export const dynamic = "force-dynamic";
 
-export default async function SpacesPage({ searchParams }) {
+export default async function SpacesPage(props) {
+  const searchParams = await props.searchParams;
   let context;
   try { context = await getAccessibleSpacesForCurrentProfile(); }
   catch (error) {
@@ -22,7 +23,7 @@ export default async function SpacesPage({ searchParams }) {
   }
   if (!context.profile.onboarding_completed_at) redirect("/identite/onboarding");
   if (searchParams?.entree === "1") {
-    const destination = workspaceEntryDestination(context.spaces, cookies().get("zla_last_space")?.value);
+    const destination = workspaceEntryDestination(context.spaces, (await cookies()).get("zla_last_space")?.value);
     if (destination) redirect(destination);
   }
   const labels = spaceDictionary(context.profile.preferred_locale);

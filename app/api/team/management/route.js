@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { buildAbsoluteUrl, sendZeroLimitEmail } from "@/lib/emails/zero-limit";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import { canReturnPreviewInvitationToken } from "@/lib/zero-limit-id/environment";
@@ -22,6 +23,7 @@ export async function POST(request) {
     const body = await request.json().catch(() => ({}));
     if (body.action === "resendInvitation") {
       const invitation = await resendTeamInvitation(body.organizationId, body.invitationId);
+      revalidatePath(`/espace/${encodeURIComponent(String(body.spaceId || ""))}/membres`);
       const url = buildAbsoluteUrl(`/invitation/team/${encodeURIComponent(invitation.token)}`);
       const delivery = await sendZeroLimitEmail({
         to: invitation.email,
@@ -36,6 +38,7 @@ export async function POST(request) {
     const action = actions[body.action];
     if (!action) throw new TeamManagementError("invalid_action");
     await action(body);
+    revalidatePath(`/espace/${encodeURIComponent(String(body.spaceId || ""))}/membres`);
     return NextResponse.json({ success: true });
   } catch (error) {
     if (error instanceof TeamManagementError) {

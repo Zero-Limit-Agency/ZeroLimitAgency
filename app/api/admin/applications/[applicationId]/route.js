@@ -61,7 +61,8 @@ function normalizeTimelineEvents(items) {
     }));
 }
 
-export async function PATCH(request, { params }) {
+export async function PATCH(request, props) {
+  const params = await props.params;
   try {
     const rateLimitResponse = await checkRateLimit(request, {
       key: "admin-application-patch",
@@ -177,7 +178,8 @@ export async function PATCH(request, { params }) {
   }
 }
 
-export async function DELETE(_request, { params }) {
+export async function DELETE(_request, props) {
+  const params = await props.params;
   try {
     const rateLimitResponse = await checkRateLimit(_request, {
       key: "admin-application-delete",

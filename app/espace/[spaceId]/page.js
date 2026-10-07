@@ -9,7 +9,8 @@ import { getAccessibleModulesForCurrentProfile } from "@/lib/workspace/modules";
 
 export const dynamic = "force-dynamic";
 
-export default async function SpacePage({ params }) {
+export default async function SpacePage(props) {
+  const params = await props.params;
   let context;
   try { context = await getAccessibleModulesForCurrentProfile(params.spaceId); }
   catch (error) {

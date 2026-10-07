@@ -8,7 +8,8 @@ import { markLessonProgress, saveNote, toggleFavorite } from "../../actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function LessonPage({ params }) {
+export default async function LessonPage(props) {
+  const params = await props.params;
   const user = await requireTrainingUser(`/learn-youtube/espace/lecons/${params.lessonId}`);
   const { lesson, module, pack } = await requireLessonAccess(user.id, params.lessonId);
   const orderedLessons = pack.modules.flatMap((item) => item.lessons);

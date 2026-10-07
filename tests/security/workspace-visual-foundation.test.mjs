@@ -70,6 +70,6 @@ test("Preview polish keeps Team singular and explains the URL identifier", () =>
 test("duplicated settings CTA is removed and empty member groups are compactable", () => {
   assert.doesNotMatch(landing, /settings\.title/);
   assert.match(members, /team-group\$\{groups\[key\]\.length \? "" : " is-empty"\}/);
-  assert.match(members, /team-invitations\$\{initialData\.invitations\.length \? "" : " is-empty"\}/);
+  assert.match(members, /team-invitations\$\{invitations\.length \? "" : " is-empty"\}/);
   assert.match(styles, /\.is-empty \.team-empty/);
 });

@@ -40,7 +40,8 @@ async function loadApplication(adminClient, applicationId) {
   return isCollaborationRequestType(application?.request_type) ? application : null;
 }
 
-export async function GET(_request, { params }) {
+export async function GET(_request, props) {
+  const params = await props.params;
   try {
     const guard = await requireAdminApiSession();
 
@@ -87,7 +88,8 @@ export async function GET(_request, { params }) {
   }
 }
 
-export async function POST(request, { params }) {
+export async function POST(request, props) {
+  const params = await props.params;
   try {
     const rateLimitResponse = await checkRateLimit(request, {
       key: "admin-collaboration-send",

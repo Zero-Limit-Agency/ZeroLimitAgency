@@ -8,7 +8,8 @@ import { teamInvitationReturnPath } from "@/lib/security/internal-return-url";
 
 export const metadata = { title: "Connexion Zero Limit ID | Zero Limit Agency" };
 
-export default async function ConnexionPage({ searchParams }) {
+export default async function ConnexionPage(props) {
+  const searchParams = await props.searchParams;
   const next = teamInvitationReturnPath(searchParams?.next);
   const session = await getClientSession();
   if (session?.user && !session.isDemo) {

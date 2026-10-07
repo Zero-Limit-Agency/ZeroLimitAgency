@@ -10,7 +10,8 @@ function pct(done, total) {
   return total ? Math.round((done / total) * 100) : 0;
 }
 
-export default async function PackPage({ params }) {
+export default async function PackPage(props) {
+  const params = await props.params;
   const user = await requireTrainingUser(`/learn-youtube/espace/packs/${params.packSlug}`);
   const space = await getTrainingSpace(user.id);
   const pack = space.packs.find((item) => item.slug === params.packSlug);

@@ -21,7 +21,8 @@ function buildDownloadHeaders(attachment, contentType) {
   };
 }
 
-export async function GET(_request, { params }) {
+export async function GET(_request, props) {
+  const params = await props.params;
   try {
     const guard = await requireAdminApiSession();
 

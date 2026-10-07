@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { requestCoreJson } from "@/lib/http/core-request";
 
-export function TeamInvitationForm({ organizationId, labels, onSuccess }) {
+export function TeamInvitationForm({ organizationId, spaceId, labels, onSuccess }) {
   const [state, setState] = useState({ status: "idle", message: "", url: "" });
   async function submit(event) {
     event.preventDefault();
@@ -13,16 +13,16 @@ export function TeamInvitationForm({ organizationId, labels, onSuccess }) {
     try {
       const result = await requestCoreJson("/api/team/invitations", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ organizationId, email: data.get("email"), role: data.get("role") })
+        body: JSON.stringify({ organizationId, spaceId, email: data.get("email"), role: data.get("role") })
       });
       if (result.delivery !== "sent") throw new Error("Email not sent");
       setState({ status: "success", message: labels.invitationSent, url: result.previewUrl || "" });
-      form.reset(); onSuccess?.();
+      form.reset(); onSuccess?.(result.invitation);
     } catch (error) {
       setState({ status: "error", message: error.result?.error || labels.genericError, url: error.result?.previewUrl || "" });
       // The invitation is persisted before delivery. Keep it visible for resend
       // even when the email fails, and preserve the entered form values.
-      if (error.result?.mutationApplied) onSuccess?.();
+      if (error.result?.mutationApplied) onSuccess?.(error.result.invitation);
     }
   }
   return <form className="invite-form" onSubmit={submit} aria-busy={state.status === "loading"}>
